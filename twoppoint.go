@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"math"
+	"sort"
 )
 
 func main()  {
@@ -10,7 +12,10 @@ func main()  {
 	//r := minWindow("ADOBECODEBANC", "ABC")
 	//r := judgeSquareSum(1)
 	//r := validPalindrome("abba")
-	//fmt.Println(r)
+	s :="aewfafwafjlwajflwajflwafj"
+	arr := []string{"apple","ewaf","awefawfwaf","awef","awefe","ewafeffewafewf"}
+	r := findLongestWord(s, arr)
+	fmt.Println(r)
 	return
 
 }
@@ -219,4 +224,86 @@ func isPalindrome(s string)bool{
 		end --
 	}
 	return true
+}
+
+/**
+524. 通过删除字母匹配到字典里最长单词
+
+给你一个字符串 s 和一个字符串数组 dictionary ，找出并返回 dictionary 中最长的字符串，该字符串可以通过删除 s 中的某些字符得到。
+如果答案不止一个，返回长度最长且字母序最小的字符串。如果答案不存在，则返回空字符串。
+
+示例 1：
+输入：s = "abpcplea", dictionary = ["ale","apple","monkey","plea"]
+输出："apple"
+
+示例 2：
+输入：s = "abpcplea", dictionary = ["a","b","c"]
+输出："a"
+ */
+func findLongestWord(s string, dictionary []string) string {
+	mp := make(map[byte]int)
+	for i:=0; i<len(s); i++ {
+		mp[s[i]] ++
+	}
+
+	includeArray := make([]string, 0)
+	for _, str := range dictionary {
+		strMap := make(map[byte]int)
+		for i:=0; i<len(str); i++ {
+			strMap[str[i]] ++
+		}
+		isInclude :=  true
+		for k, v := range strMap {
+			if cnt, ok := mp[k]; ok && cnt >= v {
+				continue
+			}
+			isInclude =  false
+			break
+		}
+		if isInclude {
+			includeArray = append(includeArray, str)
+		}
+	}
+	if len(includeArray) < 1 {
+		return ""
+	}
+	if len(includeArray) == 1 {
+		return includeArray[0]
+	}
+
+	strSlice := strSlice(includeArray)
+	strSlice.Sort()
+	return strSlice[0]
+}
+
+type strSlice []string
+
+func (s strSlice) Len() int {
+	return len(s)
+}
+
+func (s strSlice) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
+}
+
+func (s strSlice) Less(i, j int) bool {
+	if len(s[i]) > len(s[j]) {
+		return true
+	} else if len(s[i]) < len(s[j]) {
+		return false
+	}
+	for c:=0; c<1000 ; c++ {
+		if s[i][c] > s[j][c] {
+			return false
+		} else if s[i][c] < s[j][c] {
+			return true
+		} else {
+			continue
+		}
+	}
+	return true
+}
+
+func (s strSlice) Sort() {
+	sort.Sort(s)
 }
