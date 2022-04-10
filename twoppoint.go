@@ -12,12 +12,16 @@ func main()  {
 	//r := minWindow("ADOBECODEBANC", "ABC")
 	//r := judgeSquareSum(1)
 	//r := validPalindrome("abba")
-	s :="aewfafwafjlwajflwajflwafj"
-	arr := []string{"apple","ewaf","awefawfwaf","awef","awefe","ewafeffewafewf"}
-	r := findLongestWord(s, arr)
+	//s :="aewfafwafjlwajflwajflwafj"
+	//arr := []string{"apple","ewaf","awefawfwaf","awef","awefe","ewafeffewafewf"}
+	//s := "abpcplea"
+	arr := []string{"ale","apple","monkey","plea"}
+	s := "aaa"
+	//arr := []string{"aaa","aa","a"}
+	//s := "wordgoodgoodgoodbestword"
+	//arr := []string{"word","good","best","good"}
+	r := findLongestWord1(s, arr)
 	fmt.Println(r)
-	return
-
 }
 
 /**
@@ -241,27 +245,22 @@ func isPalindrome(s string)bool{
 输出："a"
  */
 func findLongestWord(s string, dictionary []string) string {
-	mp := make(map[byte]int)
-	for i:=0; i<len(s); i++ {
-		mp[s[i]] ++
+
+	if len(dictionary) < 1 {
+		return ""
 	}
 
 	includeArray := make([]string, 0)
 	for _, str := range dictionary {
-		strMap := make(map[byte]int)
-		for i:=0; i<len(str); i++ {
-			strMap[str[i]] ++
-		}
-		isInclude :=  true
-		for k, v := range strMap {
-			if cnt, ok := mp[k]; ok && cnt >= v {
-				continue
+		start := 0
+		for i:=0; i<len(s); i++ {
+			if s[i] == str[start] {
+				start++
 			}
-			isInclude =  false
-			break
-		}
-		if isInclude {
-			includeArray = append(includeArray, str)
+			if start >= len(str) {
+				includeArray = append(includeArray, str)
+				break
+			}
 		}
 	}
 	if len(includeArray) < 1 {
@@ -292,7 +291,7 @@ func (s strSlice) Less(i, j int) bool {
 	} else if len(s[i]) < len(s[j]) {
 		return false
 	}
-	for c:=0; c<1000 ; c++ {
+	for c:=0; c<len(s[i]) ; c++ {
 		if s[i][c] > s[j][c] {
 			return false
 		} else if s[i][c] < s[j][c] {
@@ -306,4 +305,65 @@ func (s strSlice) Less(i, j int) bool {
 
 func (s strSlice) Sort() {
 	sort.Sort(s)
+}
+
+func findLongestWord1(s string, dictionary []string) (ans string) {
+	m := len(s)
+	f := make([][26]int, m+1)
+	for i := range f[m] {
+		f[m][i] = m
+	}
+	for i := m - 1; i >= 0; i-- {
+		f[i] = f[i+1]
+		f[i][s[i]-'a'] = i
+	}
+
+outer:
+	for _, t := range dictionary {
+		j := 0
+		for _, ch := range t {
+			if f[j][ch-'a'] == m {
+				continue outer
+			}
+			j = f[j][ch-'a'] + 1
+		}
+		if len(t) > len(ans) || len(t) == len(ans) && t < ans {
+			ans = t
+		}
+	}
+	return
+}
+
+func findLongestWord2(s string, dictionary []string) string {
+	sort.Slice(dictionary,func(i,j int)bool{
+		if len(dictionary[i])>len(dictionary[j]) {
+			return true
+		}else if len(dictionary[i])==len(dictionary[j]) {
+			for v:=0;v<len(dictionary[i]);v++{
+				a,b:=dictionary[i][v]-'a',dictionary[j][v]-'a'
+				if a<b {
+					return true
+				}else if a>b {
+					return false
+				}
+			}
+			return true
+		}else{
+			return false
+		}
+	})
+	length:=len(s)
+	for _,str:=range dictionary{
+		l,L,strLen:=0,0,len(str)
+		for l<strLen&&L<length{
+			if s[L]==str[l] {
+				l++
+			}
+			L++
+		}
+		if l==strLen {
+			return str
+		}
+	}
+	return ""
 }
