@@ -15,12 +15,13 @@ func main()  {
 	//s :="aewfafwafjlwajflwajflwafj"
 	//arr := []string{"apple","ewaf","awefawfwaf","awef","awefe","ewafeffewafewf"}
 	//s := "abpcplea"
-	arr := []string{"ale","apple","monkey","plea"}
-	s := "aaa"
+	//arr := []string{"ale","apple","monkey","plea"}
+	//s := "aaa"
 	//arr := []string{"aaa","aa","a"}
 	//s := "wordgoodgoodgoodbestword"
 	//arr := []string{"word","good","best","good"}
-	r := findLongestWord1(s, arr)
+	//r := findLongestWord1(s, arr)
+	r := mySqrt1(2)
 	fmt.Println(r)
 }
 
@@ -366,4 +367,56 @@ func findLongestWord2(s string, dictionary []string) string {
 		}
 	}
 	return ""
+}
+
+/**
+69. x 的平方根
+
+给你一个非负整数 x ，计算并返回 x 的 算术平方根 。
+由于返回类型是整数，结果只保留 整数部分 ，小数部分将被 舍去 。
+注意：不允许使用任何内置指数函数和算符，例如 pow(x, 0.5) 或者 x ** 0.5 。
+
+示例 1：
+输入：x = 4
+输出：2
+
+示例 2：
+输入：x = 8
+输出：2
+解释：8 的算术平方根是 2.82842..., 由于返回类型是整数，小数部分将被舍去。
+*/
+func mySqrt(x int) int {
+	if x==0||x==1{
+		return x
+	}
+	start, end := 0, x/2+1
+	for start < end {
+		middle := int(math.Ceil(float64((start + end) / 2)))
+		if middle * middle > x {
+			end = middle
+		} else if middle * middle < x {
+			start = middle + 1
+		} else {
+			return middle
+		}
+	}
+	if start==x/start{
+		return start
+	}
+	return start-1
+}
+
+func mySqrt1(x int) int {
+	l, r := 0, x
+	ans := -1
+	for l <= r {
+		mid := l + (r - l) / 2
+		if mid * mid <= x {
+			ans = mid
+			l = mid + 1
+		} else {
+			r = mid - 1
+		}
+	}
+	return ans
 }
