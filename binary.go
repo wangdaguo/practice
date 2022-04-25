@@ -6,9 +6,9 @@ import (
 
 func main()  {
 	//r := mySqrtTest(1)
-	nums := []int{9,10}
+	nums := []int{1,1,1,1,1,1,2,3,4,4,5,5,5,6,7,8,8,8,8}
 	target := 8
-	r := binarySearch(nums, target)
+	r := searchRange(nums, target)
 	fmt.Println(r)
 }
 
@@ -74,43 +74,48 @@ func searchRange(nums []int, target int) []int {
 		return []int{-1, -1}
 	}
 	start, end := 0, len(nums)-1
-	rleft, rright := -1, -1
-	for start < end {
+	for start <= end {
 		middle := start + (end-start)/2
 		if nums[middle] < target {
 			start = middle + 1
 		} else if nums[middle] > target {
 			end = middle - 1
 		} else  {
-			rleft, rright = middle, middle
-			tmpL := binarySearch(nums[0:middle], target)
-			if tmpL != -1 {
+			rleft, rright := middle, middle
+			tmpL := binarySearch(nums[0:middle], target, true)
+			if tmpL != -1 && tmpL < rleft {
 				rleft = tmpL
 			}
-			tmpR := binarySearch(nums[middle+1:], target)
-			if tmpR != -1 {
-				rright = tmpR
+			tmpR := binarySearch(nums[middle+1:], target, false)
+			if tmpR != -1 && tmpR + middle + 1 > rright {
+				rright = tmpR + middle + 1
 			}
+			return []int{rleft, rright}
 		}
 	}
-	return []int{rleft, rright}
+	return []int{-1, -1}
 }
 
-func binarySearch(nums []int, target int) int {
+func binarySearch(nums []int, target int, isFindLeft bool) int {
 	if len(nums) == 0 {
 		return -1
 	}
-	start, end := 0, len(nums)-1
-	for start < end {
+	start, end, r := 0, len(nums)-1, -1
+	for start <= end {
 		middle := start + (end-start)/2
 		if nums[middle]  > target {
-			end = middle + 1
+			end = middle - 1
 		} else if nums[middle] < target {
 			start = middle + 1
 		} else {
-			return middle
+			r = middle
+			if isFindLeft {
+				end = middle - 1
+			} else  {
+				start = middle + 1
+			}
 		}
 	}
-	return -1
+	return r
 }
 
