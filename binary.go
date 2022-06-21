@@ -347,5 +347,46 @@ https://leetcode.cn/problems/median-of-two-sorted-arrays/
 解释：合并数组 = [1,2,3,4] ，中位数 (2 + 3) / 2 = 2.5
  */
 func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
+	totalLen := len(nums1) + len(nums2)
+	if totalLen % 2 == 1 {
+		midIndex := totalLen / 2
+		return float64(getKthElement(nums1, nums2, midIndex+1))
+	} else {
+		minIndex1, minIndex2 := totalLen / 2 - 1, totalLen / 2
+		return float64(getKthElement(nums1, nums2, minIndex1+1) + getKthElement(nums1, nums2, minIndex2+1)) / 2
+	}
+}
+
+func getKthElement(nums1, nums2 []int, k int) int {
+	var index1, index2 int
+	for {
+		if index1 == len(nums1) {
+			return nums2[index2 + k - 1]
+		}
+		if index2 == len(nums2) {
+			return nums1[index1 + k - 1]
+		}
+		if k == 1 {
+			return min(nums1[index1], nums2[index2])
+		}
+		half := k / 2
+		newIndex1 := min(index1+half, len(nums1)) - 1
+		newIndex2 := min(index2+half, len(nums2)) - 1
+		val1, val2 := nums1[newIndex1], nums2[newIndex2]
+		if val1 <= val2 {
+			k = k - (newIndex1 - index1 + 1)
+			index1 = newIndex1 + 1
+		} else {
+			k = k - (newIndex2 - index2 + 1)
+			index2 = newIndex2 + 1
+		}
+	}
 	return 0
+}
+
+func min(x, y int) int {
+	if x < y {
+		return x
+	}
+	return y
 }
