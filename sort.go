@@ -55,33 +55,37 @@ l, r, mid
 2, 3, 2   {4,8,5,7}
 0, 3, 1   {4,8},{5,7}
  */
-func mergeList(nums, temp *[]int64, l, mid, r int64)  {
-	i, j, t := l, mid+1, l  // 0, 1, 0; 2, 3, 2;  0, 2, 0
+func mergeList(nums, temp *[]int64, l, mid, r int64) {
+	i, j, t := l, mid+1, l // 0, 1, 0; 2, 3, 2;  0, 2, 0
 	for i <= mid && j <= r {
 		if (*nums)[i] <= (*nums)[j] {
 			(*temp)[t] = (*nums)[i]
-			i ++
-			t ++
+			i++
+			t++
 		} else {
 			(*temp)[t] = (*nums)[j]
-			j ++
-			t ++
+			j++
+			t++
 		}
 	}
 
 	for i <= mid {
 		(*temp)[t] = (*nums)[i]
-		i ++
-		t ++
+		i++
+		t++
 	}
 
 	for j <= r {
 		(*temp)[t] = (*nums)[j]
-		j ++
-		t ++
+		j++
+		t++
 	}
 
-	for i:=int64(0); i<=r; i++ {
+	for i := int64(0); i <= r; i++ {
 		(*nums)[i] = (*temp)[i]
 	}
+}
+
+func insertSort(nums *[]int64, n int64)  {
+	
 }
