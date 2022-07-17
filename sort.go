@@ -153,5 +153,14 @@ func findKthLargest(nums []int64, k int) int64 {
 }
 
 func quickSort1(nums []int64, start, end int) int {
-
+	i, j := start+1, end
+	for i < j {
+		for i < end && nums[i] <= nums[start] {
+			i ++
+		}
+		for start < j && nums[j] >= nums[start] {
+			j --
+		}
+		if i 
+	}
 }
