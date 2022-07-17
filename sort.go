@@ -7,10 +7,15 @@ func main()  {
 	//quickSort(nums, 0, 3)
 
 	//nums := []int64{8,4,5,7,10,3,6,2}
+	//nums := []int64{8,4,5,7}
+	//temp := make([]int64, len(nums))
+	//mergeSort(nums, temp, 0, 3)
+	//nums := []int64{8,4,5,7}
+	//insertSort(&nums, len(nums))
 	nums := []int64{8,4,5,7}
-	temp := make([]int64, len(nums))
-	mergeSort(nums, temp, 0, 3)
-	fmt.Println(temp)
+	//bubbleSort(&nums, len(nums))
+	selectSort(&nums, len(nums))
+	fmt.Println(nums)
 }
 
 func quickSort(nums *[]int, l, r int)  {
@@ -86,6 +91,67 @@ func mergeList(nums, temp *[]int64, l, mid, r int64) {
 	}
 }
 
-func insertSort(nums *[]int64, n int64)  {
-	
+func insertSort(nums *[]int64, n int)  {
+	if n < 1 {
+		return
+	}
+	for i:=0;i<n-1;i++ {
+		for j:=i+1;j>0;j-- {
+			if (*nums)[j-1] > (*nums)[j] {
+				(*nums)[j-1], (*nums)[j] = (*nums)[j], (*nums)[j-1]
+			}
+		}
+	}
+	return
+}
+
+func bubbleSort(nums *[]int64, n int)  {
+	if n < 1 {
+		return
+	}
+	for i:=0;i<n-1;i++ {
+		for j:=0;j<n-i-1;j++ {
+			if (*nums)[j] > (*nums)[j+1] {
+				(*nums)[j], (*nums)[j+1] = (*nums)[j+1], (*nums)[j]
+			}
+		}
+	}
+	return
+}
+
+func selectSort(nums *[]int64, n int)  {
+	if n < 1 {
+		return
+	}
+	for i:=0;i<n-1;i++ {
+		for j:=i+1;j<n;j++ {
+			if (*nums)[i] > (*nums)[j] {
+				(*nums)[i], (*nums)[j] = (*nums)[j], (*nums)[i]
+			}
+		}
+	}
+	return
+}
+
+func findKthLargest(nums []int64, k int) int64 {
+	if k < 1 || k > len(nums) {
+		return 0
+	}
+	start, end, target := 0, len(nums)-1, len(nums)-k
+	for start < end {
+		key := quickSort1(nums, start, end)
+		if key == target {
+			return nums[key]
+		}
+		if key < target {
+			start = key + 1
+		} else {
+			end = key - 1
+		}
+	}
+	return nums[start]
+}
+
+func quickSort1(nums []int64, start, end int) int {
+
 }
