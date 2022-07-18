@@ -14,8 +14,9 @@ func main()  {
 	//insertSort(&nums, len(nums))
 	nums := []int64{8,4,5,7}
 	//bubbleSort(&nums, len(nums))
-	selectSort(&nums, len(nums))
-	fmt.Println(nums)
+	//selectSort(&nums, len(nums))
+	r := findKthLargest(nums, 4)
+	fmt.Println(r)
 }
 
 func quickSort(nums *[]int, l, r int)  {
@@ -133,6 +134,10 @@ func selectSort(nums *[]int64, n int)  {
 	return
 }
 
+/**
+215. 数组中的第K个最大元素
+https://leetcode.cn/problems/kth-largest-element-in-an-array/
+ */
 func findKthLargest(nums []int64, k int) int64 {
 	if k < 1 || k > len(nums) {
 		return 0
@@ -153,7 +158,7 @@ func findKthLargest(nums []int64, k int) int64 {
 }
 
 func quickSort1(nums []int64, start, end int) int {
-	i, j := start+1, end
+	i, j := start, end
 	for i < j {
 		for i < end && nums[i] <= nums[start] {
 			i ++
@@ -161,6 +166,11 @@ func quickSort1(nums []int64, start, end int) int {
 		for start < j && nums[j] >= nums[start] {
 			j --
 		}
-		if i 
+		if i >= j {
+			break
+		}
+		nums[i], nums[j] = nums[j], nums[i]
 	}
+	nums[i], nums[j] = nums[j], nums[i]
+	return i
 }
