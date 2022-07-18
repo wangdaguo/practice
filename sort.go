@@ -15,7 +15,7 @@ func main()  {
 	nums := []int64{8,4,5,7}
 	//bubbleSort(&nums, len(nums))
 	//selectSort(&nums, len(nums))
-	r := findKthLargest(nums, 4)
+	r := findKthLargest(nums, 1)
 	fmt.Println(r)
 }
 
@@ -144,7 +144,7 @@ func findKthLargest(nums []int64, k int) int64 {
 	}
 	start, end, target := 0, len(nums)-1, len(nums)-k
 	for start < end {
-		key := quickSort1(nums, start, end)
+		key := quickSortT(&nums, start, end)
 		if key == target {
 			return nums[key]
 		}
@@ -157,20 +157,36 @@ func findKthLargest(nums []int64, k int) int64 {
 	return nums[start]
 }
 
-func quickSort1(nums []int64, start, end int) int {
+func quickSort1(nums *[]int64, start, end int) int {
 	i, j := start, end
 	for i < j {
-		for i < end && nums[i] <= nums[start] {
+		for i < end && (*nums)[i] <= (*nums)[start] {
 			i ++
 		}
-		for start < j && nums[j] >= nums[start] {
+		for start < j && (*nums)[j] >= (*nums)[start] {
 			j --
 		}
 		if i >= j {
 			break
 		}
-		nums[i], nums[j] = nums[j], nums[i]
+		(*nums)[i], (*nums)[j] = (*nums)[j], (*nums)[i]
 	}
-	nums[i], nums[j] = nums[j], nums[i]
+	(*nums)[start], (*nums)[j] = (*nums)[j], (*nums)[start]
+	return j
+}
+
+func quickSortT(nums *[]int64, start, end int) int {
+	i, j, piov := start, end, (*nums)[start]
+	for i < j {
+		for i < j && (*nums)[j] >= piov {
+			j --
+		}
+		(*nums)[i] = (*nums)[j]
+		for i < j && (*nums)[i] <= piov {
+			i ++
+		}
+		(*nums)[j] = (*nums)[i]
+	}
+	(*nums)[i] = piov
 	return i
 }
