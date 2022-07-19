@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"sort"
+)
 
 func main()  {
 	//nums := &[]int{5,3,9,6}
@@ -235,8 +238,10 @@ func max1(i, j int) int {
 /**
 451. 根据字符出现频率排序
 https://leetcode.cn/problems/sort-characters-by-frequency/
+输入: s = "tree"
+输出: "eert"
  */
-func frequencySort(s string) string {
+func frequencySort1(s string) string {
 
 	if len(s) < 1 {
 		return ""
@@ -262,6 +267,35 @@ func frequencySort(s string) string {
 					r = fmt.Sprintf("%s%s", r, string(d))
 				}
 			}
+		}
+	}
+	return r
+}
+
+func frequencySort(s string) string {
+
+	if len(s) < 1 {
+		return ""
+	}
+
+	mp := make(map[rune]int)
+	for _, charInt := range s {
+		mp[charInt] += 1
+	}
+
+	buckets :=  make([]rune, 0)
+	for k, _ := range mp {
+		buckets = append(buckets, k)
+	}
+
+	sort.Slice(buckets, func(i, j int) bool {
+		return mp[buckets[i]] > mp[buckets[j]]
+	})
+
+	var r string
+	for _, v := range buckets {
+		for i:=0; i<mp[v]; i++ {
+			r = fmt.Sprintf("%s%s", r, string(v))
 		}
 	}
 	return r
