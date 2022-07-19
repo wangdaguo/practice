@@ -12,10 +12,12 @@ func main()  {
 	//mergeSort(nums, temp, 0, 3)
 	//nums := []int64{8,4,5,7}
 	//insertSort(&nums, len(nums))
-	nums := []int64{8,4,5,7}
+	//nums := []int64{8,4,5,7}
 	//bubbleSort(&nums, len(nums))
 	//selectSort(&nums, len(nums))
-	r := findKthLargest(nums, 1)
+	//r := findKthLargest(nums, 1)
+	nums := []int{1,1,1,1,2,2,3,4,4,4,4,4,6,7,7,7,7}
+	r := topKFrequent(nums, 3)
 	fmt.Println(r)
 }
 
@@ -189,4 +191,50 @@ func quickSortT(nums *[]int64, start, end int) int {
 	}
 	(*nums)[i] = piov
 	return i
+}
+
+/**
+347. 前 K 个高频元素
+https://leetcode.cn/problems/top-k-frequent-elements/
+ */
+func topKFrequent(nums []int, k int) []int {
+	mp := make(map[int]int)
+	var maxCnt int
+	for  _, v := range nums {
+		mp[v] += 1
+		maxCnt = max1(maxCnt, mp[v])
+	}
+	buckets := make(map[int][]int, maxCnt)
+	for k, v := range mp {
+		buckets[v] = append(buckets[v], k)
+	}
+	var r[]int
+	var cnt int
+	for i:=maxCnt; i>=0; i-- {
+		if data, ok:=buckets[i]; ok {
+			for _, d := range data {
+				r = append(r, d)
+				cnt ++
+				if k == cnt {
+					return r
+				}
+			}
+		}
+	}
+	return r
+}
+
+func max1(i, j int) int {
+	if i > j {
+		return i
+	}
+	return j
+}
+
+/**
+451. 根据字符出现频率排序
+https://leetcode.cn/problems/sort-characters-by-frequency/
+ */
+func frequencySort(s string) string {
+
 }
