@@ -16,8 +16,9 @@ func main()  {
 	//bubbleSort(&nums, len(nums))
 	//selectSort(&nums, len(nums))
 	//r := findKthLargest(nums, 1)
-	nums := []int{1,1,1,1,2,2,3,4,4,4,4,4,6,7,7,7,7}
-	r := topKFrequent(nums, 3)
+	//nums := []int{1,1,1,1,2,2,3,4,4,4,4,4,6,7,7,7,7}
+	//r := topKFrequent(nums, 3)
+	r := frequencySort("aabbaccbb")
 	fmt.Println(r)
 }
 
@@ -237,4 +238,31 @@ https://leetcode.cn/problems/sort-characters-by-frequency/
  */
 func frequencySort(s string) string {
 
+	if len(s) < 1 {
+		return ""
+	}
+
+	mp := make(map[rune]int)
+	var maxCnt int
+	for _, charInt := range s {
+		mp[charInt] += 1
+		maxCnt = max1(maxCnt, mp[charInt])
+	}
+
+	buckets := make(map[int][]rune, maxCnt)
+	for k, v := range mp {
+		buckets[v] = append(buckets[v], k)
+	}
+
+	var r string
+	for i:=maxCnt; i>=0; i-- {
+		if data, ok := buckets[i]; ok {
+			for _, d := range data {
+				for j:=0; j<i; j++ {
+					r = fmt.Sprintf("%s%s", r, string(d))
+				}
+			}
+		}
+	}
+	return r
 }
