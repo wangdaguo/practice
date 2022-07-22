@@ -21,8 +21,10 @@ func main()  {
 	//r := findKthLargest(nums, 1)
 	//nums := []int{1,1,1,1,2,2,3,4,4,4,4,4,6,7,7,7,7}
 	//r := topKFrequent(nums, 3)
-	r := frequencySort("aabbaccbb")
-	fmt.Println(r)
+	//r := frequencySort("aabbaccbb")
+	sortColors([]int{2,0,2,1,1,0})
+	//fmt.Println(r)
+	return
 }
 
 func quickSort(nums *[]int, l, r int)  {
@@ -241,7 +243,7 @@ https://leetcode.cn/problems/sort-characters-by-frequency/
 输入: s = "tree"
 输出: "eert"
  */
-func frequencySort1(s string) string {
+func frequencySort(s string) string {
 
 	if len(s) < 1 {
 		return ""
@@ -272,7 +274,7 @@ func frequencySort1(s string) string {
 	return r
 }
 
-func frequencySort(s string) string {
+func frequencySort1(s string) string {
 
 	if len(s) < 1 {
 		return ""
@@ -299,4 +301,55 @@ func frequencySort(s string) string {
 		}
 	}
 	return r
+}
+
+func frequencySort2(s string) string {
+	maxfreq := 0
+	cmap := make(map[byte]int)
+
+	for _,c := range []byte(s){
+		cmap[c]++
+		maxfreq = max1(maxfreq,cmap[c])
+	}
+
+	//初始化桶，并填充内容
+	buckets := make([][]byte,maxfreq+1)
+	for c,f := range cmap{
+		buckets[f] = append(buckets[f],c)
+	}
+
+	ans := make([]byte,0,len(s))
+	for i := maxfreq ; i > 0 ; i--{
+		blen := len(buckets[i])
+		for j:=0; j < blen; j++{
+			c := buckets[i][j]
+			for k := 0; k < i; k++{
+				ans = append(ans,c)
+			}
+		}
+	}
+	return string(ans)
+}
+
+/**
+75. 颜色分类
+https://leetcode.cn/problems/sort-colors/
+ */
+func sortColors(nums []int)  {
+	if len(nums) <= 0 {
+		return
+	}
+	cur, p0, p2 := 0, 0, len(nums)-1
+	for cur <= p2 {
+		if nums[cur] == 0 {
+			nums[p0], nums[cur] = nums[cur], nums[p0]
+			p0 ++
+			cur ++
+		} else if nums[cur] == 2 {
+			nums[p2], nums[cur] = nums[cur], nums[p2]
+			p2 --
+		} else {
+			cur ++
+		}
+	}
 }

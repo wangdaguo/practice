@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"math"
 	"sort"
 )
@@ -21,9 +20,10 @@ func main()  {
 	//s := "wordgoodgoodgoodbestword"
 	//arr := []string{"word","good","best","good"}
 	//r := findLongestWord1(s, arr)
-	r := mySqrt1(2)
-	fmt.Println(r)
+	//r := mySqrt1(2)
+	//fmt.Println(r)
 }
+
 
 /**
 167. 两数之和 II - 输入有序数组
