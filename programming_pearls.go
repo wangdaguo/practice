@@ -8,56 +8,35 @@ func main()  {
 	//fmt.Println(s)
 	//return
 
-	r := GenCalendar(2022, 8)
+	date1 := &Date{
+		Year:  2012,
+		Month: 1,
+		Day:   10,
+	}
+
+	date2 := &Date{
+		Year:  2013,
+		Month: 1,
+		Day:   10,
+	}
+
+	cnt := BetweenDay(date1, date2)
+	fmt.Println(cnt)
+
+	date3 := &Date{
+		Year:  2022,
+		Month: 8,
+		Day:   19,
+	}
+	r := WeekDay(date3)
 	fmt.Println(r)
+
+	rr := GenCalendar(2022, 8)
+	fmt.Println(rr)
 	return
 }
 
-type Date struct {
-	Year int
-	Month int
-	Day int
-}
-
 var monthDay = []int{0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
-
-func IsRunYear(year int) bool {
-	return (year % 4 ==0 && year % 100 != 0) || year % 400 == 0
-}
-
-func YearDay(date *Date) int {
-	totalDay := 0
-	for i:=1; i<date.Month; i++ {
-		totalDay += monthDay[i]
-	}
-	if date.Month > 2 && IsRunYear(date.Year) {
-		totalDay += 1
-	}
-	return totalDay
-}
-
-func BetweenDay(date1, date2 *Date) int {
-	if date1.Year == date2.Year {
-		return YearDay(date2) - YearDay(date1)
-	}
-	cnt := 0
-	for i:=date1.Year; i<date2.Year; i++ {
-		cnt += 365
-		if IsRunYear(i) {
-			cnt += 1
-		}
-	}
-	return cnt + YearDay(date2) - YearDay(date1)
-}
-
-func WeekDay(date *Date) int {
-	startDate := &Date{
-		Year:  1900,
-		Month: 1,
-		Day:   1,
-	}
-	return BetweenDay(startDate, date) % 7 + 1
-}
 
 func GenCalendar(year, month int) [][]int {
 	var r [][]int
@@ -145,4 +124,55 @@ func reverse(s []string, i, j int) {
 	}
 	return
 }
+
+type Date struct {
+	Year int
+	Month int
+	Day int
+}
+
+func IsRunYear(year int) bool {
+	if (year % 4 == 0 && year % 100 != 0) || year % 400 == 0 {
+		return true
+	}
+	return false
+}
+
+func YearDay(date *Date) (day int) {
+	arr := []int{0,31,28,31,30,31,30,31,31,30,31,30,31}
+	for i:=1; i<date.Month; i++ {
+		day += arr[i]
+	}
+	if date.Month > 2 && IsRunYear(date.Year) {
+		day += 1
+	}
+	day += date.Day
+	return day
+}
+
+func BetweenDay(date1, date2 *Date) int {
+	if date1.Year == date2.Year {
+		return YearDay(date2) - YearDay(date1)
+	}
+	var totalDay int
+	for i:=date1.Year; i<date2.Year; i++ {
+		totalDay += 365
+		if IsRunYear(i) {
+			totalDay += 1
+		}
+	}
+	return totalDay + YearDay(date2) - YearDay(date1)
+}
+
+//选取1900年作为参考，日历都是以1900为参考的，1900.1.1为星期一，其它日期相对它的天数与7取余
+// 数再加上1就是对应的星期几。这里用1~7表示星期一到星期天
+func WeekDay(date *Date) int {
+	startDate := &Date{
+		Year:  1900,
+		Month: 1,
+		Day:   1,
+	}
+	return BetweenDay(startDate, date) % 7 + 1
+}
+
 
