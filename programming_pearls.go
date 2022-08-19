@@ -31,7 +31,7 @@ func main()  {
 	r := WeekDay(date3)
 	fmt.Println(r)
 
-	rr := GenCalendar(2022, 8)
+	rr := GenCalendar(2022, 7)
 	fmt.Println(rr)
 	return
 }
@@ -45,24 +45,29 @@ func GenCalendar(year, month int) [][]int {
 		Month: month,
 		Day:   1,
 	}
-	startDayWeekend := WeekDay(startDate)
+	tmpWeekDay := WeekDay(startDate)
 	lastDay := monthDay[month]
 	if IsRunYear(year) && month == 2 {
 		lastDay = 29
 	}
+	j:=1
+	tmpArr := []int{}
 	for i:=startDate.Day; i<=lastDay; i ++ {
-		tmpWeekDay := startDayWeekend
-		tmpArr := []int{}
-		for j:=1; j<=7; j++ {
+		if i % 7 == 1 {
+			tmpArr = []int{}
+		}
+		for ; j<=7; j++ {
 			if j < tmpWeekDay {
 				tmpArr = append(tmpArr, 0)
 				continue
 			}
-			tmpArr = append(tmpArr, tmpWeekDay)
-			tmpWeekDay ++
+			j = 8
+			break
 		}
-		tmpWeekDay = 1
-		r = append(r, tmpArr)
+		tmpArr = append(tmpArr, i)
+		if len(tmpArr) % 7 == 0 || i == lastDay {
+			r = append(r, tmpArr)
+		}
 	}
 	return r
 }
@@ -139,9 +144,8 @@ func IsRunYear(year int) bool {
 }
 
 func YearDay(date *Date) (day int) {
-	arr := []int{0,31,28,31,30,31,30,31,31,30,31,30,31}
 	for i:=1; i<date.Month; i++ {
-		day += arr[i]
+		day += monthDay[i]
 	}
 	if date.Month > 2 && IsRunYear(date.Year) {
 		day += 1
