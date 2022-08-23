@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 func main()  {
 	//s := []string{"a", "b", "c", "d", "e", "f", "g", "h"}
@@ -8,31 +11,39 @@ func main()  {
 	//fmt.Println(s)
 	//return
 
-	date1 := &Date{
-		Year:  2012,
-		Month: 1,
-		Day:   10,
-	}
+	//date1 := &Date{
+	//	Year:  2012,
+	//	Month: 1,
+	//	Day:   10,
+	//}
+	//
+	//date2 := &Date{
+	//	Year:  2013,
+	//	Month: 1,
+	//	Day:   10,
+	//}
+	//
+	//cnt := BetweenDay(date1, date2)
+	//fmt.Println(cnt)
+	//
+	//date3 := &Date{
+	//	Year:  2022,
+	//	Month: 8,
+	//	Day:   19,
+	//}
+	//r := WeekDay(date3)
+	//fmt.Println(r)
 
-	date2 := &Date{
-		Year:  2013,
-		Month: 1,
-		Day:   10,
-	}
+	//rr := GenCalendar(2022, 8)
+	//fmt.Println(rr)
+	//return
 
-	cnt := BetweenDay(date1, date2)
-	fmt.Println(cnt)
+	//str := "et-ic"
+	//fmt.Println(str[4:])
+	//return
 
-	date3 := &Date{
-		Year:  2022,
-		Month: 8,
-		Day:   19,
-	}
-	r := WeekDay(date3)
+	r := Getlastsamechar("clinic")
 	fmt.Println(r)
-
-	rr := GenCalendar(2022, 7)
-	fmt.Println(rr)
 	return
 }
 
@@ -53,7 +64,7 @@ func GenCalendar(year, month int) [][]int {
 	j:=1
 	tmpArr := []int{}
 	for i:=startDate.Day; i<=lastDay; i ++ {
-		if i % 7 == 1 {
+		if len(tmpArr) % 7 == 0 {
 			tmpArr = []int{}
 		}
 		for ; j<=7; j++ {
@@ -179,4 +190,32 @@ func WeekDay(date *Date) int {
 	return BetweenDay(startDate, date) % 7 + 1
 }
 
+var rule = []string{"et-ic", "al-is-tic", "s-tic", "p-tic", "-lyt-ic", "ot-ic", "an-tic",
+	"n-tic", "c-tic", "at-ic", "h-nic", "n-ic", "m-ic", "l-lic", "b-lic", "-clic", "l-ic",
+	"h-ic", "f-ic", "d-ic", "-bic", "a-ic", "-mac", "i-ac"}
 
+func Getlastsamechar(word string) string {
+	ruleList := make(map[string][]string)
+	for _, newStr := range rule {
+		str := strings.Replace(newStr, "-", "", -1 )
+		for i:=len(str)-1;i>=0;i-- {
+			if len(str[i:]) > 0 && i+1<=len(str) && str[i:i+1] != "-" {
+				if _, ok := ruleList[str[i:]]; !ok {
+					ruleList[str[i:]] = make([]string, 0)
+				}
+				ruleList[str[i:]] = append(ruleList[str[i:]], str)
+			}
+		}
+	}
+	fmt.Println(ruleList)
+	j :=len(word)-1
+	for ;j>=0;j-- {
+		if _, ok := ruleList[word[j:]]; !ok {
+			break
+		}
+	}
+	if j < 0 {
+		return ""
+	}
+	return ruleList[word[j+1:]][0]
+}
