@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"strings"
 )
 
@@ -286,19 +287,29 @@ triangle = [
 [6,5,7],
 [4,1,8,3]
 ]
-f(n) = min(f(n-1)+n[i], f(n-1)+n[i+1])
+f[i][j] = min(f[i-1][j-1], f[i-1][j]) +c[i][j]
  */
 func minimumTotal(triangle [][]int) int {
 	if len(triangle) < 1 {
 		return 0
 	}
-	if len(triangle) == 1 {
-		return minM(triangle[0]...)
+	f := make([][]int, len(triangle))
+	for i:=0; i<len(triangle); i++  {
+		f[i] = make([]int, len(triangle))
 	}
-	var dp []int
-	for i, list := range triangle {
-
+	f[0][0] = triangle[0][0]
+	for i:=1; i<len(triangle); i++ {
+		f[i][0] = f[i-1][0] + triangle[i][0]
+		for j:=1; j<i; j++ {
+			f[i][j] = minM(f[i-1][j-1], f[i-1][j]) + triangle[i][j]
+		}
+		f[i][i] = f[i-1][i-1] + triangle[i][i]
 	}
+	ans := math.MaxInt32
+	for i := 0; i < len(triangle); i++ {
+		ans = min(ans, f[len(triangle)-1][i])
+	}
+	return ans
 }
 
 func minM(x... int) int {
