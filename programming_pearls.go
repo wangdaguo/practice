@@ -42,7 +42,20 @@ func main()  {
 	//fmt.Println(str[4:])
 	//return
 
-	r := Getlastsamechar("clinic")
+	//str := "n" //l, d, n
+	//r := []rune(str)
+	//fmt.Println(r)
+	//return
+
+
+	//index := Getlastsamechar("clinic")
+	//if index == -1 {
+	//	fmt.Println("no match")
+	//	return
+	//}
+	//fmt.Println(rule[index])
+
+	r := binarySearchFirst([]int{1,3,5,8,9,12,14,18}, 2)
 	fmt.Println(r)
 	return
 }
@@ -190,32 +203,111 @@ func WeekDay(date *Date) int {
 	return BetweenDay(startDate, date) % 7 + 1
 }
 
+// clinic
 var rule = []string{"et-ic", "al-is-tic", "s-tic", "p-tic", "-lyt-ic", "ot-ic", "an-tic",
 	"n-tic", "c-tic", "at-ic", "h-nic", "n-ic", "m-ic", "l-lic", "b-lic", "-clic", "l-ic",
 	"h-ic", "f-ic", "d-ic", "-bic", "a-ic", "-mac", "i-ac"}
 
-func Getlastsamechar(word string) string {
-	ruleList := make(map[string][]string)
-	for _, newStr := range rule {
+func Getlastsamechar(word string) int {
+	ruleList := make(map[string]int)
+	for index, newStr := range rule {
 		str := strings.Replace(newStr, "-", "", -1 )
-		for i:=len(str)-1;i>=0;i-- {
-			if len(str[i:]) > 0 && i+1<=len(str) && str[i:i+1] != "-" {
-				if _, ok := ruleList[str[i:]]; !ok {
-					ruleList[str[i:]] = make([]string, 0)
-				}
-				ruleList[str[i:]] = append(ruleList[str[i:]], str)
-			}
-		}
+		ruleList[str] = index
 	}
-	fmt.Println(ruleList)
-	j :=len(word)-1
-	for ;j>=0;j-- {
-		if _, ok := ruleList[word[j:]]; !ok {
+	r := -1
+	runeWord := []rune(word)
+	for k, v := range ruleList {
+		if len(runeWord) < len(k) {
+			continue
+		}
+		rule := []rune(k)
+		i := 0
+		for i < len(k) {
+			if runeWord[len(runeWord)-i-1] != rule[len(rule)-i-1] {
+				break
+			}
+			i ++
+		}
+		if i == len(rule) {
+			r = v
 			break
 		}
 	}
-	if j < 0 {
-		return ""
-	}
-	return ruleList[word[j+1:]][0]
+	return r
 }
+
+/**
+4.2
+ */
+func binarySearchFirst(arr []int, val int) int {
+	if len(arr) < 1 {
+		return -1
+	}
+	start, end := 0, len(arr)-1
+	lessEqual := -1
+	var compareCnt int
+	for start <= end {
+		middle := start + (end-start) / 2
+		if arr[middle] > val {
+			end = middle - 1
+		} else if arr[middle] < val {
+			start = middle + 1
+		} else {
+			lessEqual = middle
+			end = middle-1
+		}
+		compareCnt ++
+	}
+	fmt.Println(compareCnt)
+	return lessEqual
+}
+
+func binarySearchT(arr []int, start, end, val int) int {
+	if len(arr) < 1 {
+		return -1
+	}
+	for start <= end {
+		middle := start + (end-start) / 2
+		if arr[middle] > val {
+			return binarySearchT(arr, start, middle-1, val)
+		} else if arr[middle] < val {
+			return binarySearchT(arr, start+1, end, val)
+		} else {
+			return middle
+		}
+	}
+	return -1
+}
+
+/**
+triangle = [
+[2],
+[3,4],
+[6,5,7],
+[4,1,8,3]
+]
+f(n) = min(f(n-1)+n[i], f(n-1)+n[i+1])
+ */
+func minimumTotal(triangle [][]int) int {
+	if len(triangle) < 1 {
+		return 0
+	}
+	if len(triangle) == 1 {
+		return minM(triangle[0]...)
+	}
+	var dp []int
+	for i, list := range triangle {
+
+	}
+}
+
+func minM(x... int) int {
+	min := x[0]
+	for i:=1; i<len(x); i++ {
+		if x[i] < min {
+			min = x[i]
+		}
+	}
+	return min
+}
+
