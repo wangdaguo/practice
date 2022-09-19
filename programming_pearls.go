@@ -55,8 +55,11 @@ func main()  {
 	//	return
 	//}
 	//fmt.Println(rule[index])
+	//
+	//r := binarySearchFirst([]int{1,3,5,8,9,12,14,18}, 2)
+	//fmt.Println(r)
 
-	r := binarySearchFirst([]int{1,3,5,8,9,12,14,18}, 2)
+	r :=  maxSubArray1([]int{-2, -1})
 	fmt.Println(r)
 	return
 }
@@ -307,7 +310,7 @@ func minimumTotal(triangle [][]int) int {
 	}
 	ans := math.MaxInt32
 	for i := 0; i < len(triangle); i++ {
-		ans = min(ans, f[len(triangle)-1][i])
+		ans = minM(ans, f[len(triangle)-1][i])
 	}
 	return ans
 }
@@ -322,3 +325,68 @@ func minM(x... int) int {
 	return min
 }
 
+func maxM(x... int) int {
+	max := x[0]
+	for i:=1; i<len(x); i++ {
+		if x[i] > max {
+			max = x[i]
+		}
+	}
+	return max
+}
+
+/**
+https://leetcode.cn/problems/maximum-subarray/
+53. 最大子数组和
+ */
+func maxSubArraySum(nums []int) int {
+	if len(nums) < 1 {
+		return 0
+	}
+	minStart, start := 0, 0
+	var maxEnd, end int
+	maxSum, sum := nums[0], nums[0]
+	for i:=1; i<len(nums); i++ {
+		if sum < 0 {
+			sum = nums[i]
+			start, end = i, i
+		} else {
+			sum += nums[i]
+			end = i
+		}
+		if sum > maxSum {
+			maxSum = sum
+			minStart = start
+			maxEnd = end
+		}
+	}
+	fmt.Printf("start is: %v, end is: %v\n", minStart, maxEnd)
+	return maxSum
+}
+
+func maxSubArray(nums []int) int {
+	if len(nums) <= 0 {
+		return 0
+	}
+	sum, maxSum := nums[0], nums[0]
+	for i:=1; i<len(nums); i++ {
+		if sum < 0 {
+			sum = nums[i]
+		} else {
+			sum += nums[i]
+		}
+		if sum > maxSum {
+			maxSum = sum
+		}
+	}
+	return maxSum
+}
+
+func maxSubArray1(nums []int) int {
+	maxsofar, maxendinghere := nums[0], nums[0]
+	for i:=1;i<len(nums);i++ {
+		maxendinghere = maxM(maxendinghere+nums[i], nums[i])
+		maxsofar = maxM(maxsofar, maxendinghere)
+	}
+	return maxsofar
+}
