@@ -76,6 +76,10 @@ func (stack *Stack) isEmpty() bool {
 	return len(stack.Data) == 0
 }
 
+/**
+695. 岛屿的最大面积
+https://leetcode.cn/problems/max-area-of-island/submissions/
+ */
 func maxAreaOfIsland(grid [][]int) int {
 	direction := []int{-1, 0, 1, 0, -1}
 	stack := NewStack()
