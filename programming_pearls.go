@@ -377,7 +377,7 @@ func maxSubArray(nums []int) int {
 		}
 		if sum > maxSum {
 			maxSum = sum
-		}
+		}	
 	}
 	return maxSum
 }
