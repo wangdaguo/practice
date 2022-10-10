@@ -15,16 +15,6 @@ func main()  {
 		{0,0,0,0,0,0,0,1,1,1,0,0,0},
 		{0,0,0,0,0,0,0,1,1,0,0,0,0},
 	}
-
-	//s := NewStack()
-	//s.push(NewPoint(1, 1))
-	//s.push(NewPoint(2,2))
-	//byteList, _ := json.Marshal(s)
-	//fmt.Println(string(byteList))
-	//a := s.pop()
-	//fmt.Println(a)
-	//return
-
 	r := maxAreaOfIsland1(grid)
 	fmt.Println(r)
 	return
