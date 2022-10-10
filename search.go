@@ -25,7 +25,7 @@ func main()  {
 	//fmt.Println(a)
 	//return
 
-	r := maxAreaOfIsland(grid)
+	r := maxAreaOfIsland1(grid)
 	fmt.Println(r)
 	return
 }
@@ -114,4 +114,25 @@ func maxX(x, y int) int {
 		return x
 	}
 	return y
+}
+
+func maxAreaOfIsland1(grid [][]int) int {
+	var max int
+	for i:=0; i<len(grid); i++ {
+		for j:=0; j<len(grid[0]); j++ {
+			if grid[i][j] == 1 {
+				max = maxX(max, maxAreaOfIslandImpl(grid, i, j))
+			}
+		}
+	}
+	return max
+}
+
+func maxAreaOfIslandImpl(grid [][]int, i, j int) int {
+	if i < 0 || j < 0 || i > len(grid)-1 || j > len(grid[0])-1 || grid[i][j] == 0 {
+		return 0
+	}
+	grid[i][j] = 0
+	return 1 + maxAreaOfIslandImpl(grid, i+1, j) + maxAreaOfIslandImpl(grid, i-1, j) + maxAreaOfIslandImpl(grid, i, j-1) +
+		maxAreaOfIslandImpl(grid, i, j+1)
 }
