@@ -59,8 +59,12 @@ func main()  {
 	//r := binarySearchFirst([]int{1,3,5,8,9,12,14,18}, 2)
 	//fmt.Println(r)
 
-	r :=  maxSubArray1([]int{-2, -1})
-	fmt.Println(r)
+	//r :=  maxSubArray1([]int{-2, -1})
+
+	nums := []int{89, 4, 76, 32, 45, 0, -90}
+	//selsort(&nums)
+	shellSort(&nums)
+	fmt.Println(nums)
 	return
 }
 
@@ -390,3 +394,38 @@ func maxSubArray1(nums []int) int {
 	}
 	return maxsofar
 }
+
+func selsort(nums *[]int)  {
+	if nums == nil || len(*nums) < 1 {
+		return
+	}
+	for i:=0; i<len(*nums); i++ {
+		for j:=i+1; j<len(*nums); j++ {
+			if (*nums)[i] > (*nums)[j] {
+				(*nums)[i], (*nums)[j] = (*nums)[j], (*nums)[i]
+			}
+		}
+	}
+	return
+}
+
+func shellSort(nums *[]int)  {
+	if nums == nil || len(*nums) < 1 {
+		return
+	}
+	dis := len(*nums) / 2
+	for dis > 0 {
+		for i:=0; i<len(*nums); i++ {
+			j := i
+			for j >=0 && j + dis < len(*nums) && (*nums)[j] > (*nums)[j+dis] {
+				(*nums)[j], (*nums)[j+dis] = (*nums)[j+dis], (*nums)[j]
+				j -= dis
+			}
+		}
+		dis /= 2
+	}
+	return
+}
+
+
+

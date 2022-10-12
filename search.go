@@ -1,23 +1,94 @@
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
 
 func main()  {
-	grid := [][]int{
-		{0,0,1,0,0,0,0,1,0,0,0,0,0},
-		{0,0,0,0,0,0,0,1,1,1,0,0,0},
-		{0,1,1,0,1,0,0,0,0,0,0,0,0},
-		{0,1,0,0,1,1,0,0,1,0,1,0,0},
-		{0,1,0,0,1,1,0,0,1,1,1,0,0},
-		{0,0,0,0,0,0,0,0,0,0,1,0,0},
-		{0,0,0,0,0,0,0,1,1,1,0,0,0},
-		{0,0,0,0,0,0,0,1,1,0,0,0,0},
-	}
-	r := maxAreaOfIsland1(grid)
-	fmt.Println(r)
+	//grid := [][]int{
+	//	{0,0,1,0,0,0,0,1,0,0,0,0,0},
+	//	{0,0,0,0,0,0,0,1,1,1,0,0,0},
+	//	{0,1,1,0,1,0,0,0,0,0,0,0,0},
+	//	{0,1,0,0,1,1,0,0,1,0,1,0,0},
+	//	{0,1,0,0,1,1,0,0,1,1,1,0,0},
+	//	{0,0,0,0,0,0,0,0,0,0,1,0,0},
+	//	{0,0,0,0,0,0,0,1,1,1,0,0,0},
+	//	{0,0,0,0,0,0,0,1,1,0,0,0,0},
+	//}
+	//r := maxAreaOfIsland1(grid)
+	//fmt.Println(r)
+	//
+
+	//isConnected := [][]int{
+	//	{1,0,0,1},
+	//	{0,1,1,0},
+	//	{0,1,1,1},
+	//	{1,0,1,1},
+	//}
+	//r := findCircleNum(isConnected)
+	//fmt.Println(r)
+
+	nums := []int{0, 0, 2, 1, 3, 2, 4}
+	uf := NewUnionFind(nums)
+	fmt.Println(uf)
+
+	uf.union(2, 6)
+	fmt.Println(uf)
 	return
+}
+
+
+type UnionFind struct {
+	Val []int
+	Size map[int]int
+}
+
+func NewUnionFind(val []int) *UnionFind {
+	uf := &UnionFind{
+		Val: val,
+	}
+	uf.Size = make(map[int]int)
+	for i:=0; i<len(val); i++ {
+		uf.findRoot(i)
+	}
+	for i:=0; i<len(val); i++ {
+		uf.Size[uf.Val[i]] ++
+	}
+	return uf
+}
+
+func (uf *UnionFind) union(x, y int)  {
+	if  uf.connected(x, y) {
+		return
+	}
+	rootX := uf.findRoot(x)
+	rootY := uf.findRoot(y)
+	if uf.Size[rootX] > uf.Size[rootY] {
+		uf.Val[rootY] = rootX
+		uf.Size[rootX] += uf.Size[rootY]
+		delete(uf.Size, rootY)
+		return
+	}
+	uf.Val[rootX] = rootY
+	uf.Size[rootY] += uf.Size[rootX]
+	delete(uf.Size, rootX)
+	return
+}
+
+func (uf *UnionFind) connected(x, y int) bool {
+	rootX := uf.findRoot(x)
+	rootY := uf.findRoot(y)
+	return rootX == rootY
+}
+
+func (uf *UnionFind) size() int {
+	return len(uf.Val)
+}
+
+func (uf *UnionFind) findRoot(x int) int {
+	for x != uf.Val[x] {
+		uf.Val[x] = uf.Val[uf.Val[x]]
+		x = uf.Val[x]
+	}
+	return x
 }
 
 type Point struct {
@@ -125,4 +196,36 @@ func maxAreaOfIslandImpl(grid [][]int, i, j int) int {
 	grid[i][j] = 0
 	return 1 + maxAreaOfIslandImpl(grid, i+1, j) + maxAreaOfIslandImpl(grid, i-1, j) + maxAreaOfIslandImpl(grid, i, j-1) +
 		maxAreaOfIslandImpl(grid, i, j+1)
+}
+
+/**
+547. 省份数量
+https://leetcode.cn/problems/number-of-provinces/description/
+ */
+func findCircleNum(isConnected [][]int) int {
+	if len(isConnected) < 1 {
+		return 0
+	}
+	cnt := 0
+	for i:=0; i<len(isConnected); i++ {
+		for j:=0; j<len(isConnected[0]); j++ {
+			if isConnected[i][j] == 1 {
+				findCircleNumImpl(isConnected, i, j)
+				cnt ++
+			}
+		}
+	}
+	return cnt
+}
+
+func findCircleNumImpl(isConnected [][]int, i, j int) {
+	if i<0 || i>len(isConnected)-1 || j < 0 || j > len(isConnected[0])-1 || isConnected[i][j] != 1 {
+		return
+	}
+	isConnected[i][j] = 0
+	for t:=0; t<len(isConnected[0]); t++ {
+		if isConnected[j][t] == 1 {
+			findCircleNumImpl(isConnected, j, t)
+		}
+	}
 }
