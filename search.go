@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func main()  {
 	//grid := [][]int{
@@ -17,22 +19,59 @@ func main()  {
 	//fmt.Println(r)
 	//
 
-	//isConnected := [][]int{
-	//	{1,0,0,1},
-	//	{0,1,1,0},
-	//	{0,1,1,1},
-	//	{1,0,1,1},
-	//}
+	isConnected := [][]int{
+		{1,0,0,1},	//0,0|0,3  1
+		{0,1,1,0},  //1,1|1,2  1
+		{0,1,1,1},	//2,1|2,2|2,3   1
+		{1,0,1,1},	//3,0|3,2|3,3
+	}
+	r := findCircleNumByUnionFind(isConnected)
+	fmt.Println(r)
+	
 	//r := findCircleNum(isConnected)
 	//fmt.Println(r)
 
-	nums := []int{0, 0, 2, 1, 3, 2, 4}
-	uf := NewUnionFind(nums)
-	fmt.Println(uf)
+	//nums := []int{0, 0, 2, 1, 3, 2, 4}
+	//uf := NewUnionFind(nums)
+	//fmt.Println(uf)
+	//
+	//uf.union(2, 6)
+	//fmt.Println(uf)
 
-	uf.union(2, 6)
-	fmt.Println(uf)
 	return
+}
+
+func findCircleNumByUnionFind(isConnected [][]int) int {
+	arr := make([]int, len(isConnected))
+	for i:=0; i<len(arr); i++ {
+		arr[i] = i
+	}
+	cnt := len(isConnected)
+	for i:=0; i<len(isConnected); i++ {
+		for j:=0; j<len(isConnected[0]); j++ {
+			if isConnected[i][j] == 1 && Union(arr, i, j) {
+				cnt --
+			}
+		}
+	}
+	return cnt
+}
+
+func Union(arr []int, i, j int) bool {
+	fatherI := findFather(arr, i)
+	fatherJ := findFather(arr, j)
+	if fatherI != fatherJ {
+		arr[fatherJ] = arr[fatherI]
+		return true
+	}
+	return false
+}
+
+func findFather(arr []int, i int) int {
+	for i != arr[i] {
+		i = arr[i]
+	}
+	return i
 }
 
 
@@ -77,10 +116,6 @@ func (uf *UnionFind) connected(x, y int) bool {
 	rootX := uf.findRoot(x)
 	rootY := uf.findRoot(y)
 	return rootX == rootY
-}
-
-func (uf *UnionFind) size() int {
-	return len(uf.Val)
 }
 
 func (uf *UnionFind) findRoot(x int) int {
