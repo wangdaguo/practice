@@ -11,6 +11,8 @@ func main()  {
 	//reverseStr1(s, 3)
 	//fmt.Println(s)
 	//return
+	//r := GenCalendar(2022, 8)
+	//fmt.Println(r)
 
 	//date1 := &Date{
 	//	Year:  2012,
@@ -34,37 +36,18 @@ func main()  {
 	//}
 	//r := WeekDay(date3)
 	//fmt.Println(r)
-
-	//rr := GenCalendar(2022, 8)
-	//fmt.Println(rr)
-	//return
-
-	//str := "et-ic"
-	//fmt.Println(str[4:])
-	//return
-
-	//str := "n" //l, d, n
-	//r := []rune(str)
-	//fmt.Println(r)
-	//return
-
-
-	//index := Getlastsamechar("clinic")
-	//if index == -1 {
-	//	fmt.Println("no match")
-	//	return
-	//}
-	//fmt.Println(rule[index])
-	//
-	//r := binarySearchFirst([]int{1,3,5,8,9,12,14,18}, 2)
+	//r := CloseToZero(3, []int{1,2,3,4,5,6,7,8,9,-1,1,2,-5})
 	//fmt.Println(r)
 
-	//r :=  maxSubArray1([]int{-2, -1})
+	//nums := []int{89, 4, 76, 32, 45, 0, -90}
+	////selsort(&nums)
+	//shellSort(&nums)
+	//fmt.Println(nums)
 
-	nums := []int{89, 4, 76, 32, 45, 0, -90}
-	//selsort(&nums)
-	shellSort(&nums)
-	fmt.Println(nums)
+	arr := []int{8,4,6,2,10}
+	//InsertSort(&arr)
+	QuickSort(&arr, 0, 4)
+	fmt.Println(arr)
 	return
 }
 
@@ -102,64 +85,6 @@ func GenCalendar(year, month int) [][]int {
 		}
 	}
 	return r
-}
-
-/**
-tmp = s[0]
-s[0] = s[i]; s[i] = s[2i]
-*/
-func reverseStr(s []string, m int) {
-
-	if len(s) < 1 || m < 1 {
-		return
-	}
-	for i:=0; i<gcd(m, len(s)); i++ {
-		tmp := s[i]
-		cnt := 1
-		for i+(cnt*m)%len(s) != i {
-			s[i+((cnt-1)*m)%len(s)] = s[i+(cnt*m)%len(s)]
-			cnt ++
-		}
-		s[i+((cnt-1)*m)%len(s)] = tmp
-	}
-	return
-}
-
-func gcd(i, j int) int {
-	if i == 0 || j == 0 {
-		return 0
-	}
-	for i != j {
-		if i > j {
-			i -= j
-		} else {
-			j -= i
-		}
-	}
-	return i
-}
-
-func reverseStr1(s []string, m int) {
-	if len(s) < 1 || m < 1 {
-		return
-	}
-	reverse(s, 0, m-1)
-	reverse(s, m, len(s)-1)
-	reverse(s, 0, len(s)-1)
-	return
-}
-
-func reverse(s []string, i, j int) {
-	if len(s) < 1 || i >= j {
-		return
-	}
-	left, right := i, j
-	for left < right {
-		s[left], s[right] = s[right], s[left]
-		left ++
-		right --
-	}
-	return
 }
 
 type Date struct {
@@ -427,5 +352,38 @@ func shellSort(nums *[]int)  {
 	return
 }
 
+func InsertSort(x *[]int)  {
+	if len(*x) < 1 {
+		return
+	}
+	for i:=1; i<len(*x); i++ {
+		for j:=i; j>0; j-- {
+			if (*x)[j] <= (*x)[j-1] {
+				(*x)[j], (*x)[j-1] = (*x)[j-1], (*x)[j]
+				continue
+			}
+			break
+		}
+	}
+}
 
-
+func QuickSort(x *[]int, l, r int)  {
+	if len(*x) < 1 || l >= r {
+		return
+	}
+	partition, start, end := (*x)[l], l, r
+	for start < end {
+		for start < end && (*x)[end] >= partition {
+			end --
+		}
+		(*x)[start] = (*x)[end]
+		for start < end && (*x)[start] <= partition {
+			start ++
+		}
+		(*x)[end] = (*x)[start]
+	}
+	(*x)[start] = partition
+	QuickSort(x, l, start)
+	QuickSort(x, start+1, r)
+	return
+}

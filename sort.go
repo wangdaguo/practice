@@ -22,9 +22,19 @@ func main()  {
 	//nums := []int{1,1,1,1,2,2,3,4,4,4,4,4,6,7,7,7,7}
 	//r := topKFrequent(nums, 3)
 	//r := frequencySort("aabbaccbb")
-	sortColors([]int{2,0,2,1,1,0})
+	//sortColors([]int{2,0,2,1,1,0})
 	//fmt.Println(r)
+	TestX(10)
 	return
+}
+
+func TestX(i int)  {
+	var bd, shift, n = 32, 5, 1000
+	mask := 0x1f
+	a := make([]int, 1+n/bd)
+
+	a[i>>shift] |= (1<<(i & mask))
+	fmt.Println(a)
 }
 
 func quickSort(nums *[]int, l, r int)  {
@@ -353,3 +363,4 @@ func sortColors(nums []int)  {
 		}
 	}
 }
+
