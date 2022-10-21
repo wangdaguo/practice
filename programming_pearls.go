@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"math"
+	"math/rand"
 	"strings"
+	"time"
 )
 
 func main()  {
@@ -44,11 +46,35 @@ func main()  {
 	//shellSort(&nums)
 	//fmt.Println(nums)
 
-	arr := []int{8,4,6,2,10}
-	//InsertSort(&arr)
-	QuickSort(&arr, 0, 4)
-	fmt.Println(arr)
+	//arr := []int{8,4,6,2,10}
+	////InsertSort(&arr)
+	//QuickSort(&arr, 0, 4)
+	//fmt.Println(arr)
+
+	r := genknuth(5, 100, 300)
+	fmt.Println(r)
 	return
+}
+
+func genknuth(m, n, k int) []int {
+	var r []int
+	if m > n {
+		return r
+	}
+	for i:=0; i<n; i++ {
+		if genRand(k) % n <= m {
+			m --
+			r = append(r, i)
+		} else {
+			n --
+		}
+	}
+	return r
+}
+
+func genRand(k int) int {
+	rand.Seed(time.Now().UnixNano())
+	return rand.Intn(k)
 }
 
 var monthDay = []int{0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}

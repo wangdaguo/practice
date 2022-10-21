@@ -1,8 +1,6 @@
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
 
 func main()  {
 	//grid := [][]int{
@@ -19,15 +17,19 @@ func main()  {
 	//fmt.Println(r)
 	//
 
-	isConnected := [][]int{
-		{1,0,0,1},	//0,0|0,3  1
-		{0,1,1,0},  //1,1|1,2  1
-		{0,1,1,1},	//2,1|2,2|2,3   1
-		{1,0,1,1},	//3,0|3,2|3,3
-	}
-	r := findCircleNumByUnionFind(isConnected)
-	fmt.Println(r)
-	
+	//isConnected := [][]int{
+	//	{1,0,0,1},	//0,0|0,3  1
+	//	{0,1,1,0},  //1,1|1,2  1
+	//	{0,1,1,1},	//2,1|2,2|2,3   1
+	//	{1,0,1,1},	//3,0|3,2|3,3
+	//}
+	//r := findCircleNum123(isConnected)
+	//fmt.Println(r)
+	//return
+
+	//r := findCircleNumByUnionFind(isConnected)
+	//fmt.Println(r)
+
 	//r := findCircleNum(isConnected)
 	//fmt.Println(r)
 
@@ -38,7 +40,136 @@ func main()  {
 	//uf.union(2, 6)
 	//fmt.Println(uf)
 
+	//
+	//heights := [][]int{
+	//	{1,2,2,3,5},
+	//	{3,2,3,4,4},
+	//	{2,4,5,3,1},
+	//	{6,7,1,4,5},
+	//	{5,1,1,2,4},
+	//}
+
+	heights := [][]int{
+		{1,2,3},
+		{8,9,4},
+		{7,6,5},
+	}
+	//[[0,4],[1,3],[1,4],[2,2],[3,0],[3,1],[4,0]]
+	r := pacificAtlantic(heights)
+	fmt.Println(r)
 	return
+}
+
+func pacificAtlantic(heights [][]int) [][]int {
+	if len(heights) < 1 {
+		return [][]int{}
+	}
+	pacific := make([][]bool, len(heights))
+	atlantic := make([][]bool, len(heights))
+	for i := range pacific {
+		pacific[i] = make([]bool, len(heights[0]))
+		atlantic[i] = make([]bool, len(heights[0]))
+	}
+	
+	return [][]int{}
+}
+
+func dfs(heights [][]int, i, j int, ocean [][]bool)  {
+	stack := NewStack()
+	for i:=0; i<len(heights); i++ {
+		for j:=0; j<len(heights[0]); j++ {
+			if !ocean[i][j] {
+				ocean[i][j] = true
+				stack.push(NewPoint(i, j))
+			}
+			for !stack.isEmpty() {
+				p := stack.pop()
+				for k:=0; k<4; k++ {
+					x := p.X + direction[k]
+					y := p.Y + direction[k+1]
+					if x >=0 && x < len(heights) && y>=0 && y<len(heights[0]) && heights[x][y] > heights[p.X][p.Y] {
+						dfs(heights, x, y, ocean)
+					}
+				}
+			}
+		}
+	}
+}
+
+func findCircleNumByStack1(isConnected [][]int) int {
+	if len(isConnected) < 1 {
+		return 0
+	}
+	vis := make([]bool, len(isConnected))
+	cnt := 0
+	var dfs func(int)
+	dfs = func(i int) {
+		vis[i] = true
+		for j:=0; j<len(isConnected[0]); j++ {
+			if isConnected[i][j] == 1 && !vis[j] {
+				dfs(j)
+			}
+		}
+	}
+	for i:=0; i<len(vis); i++ {
+		if !vis[i] {
+			cnt ++
+			dfs(i)
+		}
+	}
+	return cnt
+}
+
+func findCircleNum123(isConnected [][]int) int {
+	if len(isConnected) < 1 {
+		return 0
+	}
+	vis := make([]bool, len(isConnected))
+	queue := make([]int, 0)
+	cnt := 0
+	for i:=0; i<len(vis); i++ {
+		if !vis[i] {
+			queue = append(queue, i)
+			cnt ++
+			for len(queue) > 0 {
+				j := queue[0]
+				queue = queue[1:]
+				vis[j] = true
+				for t:=0; t<len(isConnected[0]); t++ {
+					if isConnected[j][t] == 1 && !vis[t] {
+						queue = append(queue, t)
+					}
+				}
+			}
+		}
+	}
+	return cnt
+}
+
+func findCircleNumByStack(isConnected [][]int) int {
+	if len(isConnected) < 1 {
+		return 0
+	}
+	stack := NewStack()
+	cnt := 0
+	for i:=0; i<len(isConnected); i++ {
+		for j:=0; j<len(isConnected[0]);j ++ {
+			if isConnected[i][j] == 1 {
+				stack.push(NewPoint(i, j))
+				cnt ++
+			}
+			for !stack.isEmpty() {
+				p := stack.pop()
+				isConnected[p.X][p.Y] = 0
+				for t:=0;t<len(isConnected[0]);t++{
+					if isConnected[p.Y][t] == 1 {
+						stack.push(NewPoint(p.Y, t))
+					}
+				}
+			}
+		}
+	}
+	return cnt
 }
 
 func findCircleNumByUnionFind(isConnected [][]int) int {
@@ -48,7 +179,7 @@ func findCircleNumByUnionFind(isConnected [][]int) int {
 	}
 	cnt := len(isConnected)
 	for i:=0; i<len(isConnected); i++ {
-		for j:=0; j<len(isConnected[0]); j++ {
+		for j:=i+1; j<len(isConnected[0]); j++ {
 			if isConnected[i][j] == 1 && Union(arr, i, j) {
 				cnt --
 			}
@@ -172,12 +303,13 @@ func (stack *Stack) isEmpty() bool {
 	return len(stack.Data) == 0
 }
 
+var direction = []int{-1, 0, 1, 0, -1}
+
 /**
 695. 岛屿的最大面积
 https://leetcode.cn/problems/max-area-of-island/submissions/
  */
 func maxAreaOfIsland(grid [][]int) int {
-	direction := []int{-1, 0, 1, 0, -1}
 	stack := NewStack()
 	maxArea, tmpArea := 0, 0
 	for i:=0; i<len(grid); i++ {
