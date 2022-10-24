@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func main()  {
 	//grid := [][]int{
@@ -54,10 +56,33 @@ func main()  {
 		{8,9,4},
 		{7,6,5},
 	}
+	/**
+	[
+	 [true,true,true],
+	 [true,true,true],
+	 [true,true,true]
+	]
+
+	[
+	 [false,false,true],
+	 [true,true,true],
+	 [true,true,true]]
+
+	*/
 	//[[0,4],[1,3],[1,4],[2,2],[3,0],[3,1],[4,0]]
 	r := pacificAtlantic(heights)
 	fmt.Println(r)
 	return
+}
+
+func permute(nums []int) [][]int {
+	if len(nums) < 1 {
+		return [][]int{}
+	}
+	r := make([][]int, 0)
+	for i:=0; i<len(nums); i++ {
+		
+	}
 }
 
 func pacificAtlantic(heights [][]int) [][]int {
@@ -70,31 +95,85 @@ func pacificAtlantic(heights [][]int) [][]int {
 		pacific[i] = make([]bool, len(heights[0]))
 		atlantic[i] = make([]bool, len(heights[0]))
 	}
-	
-	return [][]int{}
-}
-
-func dfs(heights [][]int, i, j int, ocean [][]bool)  {
-	stack := NewStack()
 	for i:=0; i<len(heights); i++ {
-		for j:=0; j<len(heights[0]); j++ {
-			if !ocean[i][j] {
-				ocean[i][j] = true
-				stack.push(NewPoint(i, j))
-			}
-			for !stack.isEmpty() {
-				p := stack.pop()
-				for k:=0; k<4; k++ {
-					x := p.X + direction[k]
-					y := p.Y + direction[k+1]
-					if x >=0 && x < len(heights) && y>=0 && y<len(heights[0]) && heights[x][y] > heights[p.X][p.Y] {
-						dfs(heights, x, y, ocean)
-					}
-				}
+		dfs(heights, i, 0, &pacific)
+	}
+	for j:=0; j<len(heights[0]); j++ {
+		dfs(heights, 0, j, &pacific)
+	}
+	for i:=0; i<len(heights); i++ {
+		dfs(heights, i, len(heights[0])-1, &atlantic)
+	}
+	for j:=0; j<len(heights[0]); j++ {
+		dfs(heights, len(heights)-1, j, &atlantic)
+	}
+
+	r := make([][]int, 0)
+	for i:=0; i<len(pacific); i++ {
+		for j:=0; j<len(pacific[0]); j ++ {
+			if pacific[i][j] && atlantic[i][j] {
+				r = append(r, []int{i, j})
 			}
 		}
 	}
+	return r
 }
+
+func dfs(heights [][]int, i, j int, ocean *[][]bool)  {
+
+	//if (*ocean)[i][j] {
+	//	return
+	//}
+	//(*ocean)[i][j] = true
+	//for k := 0; k < 4; k++ {
+	//	x := i + direction[k]
+	//	y := j + direction[k+1]
+	//	if x >= 0 && x < len(heights) && y >= 0 && y < len(heights[0]) && heights[x][y] >= heights[i][j] {
+	//		dfs(heights, x, y, ocean)
+	//	}
+	//}
+
+	if (*ocean)[i][j] {
+		return
+	}
+	(*ocean)[i][j] = true
+	stack := NewStack()
+	stack.push(NewPoint(i, j))
+	for !stack.isEmpty() {
+		p := stack.pop()
+		for k := 0; k < 4; k++ {
+			x := p.X + direction[k]
+			y := p.Y + direction[k+1]
+			if x >= 0 && x < len(heights) && y >= 0 && y < len(heights[0]) && heights[x][y] >= heights[p.X][p.Y] {
+				stack.push(NewPoint(x, y))
+				(*ocean)[x][y] = true
+			}
+		}
+	}
+	return
+}
+
+//func dfs1(heights [][]int, i, j int, ocean [][]bool)  {
+//	stack := NewStack()
+//	for i:=0; i<len(heights); i++ {
+//		for j:=0; j<len(heights[0]); j++ {
+//			if !ocean[i][j] {
+//				ocean[i][j] = true
+//				stack.push(NewPoint(i, j))
+//			}
+//			for !stack.isEmpty() {
+//				p := stack.pop()
+//				for k:=0; k<4; k++ {
+//					x := p.X + direction[k]
+//					y := p.Y + direction[k+1]
+//					if x >=0 && x < len(heights) && y>=0 && y<len(heights[0]) && heights[x][y] > heights[p.X][p.Y] {
+//						dfs(heights, x, y, ocean)
+//					}
+//				}
+//			}
+//		}
+//	}
+//}
 
 func findCircleNumByStack1(isConnected [][]int) int {
 	if len(isConnected) < 1 {
