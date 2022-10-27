@@ -42,35 +42,16 @@ func main()  {
 	//uf.union(2, 6)
 	//fmt.Println(uf)
 
-	//
 	//heights := [][]int{
-	//	{1,2,2,3,5},
-	//	{3,2,3,4,4},
-	//	{2,4,5,3,1},
-	//	{6,7,1,4,5},
-	//	{5,1,1,2,4},
+	//	{1,2,3},
+	//	{8,9,4},
+	//	{7,6,5},
 	//}
 
-	heights := [][]int{
-		{1,2,3},
-		{8,9,4},
-		{7,6,5},
-	}
-	/**
-	[
-	 [true,true,true],
-	 [true,true,true],
-	 [true,true,true]
-	]
-
-	[
-	 [false,false,true],
-	 [true,true,true],
-	 [true,true,true]]
-
-	*/
 	//[[0,4],[1,3],[1,4],[2,2],[3,0],[3,1],[4,0]]
-	r := pacificAtlantic(heights)
+	//r := pacificAtlantic(heights)
+
+	r := permute([]int{1,2,3,4})
 	fmt.Println(r)
 	return
 }
@@ -80,9 +61,26 @@ func permute(nums []int) [][]int {
 		return [][]int{}
 	}
 	r := make([][]int, 0)
-	for i:=0; i<len(nums); i++ {
-		
+	backTrace(nums, 0, &r)
+	return r
+}
+
+func backTrace(nums []int, level int, r *[][]int)  {
+	if level == len(nums)-1 {
+		var tmp []int
+		tmp = append(tmp, nums...)
+		*r = append(*r, tmp)
+		return
 	}
+	for i:=level; i<len(nums); i++ {
+		swap(nums, i, level)
+		backTrace(nums, level+1, r)
+		swap(nums, i, level)
+	}
+}
+
+func swap(nums []int, i, j int)  {
+	nums[i] , nums[j] = nums[j], nums[i]
 }
 
 func pacificAtlantic(heights [][]int) [][]int {
