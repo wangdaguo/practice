@@ -54,7 +54,7 @@ func main()  {
 	//r := permute([]int{1,2,3})
 
 	//r := combine(3, 2)
-	r := permuteUnique()
+	r := permuteUnique([]int{1,1,3})
 	fmt.Println(r)
 	return
 }
@@ -63,7 +63,29 @@ func main()  {
 https://leetcode.cn/problems/permutations-ii/
  */
 func permuteUnique(nums []int) [][]int {
+	if len(nums) < 1 {
+		return [][]int{}
+	}
+	r, level := make([][]int, 0), 0
+	backTrace2(nums, level, &r)
+	return r
+}
 
+func backTrace2(nums []int, level int, r *[][]int)  {
+	if level == len(nums) {
+		tmp := make([]int, 0)
+		tmp = append(tmp, nums...)
+		*r = append(*r, tmp)
+		return
+	}
+	for i:=level; i<len(nums); i++ {
+		if i > 0 && nums[i] == nums[i-1] {
+			continue
+		}
+		swap(nums, i, level)
+		backTrace2(nums, level+1, r)
+		swap(nums, i, level)
+	}
 }
 
 func combine(n int, k int) [][]int {
