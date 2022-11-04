@@ -51,9 +51,49 @@ func main()  {
 	//[[0,4],[1,3],[1,4],[2,2],[3,0],[3,1],[4,0]]
 	//r := pacificAtlantic(heights)
 
-	r := permute([]int{1,2,3,4})
+	//r := permute([]int{1,2,3})
+
+	//r := combine(3, 2)
+	r := permuteUnique()
 	fmt.Println(r)
 	return
+}
+
+/**
+https://leetcode.cn/problems/permutations-ii/
+ */
+func permuteUnique(nums []int) [][]int {
+
+}
+
+func combine(n int, k int) [][]int {
+	if n < k {
+		return [][]int{}
+	}
+	nums, path := make([]int, 0), make([]int, 0)
+	for i:=1; i<=n; i++ {
+		nums = append(nums, i)
+	}
+	level := 0
+	r := make([][]int, 0)
+	backTrack1(nums, path, level, k, &r)
+	return r
+}
+
+func backTrack1(nums, path []int, level, k int, r *[][]int)  {
+	if len(path) == k {
+		tmp := make([]int, 0)
+		tmp = append(tmp, path...)
+		*r = append(*r, tmp)
+		return
+	}
+	for i:=level; i<len(nums); i++ {
+		path = append(path, nums[i])
+		fmt.Printf("  递归之前 => %v\n", path)
+		backTrack1(nums, path, i+1, k, r)
+		path = path[0:len(path)-1]
+		fmt.Printf("递归之后 => %v\n", path)
+	}
 }
 
 func permute(nums []int) [][]int {
@@ -74,8 +114,11 @@ func backTrace(nums []int, level int, r *[][]int)  {
 	}
 	for i:=level; i<len(nums); i++ {
 		swap(nums, i, level)
+		fmt.Printf("  递归之前 => %v\n", nums)
 		backTrace(nums, level+1, r)
 		swap(nums, i, level)
+		fmt.Printf("递归之后 => %v\n", nums)
+
 	}
 }
 
