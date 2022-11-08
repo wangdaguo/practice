@@ -51,9 +51,91 @@ func main()  {
 	//QuickSort(&arr, 0, 4)
 	//fmt.Println(arr)
 
-	r := genknuth(5, 100, 300)
-	fmt.Println(r)
+	//r := genknuth(5, 100, 300)
+	//fmt.Println(r)
+
+	//r := heapSort([]int{5, 3, 7, 2, 1, 10})
+
+	heap := NewHeap()
+	for _, val := range []int{5, 3, 7, 2, 1, 10} {  // 3,5
+		heap.siftUp(val)
+	}
+	min := heap.extractMin()
+	fmt.Println(heap, min)
 	return
+}
+
+type Heap struct {
+	Nums []int
+}
+
+func NewHeap() *Heap {
+	return &Heap{Nums:[]int{0}}
+}
+
+func (heap *Heap) siftUp(val int)  {
+	if len(heap.Nums) < 1 {
+		heap.Nums = append(heap.Nums, []int{0, val}...)
+		return
+	}
+	heap.Nums = append(heap.Nums, val)
+	i := len(heap.Nums)-1
+	for i > 0 {
+		p := i/2
+		if heap.Nums[p] > heap.Nums[i] {
+			heap.Nums[p], heap.Nums[i] = heap.Nums[i], heap.Nums[p]
+			i = p
+			continue
+		}
+		break
+	}
+	return
+}
+
+func (heap *Heap) siftDown(val int)  {
+	if len(heap.Nums) < 1 {
+		heap.Nums = append(heap.Nums, []int{0, val}...)
+		return
+	}
+	i := 1
+	for i > len(heap.Nums) {
+		p := 2*i
+		if p+1<len(heap.Nums) && heap.Nums[p+1] < heap.Nums[p] {
+			p ++
+		}
+		if heap.Nums[p] < val {
+			heap.Nums[p], heap.Nums[i] = heap.Nums[i], heap.Nums[p]
+			i = p
+			continue
+		}
+		heap.Nums[i] = val
+		break
+	}
+	return
+}
+
+func (heap *Heap) extractMin() int {
+	defer func() {
+		lastVal := heap.Nums[len(heap.Nums)-1]
+		heap.Nums = heap.Nums[:len(heap.Nums)-1]
+		heap.siftDown(lastVal)
+	}()
+	return heap.Nums[1]
+}
+
+func heapSort(nums []int) []int {
+	if len(nums) < 1 {
+		return nums
+	}
+	heap := NewHeap()
+	for i:=0; i<len(nums); i++ {
+		heap.siftUp(nums[i])
+	}
+	var r []int
+	for len(heap.Nums) > 1 {
+		r = append(r, heap.extractMin())
+	}
+	return r
 }
 
 func genknuth(m, n, k int) []int {
