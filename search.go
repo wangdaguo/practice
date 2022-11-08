@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sort"
 )
 
 func main()  {
@@ -51,12 +52,115 @@ func main()  {
 	//[[0,4],[1,3],[1,4],[2,2],[3,0],[3,1],[4,0]]
 	//r := pacificAtlantic(heights)
 
-	//r := permute([]int{1,2,3})
+	//r := permute1([]int{1,2,3})
 
 	//r := combine(3, 2)
-	r := permuteUnique([]int{1,1,3})
+
+	r := permuteUnique([]int{0,1,0,0,9})
+
+	//r := combinationSum([]int{2,3,6,7}, 7)
+	//r := combinationSum3([]int{10,1,2,7,6,1,5}, 8)
+	//r := subsets([]int{1,2,3})
+	//r := subsetsWithDup([]int{2,2,2})
 	fmt.Println(r)
 	return
+}
+
+/**
+https://leetcode.cn/problems/subsets-ii/
+ */
+func subsetsWithDup(nums []int) [][]int {
+	if len(nums) < 1 {
+		return [][]int{}
+	}
+	sort.Slice(nums, func(i, j int) bool {
+		if nums[i] < nums[j] {
+			return true
+		}
+		return false
+	})
+	//r, path, check, level := make([][]int, 0), make([]int, 0), make([]bool, len(nums)), 0
+	r, path, level := make([][]int, 0), make([]int, 0), 0
+	backTrace6(nums, path, level, &r)
+	return r
+}
+
+func backTrace6(nums, path []int, level int, r *[][]int) {
+	tmp := make([]int, 0)
+	tmp = append(tmp, path...)
+	*r = append(*r, tmp)
+
+	for i := level; i < len(nums); i++ {
+		if i > level && nums[i] == nums[i-1]  {
+			continue
+		}
+		path = append(path, nums[i])
+		backTrace6(nums, path, i+1, r)
+		path = path[:len(path)-1]
+	}
+}
+
+func subsets(nums []int) [][]int {
+	if len(nums) < 1 {
+		return [][]int{}
+	}
+	r, level, path := make([][]int, 0), 0, make([]int, 0)
+	backTrace5(nums, path, level, &r)
+	r = append(r, []int{})
+	return r
+}
+
+func backTrace5(nums, path []int, level int, r *[][]int) {
+	if len(path) > 0 {
+		tmp := make([]int, 0)
+		tmp = append(tmp, path...)
+		*r = append(*r, tmp)
+		if len(path) == len(nums) {
+			return
+		}
+	}
+	for i:=level; i<len(nums); i++ {
+		path = append(path, nums[i])
+		backTrace5(nums, path, i+1, r)
+		path = path[:len(path)-1]
+	}
+}
+
+/**
+https://leetcode.cn/problems/combination-sum/
+ */
+func combinationSum(candidates []int, target int) [][]int {
+	if len(candidates) < 1 && target > 0 {
+		return [][]int{}
+	}
+	r, path := make([][]int, 0), make([]int, 0)
+	backTrace3(candidates, path, 0, target, &r)
+	return r
+}
+
+func backTrace3(nums, path []int, level, target int, r *[][]int)  {
+	if sumInt(path) > target {
+		return
+	}
+	if sumInt(path) == target {
+		tmp := make([]int, 0)
+		tmp = append(tmp, path...)
+		*r = append(*r, tmp)
+		return
+	}
+	for i:=level; i<len(nums); i++ {
+		path = append(path, nums[i])
+		backTrace3(nums, path, i, target, r)
+		path = path[:len(path)-1]
+	}
+}
+
+func sumInt(path []int) int {
+	var sum int
+	for _, val := range path {
+		sum += val
+	}
+	return sum
 }
 
 /**
@@ -66,25 +170,37 @@ func permuteUnique(nums []int) [][]int {
 	if len(nums) < 1 {
 		return [][]int{}
 	}
-	r, level := make([][]int, 0), 0
-	backTrace2(nums, level, &r)
+	sort.Slice(nums, func(i, j int) bool {
+		if nums[i] < nums[j] {
+			return true
+		}
+		return false
+	})
+	check := make(map[int]bool)
+	r, level, path := make([][]int, 0), 0, make([]int, 0)
+	backTrace2(nums, path, level, &r, check)
 	return r
 }
 
-func backTrace2(nums []int, level int, r *[][]int)  {
+func backTrace2(nums, path []int, level int, r *[][]int, check map[int]bool)  {
 	if level == len(nums) {
 		tmp := make([]int, 0)
-		tmp = append(tmp, nums...)
+		tmp = append(tmp, path...)
 		*r = append(*r, tmp)
 		return
 	}
-	for i:=level; i<len(nums); i++ {
-		if i > 0 && nums[i] == nums[i-1] {
+	for i:=0; i<len(nums); i++ {
+		if check[i] {
 			continue
 		}
-		swap(nums, i, level)
-		backTrace2(nums, level+1, r)
-		swap(nums, i, level)
+		if i > 0 && check[i-1] == false && nums[i] == nums[i-1] {
+			continue
+		}
+		check[i] = true
+		path = append(path, nums[i])
+		backTrace2(nums, path, level+1, r, check)
+		check[i] = false
+		path = path[:len(path)-1]
 	}
 }
 
@@ -118,34 +234,32 @@ func backTrack1(nums, path []int, level, k int, r *[][]int)  {
 	}
 }
 
-func permute(nums []int) [][]int {
+func permute1(nums []int) [][]int {
 	if len(nums) < 1 {
 		return [][]int{}
 	}
-	r := make([][]int, 0)
-	backTrace(nums, 0, &r)
+	r, check, path := make([][]int, 0), make([]bool, len(nums)), make([]int, 0)
+	backTraceT(nums, path, check, &r)
 	return r
 }
 
-func backTrace(nums []int, level int, r *[][]int)  {
-	if level == len(nums)-1 {
+func backTraceT(nums, path []int, check []bool, r *[][]int)  {
+	if len(path) == len(nums) {
 		var tmp []int
-		tmp = append(tmp, nums...)
+		tmp = append(tmp, path...)
 		*r = append(*r, tmp)
 		return
 	}
-	for i:=level; i<len(nums); i++ {
-		swap(nums, i, level)
-		fmt.Printf("  递归之前 => %v\n", nums)
-		backTrace(nums, level+1, r)
-		swap(nums, i, level)
-		fmt.Printf("递归之后 => %v\n", nums)
-
+	for i:=0; i<len(nums); i++ {
+		if check[i] {
+			continue
+		}
+		check[i] = true
+		path = append(path, nums[i])
+		backTraceT(nums, path, check, r)
+		check[i] = false
+		path = path[0:len(path)-1]
 	}
-}
-
-func swap(nums []int, i, j int)  {
-	nums[i] , nums[j] = nums[j], nums[i]
 }
 
 func pacificAtlantic(heights [][]int) [][]int {
