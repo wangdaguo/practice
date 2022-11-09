@@ -56,15 +56,62 @@ func main()  {
 
 	//r := combine(3, 2)
 
-	r := permuteUnique([]int{0,1,0,0,9})
+	//r := permuteUnique([]int{0,1,0,0,9})
 
 	//r := combinationSum([]int{2,3,6,7}, 7)
 	//r := combinationSum3([]int{10,1,2,7,6,1,5}, 8)
 	//r := subsets([]int{1,2,3})
 	//r := subsetsWithDup([]int{2,2,2})
 
-
+	board := [][]byte{
+		{'A', 'B', 'C', 'E'},
+		{'S', 'F', 'C', 'S'},
+		{'A', 'D', 'E', 'E'},
+	}
+	r := exist(board, "ABCCED")
 	fmt.Println(r)
+	return
+}
+
+/**
+79. 单词搜索
+https://leetcode.cn/problems/word-search/
+ */
+func exist(board [][]byte, word string) bool {
+	if len(board) < 1 {
+		return false
+	}
+	if len(word) < 1 {
+		return true
+	}
+	r , byteList, check, iStart, jStart, cnt := false, make([]byte, 0), make([][]int, 0), 0, 0, 0
+	for i:=0; i<len(board); i++ {
+		check = append(check, make([]int, len(board[0])))
+	}
+	for i:=iStart; i<len(board); i++ {
+		for j := jStart; j < len(board[0]); j++ {
+			backTrace8(board, byteList, check, i, j, cnt, word, &r)
+		}
+	}
+	return r
+}
+
+func backTrace8(board [][]byte, byteList []byte, check [][]int, iStart, jStart, cnt int, word string, r *bool) {
+	if iStart < 0 || iStart >= len(board) || jStart < 0 || jStart >= len(board[0]) {
+		return
+	}
+	if check[iStart][jStart] == 1 || *r == true || board[iStart][jStart] != word[cnt]{
+		return
+	}
+	if cnt == len(word)-1 {
+		*r = true
+		return
+	}
+	check[iStart][jStart] = 1
+	for k := 0; k < 4; k++ {
+		backTrace8(board, byteList, check, iStart+direction[k], jStart+direction[k+1], cnt+1, word, r)
+	}
+	check[iStart][jStart] = 0
 	return
 }
 
