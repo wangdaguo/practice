@@ -52,16 +52,19 @@ func main()  {
 	//fmt.Println(arr)
 
 	//r := genknuth(5, 100, 300)
+
 	//fmt.Println(r)
 
-	//r := heapSort([]int{5, 3, 7, 2, 1, 10})
+	r := heapSort([]int{5, 3, 7, 2, 1, 10})
+	fmt.Println(r)
 
-	heap := NewHeap()
-	for _, val := range []int{5, 3, 7, 2, 1, 10} {  // 3,5
-		heap.siftUp(val)
-	}
-	min := heap.extractMin()
-	fmt.Println(heap, min)
+	//heap := NewHeap()
+	//for _, val := range []int{5, 3, 7, 2, 1, 10} {  // 3,5
+	//	heap.siftUp(val)
+	//}
+	//fmt.Println(heap)
+	//min := heap.extractMin()
+	//fmt.Println(heap, min)
 	return
 }
 
@@ -98,8 +101,11 @@ func (heap *Heap) siftDown(val int)  {
 		return
 	}
 	i := 1
-	for i > len(heap.Nums) {
+	for i < len(heap.Nums) {
 		p := 2*i
+		if p >= len(heap.Nums) {
+			break
+		}
 		if p+1<len(heap.Nums) && heap.Nums[p+1] < heap.Nums[p] {
 			p ++
 		}
@@ -108,8 +114,10 @@ func (heap *Heap) siftDown(val int)  {
 			i = p
 			continue
 		}
-		heap.Nums[i] = val
 		break
+	}
+	if i < len(heap.Nums) {
+		heap.Nums[i] = val
 	}
 	return
 }
@@ -494,4 +502,43 @@ func QuickSort(x *[]int, l, r int)  {
 	QuickSort(x, l, start)
 	QuickSort(x, start+1, r)
 	return
+}
+
+func findKthLargest1(nums []int, k int) int {
+	//	r := findKLargest(nums, 0, 0, 1)
+	return quickSelect(nums, 0, len(nums)-1, len(nums)-k)
+}
+
+func quickSelect(nums []int, i, j, k int) int {
+	if k < 0 || k > len(nums) || len(nums) < 1 {
+		return 0
+	}
+	start, end, target := i, j, k
+	for start < end {
+		partition := partition(&nums, start, end)
+		if target == partition {
+			return nums[k]
+		} else if target > partition {
+			start = partition + 1
+		} else  {
+			end = partition - 1
+		}
+	}
+	return nums[start]
+}
+
+func partition(nums *[]int, start, end int) int {
+	p := (*nums)[start]
+	for start < end {
+		for start < end && (*nums)[end] >= p {
+			end --
+		}
+		(*nums)[start] = (*nums)[end]
+		for start < end && (*nums)[start] <= p {
+			start ++
+		}
+		(*nums)[end] = (*nums)[start]
+	}
+	(*nums)[start] = p
+	return start
 }
