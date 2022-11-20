@@ -9,7 +9,6 @@ func main()  {
 	return
 }
 
-
 /**
 tmp = s[0]
 s[0] = s[i]; s[i] = s[2i]
