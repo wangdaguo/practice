@@ -55,8 +55,8 @@ func main()  {
 
 	//fmt.Println(r)
 
-	r := heapSort([]int{5, 3, 7, 2, 1, 10})
-	fmt.Println(r)
+	//r := heapSort([]int{5, 3, 7, 2, 1, 10, 76, 12})
+	//fmt.Println(r)
 
 	//heap := NewHeap()
 	//for _, val := range []int{5, 3, 7, 2, 1, 10} {  // 3,5
@@ -65,7 +65,32 @@ func main()  {
 	//fmt.Println(heap)
 	//min := heap.extractMin()
 	//fmt.Println(heap, min)
+
+	r := maxSum([]int{1, -10, 3, 4})
+	fmt.Println(r)
 	return
+}
+
+func maxSum(list []int) int {
+	if len(list) < 1 {
+		return 0
+	}
+	sum, tmpSum, i, j, start, end := 0, 0, 0, 0, 0, 0
+	for cnt, val := range list {
+		if tmpSum < 0 {
+			tmpSum = val
+			i, j = cnt, cnt
+		} else {
+			tmpSum += val
+			j = cnt
+		}
+		if tmpSum > sum {
+			sum = tmpSum
+			start, end = i, j
+		}
+	}
+	fmt.Println(start, end)
+	return sum
 }
 
 type Heap struct {

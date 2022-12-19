@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"sort"
+	"strings"
 )
 
 func main()  {
@@ -63,13 +64,137 @@ func main()  {
 	//r := subsets([]int{1,2,3})
 	//r := subsetsWithDup([]int{2,2,2})
 
-	board := [][]byte{
-		{'A', 'B', 'C', 'E'},
-		{'S', 'F', 'C', 'S'},
-		{'A', 'D', 'E', 'E'},
+	//board := [][]byte{
+	//	{'A', 'B', 'C', 'E'},
+	//	{'S', 'F', 'C', 'S'},
+	//	{'A', 'D', 'E', 'E'},
+	//}
+	//r := exist(board, "ABCCED")
+	//r := solveNQueens(4)
+
+	//aList := make([]int, 0)
+	//fmt.Printf("main alist pointer is %p\n", aList)
+	//tL(aList)
+	//fmt.Println(aList)
+	//return
+
+	//grid := [][]int{
+	//	{1,1,1,1,1},
+	//	{1,0,0,0,1},
+	//	{1,0,1,0,1},
+	//	{1,0,0,0,1},
+	//	{1,1,1,1,1},
+	//}
+	grid := [][]int{
+		{0,1},
+		{1,0},
 	}
-	r := exist(board, "ABCCED")
+	r := shortestBridge(grid)
 	fmt.Println(r)
+	return
+}
+
+/**
+934. 最短的桥
+DFS找到一个岛所有点，然后BFS一层层外扩找到另一个岛
+https://leetcode.cn/problems/shortest-bridge/
+ */
+func shortestBridge(grid [][]int) int {
+	if len(grid) < 1 {
+		return 0
+	}
+	tag, queue := false, NewQueue()
+	for i:=0; i<len(grid); i++ {
+		if tag {
+			break
+		}
+		for j:=0; j<len(grid[0]); j++ {
+			if grid[i][j] == 1 {
+				tag = true
+				fillOneIsland(grid, queue, i, j)
+				break
+			}
+		}
+	}
+	fmt.Println(grid)
+
+	var r int
+	for !queue.isEmpty() {
+		size := queue.Size()
+		for size > 0 {
+			size --
+			point := queue.pop()
+			for c:=0; c<4; c++ {
+				if point.X + d[c] < 0 || point.X + d[c] >= len(grid) || point.Y + d[c+1] < 0 || point.Y + d[c+1] >= len(grid[0]) ||
+					grid[point.X + d[c]][point.Y+d[c+1]] == 2 {
+					continue
+				}
+				if grid[point.X + d[c]][point.Y+d[c+1]] == 1 {
+					return r
+				}
+				if grid[point.X + d[c]][point.Y+d[c+1]] == 0 {
+					grid[point.X + d[c]][point.Y+d[c+1]] = 2
+					queue.push(NewPoint(point.X + d[c], point.Y+d[c+1]))
+				}
+			}
+		}
+		r ++
+	}
+	return 0
+}
+
+var d = []int{-1, 0, 1, 0, -1}
+
+func fillOneIsland(grid [][]int, queue *Queue, i, j int) {
+	if i < 0 || i >= len(grid) || j < 0 || j >= len(grid[0]) || grid[i][j] == 0 || grid[i][j] == 2 {
+		return
+	}
+	grid[i][j] = 2
+	queue.push(NewPoint(i, j))
+	for c:=0; c<4; c++ {
+		fillOneIsland(grid, queue, i+d[c], j+d[c+1])
+	}
+}
+
+/**
+51. N 皇后
+https://leetcode.cn/problems/n-queens/
+ */
+func solveNQueens(n int) [][]string {
+	if n <=0 {
+		return [][]string{}
+	}
+	ans, i, board, col, ldiag, rdiag := make([][]string, 0), 0, make([][]string, n), make([]bool, n), make([]bool, 2*n), make([]bool, 2*n)
+	for c:=0; c<n; c++ {
+		var t []string
+		for ci:=0; ci<n; ci++ {
+			t = append(t, ".")
+		}
+		board[c] = t
+	}
+	bt(&ans, n, i, board, col, ldiag, rdiag)
+	return ans
+}
+
+func bt(ans *[][]string , n, cnt int, board [][]string, col, ldiag, rdiag []bool)  {
+	if cnt == n {
+		var tmp []string
+		for _, v := range board {
+			tmp = append(tmp,  strings.Join(v, ""))
+		}
+		*ans = append(*ans, tmp)
+		return
+	}
+	for i:=0; i<n; i++ {
+		if col[i] || ldiag[n-1-cnt+i] || rdiag[i+cnt] {
+			continue
+		}
+		col[i], ldiag[n-1-cnt+i], rdiag[i+cnt] = true, true, true
+		board[cnt][i] = "Q"
+		bt(ans, n, cnt+1, board, col, ldiag, rdiag)
+		board[cnt][i] = "."
+		col[i], ldiag[n-1-cnt+i], rdiag[i+cnt] = false, false, false
+	}
 	return
 }
 
@@ -574,6 +699,38 @@ func NewPoint(x, y int) *Point {
 	}
 }
 
+type Queue struct {
+	Data []*Point
+}
+
+func NewQueue() *Queue {
+	data := make([]*Point, 0)
+	return &Queue{Data:data}
+}
+
+func (queue *Queue) pop() *Point {
+	r := queue.Data[0]
+	queue.Data = queue.Data[1:]
+	return r
+}
+
+func (queue *Queue) push(p *Point) {
+	if queue.isEmpty() {
+		queue.Data = append(queue.Data, p)
+		return
+	}
+	queue.Data = append(queue.Data, p)
+	return
+}
+
+func (queue *Queue) isEmpty() bool {
+	return len(queue.Data) == 0
+}
+
+func (queue *Queue) Size() int {
+	return len(queue.Data)
+}
+
 type Stack struct {
 	Data []*Point
 }
@@ -606,6 +763,10 @@ func (stack *Stack) push(p *Point) {
 
 func (stack *Stack) isEmpty() bool {
 	return len(stack.Data) == 0
+}
+
+func (stack *Stack) Size() int {
+	return len(stack.Data)
 }
 
 var direction = []int{-1, 0, 1, 0, -1}
