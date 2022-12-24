@@ -85,13 +85,107 @@ func main()  {
 	//	{1,0,0,0,1},
 	//	{1,1,1,1,1},
 	//}
-	grid := [][]int{
-		{0,1},
-		{1,0},
-	}
-	r := shortestBridge(grid)
+	//r := shortestBridge(grid)
+	var beginWord, endWord, wordList = "hit", "cog", []string{"hot","dot","dog","lot","log","cog"}
+	r := findLadders(beginWord, endWord, wordList)
 	fmt.Println(r)
 	return
+}
+
+/**
+126. 单词接龙 II
+https://leetcode.cn/problems/word-ladder-ii/
+ */
+func findLadders(beginWord string, endWord string, wordList []string) [][]string {
+	if len(beginWord) != len(endWord) {
+		return [][]string{}
+	}
+	wordMap, next, ans := make(map[string]struct{}), make(map[string][]string), make([][]string, 0)
+	for _, v := range wordList {
+		wordMap[v] = struct{}{}
+	}
+	if _, ok := wordMap[endWord]; !ok {
+		return [][]string{}
+	}
+	q1 := make(map[string]struct{})
+	q1[beginWord] = struct{}{}
+	q2 := make(map[string]struct{})
+	q2[endWord] = struct{}{}
+
+	var found, reversed  bool
+	delete(wordMap, beginWord)
+	delete(wordMap, endWord)
+
+	for len(q1) > 0 {
+		q := make(map[string]struct{})
+		for k, _ := range q1 {
+			str := k
+			for i:=0; i<len(str); i++ {
+				char := str[i]
+				for j:=0; j<26; j++ {
+					str = replaceChar(str, byte('a'+j), i)
+					if _, ok := q2[str]; ok {
+						found = true
+						if reversed {
+							next[str] = append(next[str], k)
+						} else {
+							next[k] = append(next[k], str)
+						}
+					}
+					if _, ok := wordMap[str]; ok {
+						if reversed {
+							next[str] = append(next[str], k)
+						} else {
+							next[k] = append(next[k], str)
+						}
+						q[str] = struct{}{}
+					}
+				}
+				str = replaceChar(str, char, i)
+			}
+		}
+		if found {
+			break
+		}
+		for k := range q {
+			delete(wordMap, k)
+		}
+		if len(q) <= len(q2) {
+			q1 = q
+		} else {
+			q1 = q2
+			q2 = q
+			reversed = !reversed
+		}
+	}
+	if found {
+		path := []string{beginWord}
+		bt11(beginWord, endWord, next, path, &ans)
+	}
+	return ans
+}
+
+func bt11(beginWord, endWord string, next map[string][]string, path []string, ans *[][]string) {
+	if beginWord == endWord {
+		tmp := make([]string, 0)
+		tmp = append(tmp, path...)
+		*ans = append(*ans, tmp)
+		return
+	}
+	for _, v := range next[beginWord] {
+		path = append(path, v)
+		bt11(v, endWord, next, path, ans)
+		path = path[:len(path)-1]
+	}
+}
+
+func replaceChar(str string, ch byte, n int) string {
+	byteList := []byte(str)
+	if n >= len(byteList) {
+		return str
+	}
+	byteList[n] = ch
+	return string(byteList)
 }
 
 /**
