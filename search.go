@@ -99,30 +99,71 @@ func main()  {
 	//}
 	//solve(board)
 	//fmt.Println(board)
-
-	node5 := &TreeNode{
-		Val:   5,
-		Left:  nil,
-		Right: nil,
-	}
-	node2 := &TreeNode{
-		Val:   2,
-		Left:  nil,
-		Right: node5,
-	}
-	node3 := &TreeNode{
-		Val:   3,
-		Left:  nil,
-		Right: nil,
-	}
-	root := &TreeNode{
-		Val:   1,
-		Left:  node2,
-		Right: node3,
-	}
-	r := binaryTreePaths(root)
-	fmt.Println(r)
+	//node5 := &TreeNode{
+	//	Val:   5,
+	//	Left:  nil,
+	//	Right: nil,
+	//}
+	//node2 := &TreeNode{
+	//	Val:   2,
+	//	Left:  nil,
+	//	Right: node5,
+	//}
+	//node3 := &TreeNode{
+	//	Val:   3,
+	//	Left:  nil,
+	//	Right: nil,
+	//}
+	//root := &TreeNode{
+	//	Val:   1,
+	//	Left:  node2,
+	//	Right: node3,
+	//}
+	//r := binaryTreePaths(root)
+	//fmt.Println(r)
 	return
+}
+
+/**
+47. 全排列 II
+https://leetcode.cn/problems/permutations-ii/
+*/
+func permuteUnique(nums []int) [][]int {
+	r := make([][]int, 0)
+	if len(nums)  < 1 {
+		return r
+	}
+	sort.Slice(nums, func(i, j int) bool {
+		if nums[i] < nums[j] {
+			return true
+		}
+		return false
+	})
+	check, path := make(map[int]bool), make([]int, 0)
+	ptpu2(nums, check, path, &r)
+	return r
+}
+
+func ptpu2(nums []int, check map[int]bool, path []int, r *[][]int) {
+	if len(path) == len(nums) {
+		var tmp []int
+		tmp = append(tmp, path...)
+		*r = append(*r, tmp)
+		return
+	}
+	for i:=0; i<len(nums); i ++ {
+		if check[i] {
+			continue
+		}
+		if i>0 && nums[i-1] == nums[i] && check[i-1] == false {
+			continue
+		}
+		check[i] = true
+		path = append(path, nums[i])
+		ptpu2(nums, check, path, r)
+		check[i] = false
+		path = path[:len(path)-1]
+	}
 }
 
 /**
@@ -542,47 +583,6 @@ func sumInt(path []int) int {
 		sum += val
 	}
 	return sum
-}
-
-/**
-https://leetcode.cn/problems/permutations-ii/
- */
-func permuteUnique(nums []int) [][]int {
-	if len(nums) < 1 {
-		return [][]int{}
-	}
-	sort.Slice(nums, func(i, j int) bool {
-		if nums[i] < nums[j] {
-			return true
-		}
-		return false
-	})
-	check := make(map[int]bool)
-	r, level, path := make([][]int, 0), 0, make([]int, 0)
-	backTrace2(nums, path, level, &r, check)
-	return r
-}
-
-func backTrace2(nums, path []int, level int, r *[][]int, check map[int]bool)  {
-	if level == len(nums) {
-		tmp := make([]int, 0)
-		tmp = append(tmp, path...)
-		*r = append(*r, tmp)
-		return
-	}
-	for i:=0; i<len(nums); i++ {
-		if check[i] {
-			continue
-		}
-		if i > 0 && check[i-1] == false && nums[i] == nums[i-1] {
-			continue
-		}
-		check[i] = true
-		path = append(path, nums[i])
-		backTrace2(nums, path, level+1, r, check)
-		check[i] = false
-		path = path[:len(path)-1]
-	}
 }
 
 func combine(n int, k int) [][]int {
