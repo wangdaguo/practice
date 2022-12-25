@@ -67,9 +67,9 @@ func reverse(s []string, i, j int) {
 	return
 }
 
-type TreeNode struct {
+type TreeNode1 struct {
 	Val   int
-	Child []*TreeNode
+	Child []*TreeNode1
 }
 
 const sum int = 0
@@ -90,11 +90,11 @@ func main11() {
 		nums = append(nums, x)
 	}
 
-	maps := make(map[int]*TreeNode)
+	maps := make(map[int]*TreeNode1)
 	for i, v := range nums {
-		node := &TreeNode{
+		node := &TreeNode1{
 			Val: v,
-			Child: make([]*TreeNode, 0),
+			Child: make([]*TreeNode1, 0),
 		}
 		maps[i] = node
 	}
@@ -118,7 +118,7 @@ func main11() {
 	fmt.Println(result)
 }
 
-func treeSum(root *TreeNode) int {
+func treeSum(root *TreeNode1) int {
 	if root == nil {
 		return 0
 	}
@@ -126,7 +126,7 @@ func treeSum(root *TreeNode) int {
 	return sum
 }
 
-func reverse1(root *TreeNode, depth int, value int, sum int) {
+func reverse1(root *TreeNode1, depth int, value int, sum int) {
 	if root == nil {
 		return
 	}
