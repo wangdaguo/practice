@@ -120,8 +120,154 @@ func main()  {
 	//	Right: node3,
 	//}
 	//r := binaryTreePaths(root)
-	//fmt.Println(r)
+	//r := combinationSum2([]int{10,1,2,7,6,1,5}, 8)
+
+	n := 4
+	edges := [][]int{
+		{1,0},
+		{1,2},
+		{1,3},
+	}
+	/**
+	 */
+	r := findMinHeightTrees(n, edges)
+	fmt.Println(r)
 	return
+}
+
+/**
+310. 最小高度树
+https://leetcode.cn/problems/minimum-height-trees/
+ */
+func findMinHeightTrees(n int, edges [][]int) []int {
+	if n == 0 || len(edges) == 0 {
+		return []int{0}
+	}
+	//nodeList := make(map[int][]int)
+	//for i:=0; i<n; i++ {
+	//	nodeList[i] = make([]int, 0)
+	//}
+	graph := make([][]int, n)
+	for i:=0; i<n; i++ {
+		graph[i] = make([]int, n)
+	}
+	for i:=0; i<len(edges); i++ {
+		for j:=0; j<len(edges[0]); j+=2 {
+			//nodeList[edges[i][j]] = append(nodeList[edges[i][j]], edges[i][j+1])
+			//nodeList[edges[i][j+1]] = append(nodeList[edges[i][j+1]], edges[i][j])
+			graph[edges[i][j]][edges[i][j+1]] = 1
+			graph[edges[i][j+1]][edges[i][j]] = 1
+		}
+	}
+	rMp := make(map[int]int)
+	for i:=0; i<n; i++ {
+		tmp := make([]int, 0)
+		var max int
+		for j:=0; j<n; j++ {
+			if graph[i][j] == 0 {
+				continue
+			}
+			Dfs3(edges, graph,0, i, i, j, &tmp)
+			max = findMax(tmp)
+		}
+		rMp[i] = max
+	}
+	//fmt.Println(rMp)
+	//return []int{}
+
+	mp := make(map[int][]int)
+	for node, l := range rMp {
+		mp[l] = append(mp[l], node)
+	}
+	minLen := n
+	for key, _ := range mp {
+		if key < minLen {
+			minLen = key
+		}
+	}
+	return mp[minLen]
+}
+
+func findMax(list []int) int {
+	if len(list) < 1 {
+		return 0
+	}
+	r := list[0]
+	for i:=1; i<len(list); i++ {
+		if r < list[i] {
+			r = list[i]
+		}
+	}
+	return r
+}
+
+
+
+/**
+0 1 0 0
+1 0 1 1
+0 1 0 0
+0 1 0 0
+*/
+func Dfs3(edges [][]int, graph [][]int, cnt, root, x, y int, t *[]int) {
+	if graph[x][y] == 0 {
+		if y == len(graph[x])-1 {
+			*t = append(*t, cnt)
+			//(*t)[0] = cnt
+		}
+		return
+	}
+	graph[x][y] = 0
+	graph[y][x] = 0
+	for i:=0; i<len(graph[y]); i++ {
+		Dfs3(edges, graph, cnt+1, root, y, i, t)
+	}
+	graph[x][y] = 1
+	graph[y][x] = 1
+}
+
+func combinationSum2(candidates []int, target int) [][]int {
+	var r [][]int
+	if len(candidates) < 1 {
+		return r
+	}
+	sort.Slice(candidates, func(i, j int) bool {
+		if candidates[i] < candidates[j] {
+			return true
+		}
+		return false
+	})
+	path, level := make([]int, 0), 0
+	btcs(candidates, path, level, target, &r)
+	return r
+}
+
+func btcs(nums []int, path []int, level, target int, r *[][]int) {
+	if sumList(path) > target {
+		return
+	}
+	if sumList(path) == target {
+		var tmp []int
+		tmp = append(tmp, path...)
+		*r = append(*r, tmp)
+		return
+	}
+	for i:=level; i<len(nums); i++ {
+		if i > level && nums[i] == nums[i-1] {
+			continue
+		}
+		path = append(path, nums[i])
+		btcs(nums, path, i+1, target, r)
+		path = path[:len(path)-1]
+	}
+}
+
+func sumList(list []int) int {
+	var r int
+	for _, v := range list {
+		r += v
+	}
+	return r
 }
 
 /**
