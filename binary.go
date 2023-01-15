@@ -245,7 +245,7 @@ func findMin(nums []int) int {
 			start = middle + 1
 		} else if nums[middle] < nums[start] {
 			end = middle
-		} else {
+		} else {  // nums[middle] <= nums[end] && nums[middle] >= nums[start]
 			end = middle - 1
 		}
 	}
@@ -381,7 +381,6 @@ func getKthElement(nums1, nums2 []int, k int) int {
 			index2 = newIndex2 + 1
 		}
 	}
-	return 0
 }
 
 func min(x, y int) int {

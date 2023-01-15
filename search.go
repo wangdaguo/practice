@@ -201,8 +201,6 @@ func findMax(list []int) int {
 	return r
 }
 
-
-
 /**
 0 1 0 0
 1 0 1 1

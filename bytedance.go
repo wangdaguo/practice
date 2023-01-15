@@ -8,24 +8,24 @@ import (
  
 func main() {
    //node5 := &ListNode{
-   //   Val:   5,
-   //   Next:  nil,
+   //  Val:   3,
+   //  Next:  nil,
    //}
    //node4 := &ListNode{
-   //   Val:   4,
-   //   Next: node5,
+   //  Val:   5,
+   //  Next: node5,
    //}
    //node3 := &ListNode{
-   //   Val:   3,
-   //   Next: node4,
+   //  Val:   2,
+   //  Next: node4,
    //}
    //node2 := &ListNode{
-   //   Val:   2,
-   //   Next: node3,
+   //  Val:   1,
+   //  Next: node3,
    //}
    //head := &ListNode{
-   //   Val:   1,
-   //   Next: node2,
+   //  Val:   4,
+   //  Next: node2,
    //}
    //PrintList(head)
    //r := reverseKGroup(head, 2)
@@ -37,8 +37,256 @@ func main() {
    //r := maxSlidingWindow2([]int{9,9,2,3,1,3,6,7}, 3)
    //r := longestCommonPrefix([]string{"flower","flower","flower","flower"})
    //r := threeSum([]int{-1,0,1,2,-1,-4})
-   r := selectionSort([]int{-1,0,1,2,-1,-4})
+   //r := selectionSort([]int{-1,0,1,2,-1,-4})
+   //r := sortList(head)
+   //PrintList(head)
+   //r := []int{-1,0,1,2,-1,-4}
+   //tmp := make([]int, len(r))
+   //bubbleSort21(&r, 6)
+   //a := []int{3,2,1,5,6,4}
+   //r := findKthLargestB(a, 2)
+   //r := maxSumB([]int{1, -10, 3, 4})
+   r := permuteB([]int{1,2,3})
    fmt.Println(r)
+}
+
+func permuteB(nums []int) [][]int {
+   r := make([][]int, 0)
+   if len(nums) < 1 {
+      return r
+   }
+   mp := make(map[int]bool)
+   backTraceB(nums, []int{}, &r, mp)
+   return r
+}
+
+func backTraceB(nums, arr []int, r *[][]int, mp map[int]bool) {
+   if len(arr) == len(nums) {
+      tmp := make([]int, 0)
+      tmp = append(tmp, arr...)
+      *r = append(*r, tmp)
+      return
+   }
+   for i:=0; i<len(nums); i++ {
+      if _, ok := mp[nums[i]]; ok {
+         continue
+      }
+      mp[nums[i]] = true
+      arr = append(arr, nums[i])
+      backTraceB(nums, arr, r, mp)
+      delete(mp, nums[i])
+      arr = arr[:len(arr)-1]
+   }
+}
+
+func maxSumB(list []int) int {
+   if len(list) < 1 {
+      return 0
+   }
+   max, sumMax, i, j, start, end := 0, 0, 0, 0, 0, 0
+   for k, v := range list {
+      if max < 0 {
+         max = v
+         i, j = k, k
+      } else {
+         max += v
+         j = k
+      }
+      if max > sumMax {
+         sumMax = max
+         start, end = i, j
+      }
+   }
+   fmt.Println(start, end)
+   return sumMax
+}
+
+func findKthLargestB(nums []int, target int) int {
+   if target < 1 || target > len(nums) {
+      return 0
+   }
+   l, r, k := 0, len(nums)-1, len(nums)-target
+   for l < r {
+      p := GetPartitionV(nums, l, r)
+      if k == p {
+         return nums[p]
+      } else if p > k {
+         r = p-1
+      } else  {
+         l = p + 1
+      }
+   }
+   return nums[l]
+}
+
+func GetPartitionV(nums []int, l int, r int) int {
+   p := nums[l]
+   for l < r {
+      for l < r && nums[r] >= p {
+         r --
+      }
+      nums[l] = nums[r]
+      for l < r && nums[l] <= p {
+         l ++
+      }
+      nums[r] = nums[l]
+   }
+   nums[l] = p
+   return l
+}
+
+func bubbleSort21(nums *[]int, n int)  {
+   if n < 1 {
+      return
+   }
+   for i:=0;i<n-1;i++ {
+      for j:=0;j<n-i-1;j++ {
+         if (*nums)[j] > (*nums)[j+1] {
+            (*nums)[j], (*nums)[j+1] = (*nums)[j+1], (*nums)[j]
+         }
+      }
+   }
+   return
+}
+
+func mergeSortB(nums, tmp []int, l, r int)  {
+   if l < r {
+      mid := l + (r-l)/2
+      mergeSortB(nums, tmp, l, mid)
+      mergeSortB(nums, tmp, mid+1, r)
+      mergeListB(nums, tmp, l, mid, r)
+   }
+}
+
+func mergeListB(nums []int, tmp []int, l, mid, r int) {
+   i, j, t := l, mid+1, l
+   for i <= mid && j <= r {
+      if nums[i] < nums[j] {
+         tmp[t] = nums[i]
+         t ++
+         i ++
+      } else {
+         tmp[t] = nums[j]
+         t ++
+         j ++
+      }
+   }
+   for i<=mid {
+      tmp[t] = nums[i]
+      t ++
+      i ++
+   }
+   for j<=r {
+      tmp[t] = nums[j]
+      t ++
+      j ++
+   }
+   for i := 0; i <= r; i++ {
+      nums[i] = tmp[i]
+   }
+}
+
+
+func quickSortB(nums []int, l, r int) {
+   if l >= r {
+      return
+   }
+   start, end, partition := l, r, nums[l]
+   for start < end {
+      for start < end && nums[end] >= partition {
+         end --
+      }
+      nums[start] =  nums[end]
+      for start < end && nums[start] <= partition {
+         start ++
+      }
+      nums[end] = nums[start]
+   }
+   nums[start] = partition
+   quickSortB(nums, l, start)
+   quickSortB(nums, start+1, r)
+}
+
+/**
+https://leetcode-cn.com/problems/search-in-rotated-sorted-array/
+81. 搜索旋转排序数组 II
+ */
+func searchRotationArray(nums []int, target int) int {
+   if len(nums) < 1 {
+      return -1
+   }
+   start,  end := 0,len(nums)-1
+   for start <= end {
+      middle := start + (end - start) / 2
+      if nums[middle] == target {
+         return middle
+      } else if nums[start] == nums[middle] {
+         start ++
+      } else if nums[middle] <= nums[end] {
+         if target > nums[middle] && target <= nums[end] {
+            start = middle + 1
+         } else {
+            end = middle - 1
+         }
+      } else {
+         if target >= nums[start] && target < nums[middle] {
+            end = middle - 1
+         } else {
+            start = middle+1
+         }
+      }
+   }
+   return -1
+}
+
+type ListNode struct {
+   Val  int
+   Next *ListNode
+}
+
+func sortList(head *ListNode) *ListNode {
+   return sort11(head, nil)
+}
+
+func sort11(head, tail *ListNode) *ListNode {
+   if head == nil {
+      return head
+   }
+   if head.Next == tail {
+      head.Next = nil
+      return head
+   }
+   fast, slow := head, head
+   for fast != tail {
+      fast = fast.Next
+      slow = slow.Next
+      if fast != tail {
+         fast = fast.Next
+      }
+   }
+   middle := slow
+   return mergeLinkList(sort11(head, middle), sort11(middle, tail))
+}
+
+func mergeLinkList(head1, head2 *ListNode) *ListNode {
+   NewHead := &ListNode{}
+   h1, h2, dummyHead := head1, head2, NewHead
+   for h1 != nil && h2 != nil {
+      if h1.Val > h2.Val {
+         dummyHead.Next = h2
+         h2 = h2.Next
+      } else {
+         dummyHead.Next = h1
+         h1 = h1.Next
+      }
+      dummyHead = dummyHead.Next
+   }
+   if h1 != nil {
+      dummyHead.Next = h1
+   } else if h2 != nil {
+      dummyHead.Next = h2
+   }
+   return NewHead.Next
 }
 
 func selectionSort(arr []int) []int {
@@ -57,7 +305,7 @@ func selectionSort(arr []int) []int {
    return arr
 }
 
-func bubbleSort(arr []int) []int {
+func bubbleSort1(arr []int) []int {
    if len(arr) < 1 {
       return arr
    }

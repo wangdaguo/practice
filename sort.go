@@ -58,6 +58,10 @@ func quickSort(nums *[]int, l, r int)  {
 }
 
 /**
+nums := []int64{8,4,5,7}
+l = 0, r = 3
+l r
+
 l, r, mid
 0, 3, 1 -> 0, 1, 0
 0, 3, 1 -> 2, 3, 2
@@ -80,7 +84,7 @@ l, r, mid
 0, 3, 1   {4,8},{5,7}
  */
 func mergeList(nums, temp *[]int64, l, mid, r int64) {
-	i, j, t := l, mid+1, l // 0, 1, 0; 2, 3, 2;  0, 2, 0
+	i, j, t := l, mid+1, l // 0, 1, 0;  2, 3, 2;  0, 2, 0
 	for i <= mid && j <= r {
 		if (*nums)[i] <= (*nums)[j] {
 			(*temp)[t] = (*nums)[i]
