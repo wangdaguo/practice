@@ -2,6 +2,7 @@ package main
 
 import (
    "fmt"
+   "math"
    "sort"
    "strings"
 )
@@ -46,8 +47,140 @@ func main() {
    //a := []int{3,2,1,5,6,4}
    //r := findKthLargestB(a, 2)
    //r := maxSumB([]int{1, -10, 3, 4})
-   r := permuteB([]int{1,2,3})
+   //r := permuteB([]int{1,2,3})
+   //r := findMaxVal([]int{4,5,6,7,0,1,2})
+   //r := maxArea([]int{1,8,6,2,5,4,8,3,7})
+   //r := dailyTemperatures([]int{73,74,75,71,69,72,76,73})
+   r := maxProfit([]int{7,1,5,3,6,4})
    fmt.Println(r)
+}
+
+func maxProfit(prices []int) int {
+   if len(prices) < 1 {
+      return 0
+   }
+   minPrice := math.MaxInt32
+   var maxDiff int
+   for _, v := range prices {
+      if v < minPrice {
+         minPrice = v
+      }
+      if v - minPrice > maxDiff {
+         maxDiff = v - minPrice
+      }
+   }
+   return maxDiff
+}
+
+func dailyTemperatures(temperatures []int) []int {
+   if len(temperatures) < 1 {
+      return []int{}
+   }
+   stack, r := make([]int, len(temperatures)), make([]int, len(temperatures))
+   for k, _ := range temperatures {
+      for len(stack) >= 1 && temperatures[k] > temperatures[stack[len(stack)-1]] {
+         popVal := stack[len(stack)-1]
+         stack = stack[:len(stack)-1]
+         r[popVal] = k - popVal
+      }
+      stack = append(stack, k)
+   }
+   return r
+}
+
+func min(x, y int) int {
+   if x < y {
+      return x
+   }
+   return y
+}
+
+func maxArea(height []int) int {
+   if len(height) < 1 {
+      return 0
+   }
+   left, right, area, maxArea := 0, len(height)-1, 0, 0
+   for left < right {
+      area = min(height[left], height[right]) * int(math.Abs(float64(right-left)))
+      if area > maxArea {
+         maxArea = area
+      }
+      if height[left] <= height[right] {
+         left ++
+      } else {
+         right --
+      }
+   }
+   return maxArea
+}
+
+type TreeNode struct {
+   Val   int
+   Left  *TreeNode
+   Right *TreeNode
+}
+
+func rightSideView1(root *TreeNode) []int {
+   var r []int
+   dfsB(root, &r, 0)
+   return r
+}
+
+func dfsB(node *TreeNode, r *[]int, depth int) {
+   if node == nil {
+      return
+   }
+   if depth == len(*r) {
+      *r = append(*r, node.Val)
+   }
+   depth ++
+   dfsB(node.Right, r, depth)
+   dfsB(node.Left, r, depth)
+}
+
+func rightSideView(root *TreeNode) []int {
+   if root == nil {
+      return []int{}
+   }
+   var r []int
+   queue := make([]*TreeNode, 0)
+   queue = append(queue, root)
+   for len(queue) > 0 {
+      size := len(queue)
+      for i:=0; i<size; i++ {
+         node := queue[0]
+         queue = queue[1:]
+         if node.Left != nil {
+            queue = append(queue, node.Left)
+         }
+         if node.Right != nil {
+            queue = append(queue, node.Right)
+         }
+         if i == size-1 {
+            r = append(r, node.Val)
+         }
+      }
+   }
+   return r
+}
+
+func findMaxVal(nums []int) int {
+   if len(nums) < 1 {
+      return 0
+   }
+   start, end := 0, len(nums)-1
+   for start < end {
+      middle := start + (end-start)/2
+      // 转折点在右边
+      if nums[middle] > nums[end] {
+         start = middle + 1
+      } else if nums[middle] < nums[start] {
+         end = middle
+      } else {  // nums[middle] <= nums[end] && nums[middle] >= nums[start]
+         end = middle - 1
+      }
+   }
+   return nums[start-1]
 }
 
 func permuteB(nums []int) [][]int {
