@@ -51,8 +51,70 @@ func main() {
    //r := findMaxVal([]int{4,5,6,7,0,1,2})
    //r := maxArea([]int{1,8,6,2,5,4,8,3,7})
    //r := dailyTemperatures([]int{73,74,75,71,69,72,76,73})
-   r := maxProfit([]int{7,1,5,3,6,4})
+   //r := maxProfit([]int{7,1,5,3,6,4})
+   r := findMedianSortedArraysB([]int{1,3}, []int{2})
    fmt.Println(r)
+}
+
+func findMedianSortedArraysB(nums1 []int, nums2 []int) float64 {
+   totalLen := len(nums1) + len(nums2)
+   if totalLen % 2 == 1 {
+      midIndex := totalLen / 2
+      return float64(getKthElementB(nums1, nums2, midIndex+1))
+   } else {
+      minIndex1, minIndex2 := totalLen / 2 - 1, totalLen / 2
+      return float64((getKthElementB(nums1, nums2, minIndex1) + getKthElementB(nums1, nums2, minIndex2)) / 2)
+   }
+}
+
+func getKthElementB(nums1, nums2 []int, k int) int {
+   var index1, index2 int
+   for {
+      if index1 == len(nums1) {
+         return nums2[index2+k-1]
+      }
+      if index2 == len(nums2) {
+         return nums1[index1+k-1]
+      }
+      if k == 1 {
+         return min(nums2[index2], nums1[index1])
+      }
+      half := k / 2
+      newIndex1 := min(index1+half, len(nums1)) - 1
+      newIndex2 := min(index2+half, len(nums2)) - 1
+      if nums1[newIndex1] <= nums2[newIndex2] {
+         k = k - (newIndex1 - index1 + 1)
+         index1 = newIndex1 + 1
+      } else {
+         k = k - (newIndex2 - index2 + 1)
+         index2 = newIndex2 + 1
+      }
+   }
+}
+func getKthElementcc(nums1, nums2 []int, k int) int {
+   var index1, index2 int
+   for {
+      if index1 == len(nums1) {
+         return nums2[index2 + k - 1]
+      }
+      if index2 == len(nums2) {
+         return nums1[index1 + k - 1]
+      }
+      if k == 1 {
+         return min(nums1[index1], nums2[index2])
+      }
+      half := k / 2
+      newIndex1 := min(index1+half, len(nums1)) - 1
+      newIndex2 := min(index2+half, len(nums2)) - 1
+      val1, val2 := nums1[newIndex1], nums2[newIndex2]
+      if val1 <= val2 {
+         k = k - (newIndex1 - index1 + 1)
+         index1 = newIndex1 + 1
+      } else {
+         k = k - (newIndex2 - index2 + 1)
+         index2 = newIndex2 + 1
+      }
+   }
 }
 
 func maxProfit(prices []int) int {

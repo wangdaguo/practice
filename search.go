@@ -122,16 +122,16 @@ func main()  {
 	//r := binaryTreePaths(root)
 	//r := combinationSum2([]int{10,1,2,7,6,1,5}, 8)
 
-	n := 4
-	edges := [][]int{
-		{1,0},
-		{1,2},
-		{1,3},
-	}
-	/**
-	 */
-	r := findMinHeightTrees(n, edges)
-	fmt.Println(r)
+	//n := 4
+	//edges := [][]int{
+	//	{1,0},
+	//	{1,2},
+	//	{1,3},
+	//}
+	///**
+	// */
+	//r := findMinHeightTrees(n, edges)
+	//fmt.Println(r)
 	return
 }
 
@@ -1124,8 +1124,8 @@ var direction = []int{-1, 0, 1, 0, -1}
 
 /**
 695. 岛屿的最大面积
-https://leetcode.cn/problems/max-area-of-island/submissions/
- */
+https://leetcode.cn/problems/max-area-of-island/description/
+*/
 func maxAreaOfIsland(grid [][]int) int {
 	stack := NewStack()
 	maxArea, tmpArea := 0, 0
@@ -1190,26 +1190,68 @@ func findCircleNum(isConnected [][]int) int {
 	if len(isConnected) < 1 {
 		return 0
 	}
-	cnt := 0
-	for i:=0; i<len(isConnected); i++ {
-		for j:=0; j<len(isConnected[0]); j++ {
-			if isConnected[i][j] == 1 {
-				findCircleNumImpl(isConnected, i, j)
-				cnt ++
+	isVisited := make([]bool, len(isConnected))
+	var r int
+	for i := 0; i < len(isConnected); i++ {
+		if isVisited[i] == false {
+			isVisited[i] = true
+			findDFS(isConnected, i, isVisited)
+			r ++
+		}
+	}
+	return r
+}
+
+func findDFS(isConnected [][]int, i int, isVisited []bool) {
+	for j:=0; j<len(isConnected[0]); j++ {
+		if isConnected[i][j] == 1 && isVisited[j] == false {
+			isVisited[j] = true
+			findDFS(isConnected, j, isVisited)
+		}
+	}
+}
+
+func pacificAtlantic1(heights [][]int) [][]int {
+	if len(heights) < 1 {
+		return [][]int{}
+	}
+	pacific, atlantic := make([][]bool, len(heights)), make([][]bool, len(heights))
+	for i:=0; i<len(heights); i++ {
+		pacific[i] = make([]bool, len(heights[0]))
+		atlantic[i] = make([]bool, len(heights[0]))
+	}
+
+	for i:=0; i<len(heights); i++ {
+		flowDFS(heights, i, 0, pacific)
+		flowDFS(heights, i, len(heights[0])-1, atlantic)
+	}
+	for j:=0; j<len(heights[0]); j++ {
+		flowDFS(heights, 0, j, pacific)
+		flowDFS(heights, len(heights)-1, j, atlantic)
+	}
+	var r [][]int
+	for i:=0; i<len(pacific); i++ {
+		for j:=0; j<len(pacific[0]); j++ {
+			if pacific[i][j] && atlantic[i][j] {
+				r = append(r, []int{i, j})
 			}
 		}
 	}
-	return cnt
+	return r
 }
 
-func findCircleNumImpl(isConnected [][]int, i, j int) {
-	if i<0 || i>len(isConnected)-1 || j < 0 || j > len(isConnected[0])-1 || isConnected[i][j] != 1 {
+func flowDFS(heights [][]int, i int, j int, check [][]bool) {
+	if check[i][j] {
 		return
 	}
-	isConnected[i][j] = 0
-	for t:=0; t<len(isConnected[0]); t++ {
-		if isConnected[j][t] == 1 {
-			findCircleNumImpl(isConnected, j, t)
+	check[i][j] = true
+	for k:=0; k<4; k++ {
+		x := i+direction[k]
+		y := j+direction[k+1]
+		if x<0 || x>=len(heights) || y<0 || y>=len(heights[0]) || heights[i][j] > heights[x][y] {
+			continue
 		}
+		flowDFS(heights, x, y, check)
 	}
 }
+
