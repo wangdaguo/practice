@@ -60,6 +60,7 @@ func main()  {
 
 	//r := permuteUnique([]int{0,1,0,0,9})
 
+	//r := combinationSum([]int{2,2,2}, 4)
 	//r := combinationSum([]int{2,3,6,7}, 7)
 	//r := combinationSum3([]int{10,1,2,7,6,1,5}, 8)
 	//r := subsets([]int{1,2,3})
@@ -86,11 +87,15 @@ func main()  {
 	//	{1,0,0,0,1},
 	//	{1,1,1,1,1},
 	//}
-	//r := shortestBridge(grid)
+	//r := shortestBridge1(grid)
+
+	//var beginWord, endWord, wordList = "a", "c", []string{"a", "b", "c"}
 	//var beginWord, endWord, wordList = "hit", "cog", []string{"hot","dot","dog","lot","log","cog"}
 	//var beginWord, endWord, wordList = "aaaaa", "uuuuu", []string{"aaaaa","waaaa","wbaaa","xaaaa","xbaaa","bbaaa","bbwaa","bbwba","bbxaa","bbxba","bbbba","wbbba","wbbbb","xbbba","xbbbb","cbbbb","cwbbb","cwcbb","cxbbb","cxcbb","cccbb","cccwb","cccwc","cccxb","cccxc","ccccc","wcccc","wdccc","xcccc","xdccc","ddccc","ddwcc","ddwdc","ddxcc","ddxdc","ddddc","wdddc","wdddd","xdddc","xdddd","edddd","ewddd","ewedd","exddd","exedd","eeedd","eeewd","eeewe","eeexd","eeexe","eeeee","weeee","wfeee","xeeee","xfeee","ffeee","ffwee","ffwfe","ffxee","ffxfe","ffffe","wfffe","wffff","xfffe","xffff","gffff","gwfff","gwgff","gxfff","gxgff","gggff","gggwf","gggwg","gggxf","gggxg","ggggg","wgggg","whggg","xgggg","xhggg","hhggg","hhwgg","hhwhg","hhxgg","hhxhg","hhhhg","whhhg","whhhh","xhhhg","xhhhh","ihhhh","iwhhh","iwihh","ixhhh","ixihh","iiihh","iiiwh","iiiwi","iiixh","iiixi","iiiii","wiiii","wjiii","xiiii","xjiii","jjiii","jjwii","jjwji","jjxii","jjxji","jjjji","wjjji","wjjjj","xjjji","xjjjj","kjjjj","kwjjj","kwkjj","kxjjj","kxkjj","kkkjj","kkkwj","kkkwk","kkkxj","kkkxk","kkkkk","wkkkk","wlkkk","xkkkk","xlkkk","llkkk","llwkk","llwlk","llxkk","llxlk","llllk","wlllk","wllll","xlllk","xllll","mllll","mwlll","mwmll","mxlll","mxmll","mmmll","mmmwl","mmmwm","mmmxl","mmmxm","mmmmm","wmmmm","wnmmm","xmmmm","xnmmm","nnmmm","nnwmm","nnwnm","nnxmm","nnxnm","nnnnm","wnnnm","wnnnn","xnnnm","xnnnn","onnnn","ownnn","owonn","oxnnn","oxonn","ooonn","ooown","ooowo","oooxn","oooxo","ooooo","woooo","wpooo","xoooo","xpooo","ppooo","ppwoo","ppwpo","ppxoo","ppxpo","ppppo","wpppo","wpppp","xpppo","xpppp","qpppp","qwppp","qwqpp","qxppp","qxqpp","qqqpp","qqqwp","qqqwq","qqqxp","qqqxq","qqqqq","wqqqq","wrqqq","xqqqq","xrqqq","rrqqq","rrwqq","rrwrq","rrxqq","rrxrq","rrrrq","wrrrq","wrrrr","xrrrq","xrrrr","srrrr","swrrr","swsrr","sxrrr","sxsrr","sssrr","ssswr","sssws","sssxr","sssxs","sssss","wssss","wtsss","xssss","xtsss","ttsss","ttwss","ttwts","ttxss","ttxts","tttts","wttts","wtttt","xttts","xtttt","utttt","uwttt","uwutt","uxttt","uxutt","uuutt","uuuwt","uuuwu","uuuxt","uuuxu","uuuuu","zzzzz","zzzzy","zzzyy","zzyyy","zzyyx","zzyxx","zzxxx","zzxxw","zzxww","zzwww","zzwwv","zzwvv","zzvvv","zzvvu","zzvuu","zzuuu","zzuut","zzutt","zzttt","zztts","zztss","zzsss","zzssr","zzsrr","zzrrr","zzrrq","zzrqq","zzqqq","zzqqp","zzqpp","zzppp","zzppo","zzpoo","zzooo","zzoon","zzonn","zznnn","zznnm","zznmm","zzmmm","zzmml","zzmll","zzlll","zzllk","zzlkk","zzkkk","zzkkj","zzkjj","zzjjj","zzjji","zzjii","zziii","zziih","zzihh","zzhhh","zzhhg","zzhgg","zzggg","zzggf","zzgff","zzfff","zzffe","zzfee","zzeee","zzeed","zzedd","zzddd","zzddc","zzdcc","zzccc","zzccz","azccz","aaccz","aaacz","aaaaz","uuuzu","uuzzu","uzzzu","zzzzu"}
 	//r := findLadders(beginWord, endWord, wordList)
+	//r := findLadders1(beginWord, endWord, wordList)
 	//fmt.Println(r)
+
 	//board := [][]byte{
 	//	{'X', 'X', 'X', 'X'},
 	//	{'X', 'O', 'O', 'X'},
@@ -120,18 +125,17 @@ func main()  {
 	//	Right: node3,
 	//}
 	//r := binaryTreePaths(root)
-	//r := combinationSum2([]int{10,1,2,7,6,1,5}, 8)
+	//r := combinationSum2([]int{1,1,1}, 2)
 
-	//n := 4
-	//edges := [][]int{
-	//	{1,0},
-	//	{1,2},
-	//	{1,3},
-	//}
-	///**
-	// */
-	//r := findMinHeightTrees(n, edges)
-	//fmt.Println(r)
+	n := 4
+	edges := [][]int{
+		{1,0},
+		{1,2},
+		{1,3},
+	}
+	r := findMinHeightTrees1(n, edges)
+	//r := solveNQueens1(4)
+	fmt.Println(r)
 	return
 }
 
@@ -251,7 +255,7 @@ func btcs(nums []int, path []int, level, target int, r *[][]int) {
 		return
 	}
 	for i:=level; i<len(nums); i++ {
-		if i > level && nums[i] == nums[i-1] {
+		if i > level && nums[i] == nums[i-1] {  // 1, 1, 1
 			continue
 		}
 		path = append(path, nums[i])
@@ -405,16 +409,19 @@ func findLadders(beginWord string, endWord string, wordList []string) [][]string
 	if _, ok := wordMap[endWord]; !ok {
 		return [][]string{}
 	}
+	// q1 从 beginWord 搜索
 	q1 := make(map[string]struct{})
 	q1[beginWord] = struct{}{}
-	q2 := make(map[string]struct{})
-	q2[endWord] = struct{}{}
+	// p1 从 endWord 搜索
+	p1 := make(map[string]struct{})
+	p1[endWord] = struct{}{}
 
 	var found, reversed  bool
 	delete(wordMap, beginWord)
 	delete(wordMap, endWord)
 
 	for len(q1) > 0 {
+		// 当前遍历层所有的单词
 		q := make(map[string]struct{})
 		for k, _ := range q1 {
 			str := k
@@ -422,7 +429,8 @@ func findLadders(beginWord string, endWord string, wordList []string) [][]string
 				char := str[i]
 				for j:=0; j<26; j++ {
 					str = replaceChar(str, byte('a'+j), i)
-					if _, ok := q2[str]; ok {
+					// 有结果
+					if _, ok := p1[str]; ok {
 						found = true
 						if reversed {
 							next[str] = append(next[str], k)
@@ -430,6 +438,7 @@ func findLadders(beginWord string, endWord string, wordList []string) [][]string
 							next[k] = append(next[k], str)
 						}
 					}
+					// 如果此次搜索的单词在词典里面，则加入过链路map里
 					if _, ok := wordMap[str]; ok {
 						if reversed {
 							next[str] = append(next[str], k)
@@ -439,20 +448,23 @@ func findLadders(beginWord string, endWord string, wordList []string) [][]string
 						q[str] = struct{}{}
 					}
 				}
+				// 本次循环结束代表此位置的字符全部尝试完成，需要换回原字符，继续下一位字符尝试
 				str = replaceChar(str, char, i)
 			}
 		}
 		if found {
 			break
 		}
+		// 删掉已经使用过的单词
 		for k := range q {
 			delete(wordMap, k)
 		}
-		if len(q) <= len(q2) {
+
+		if len(q) <= len(p1) {
 			q1 = q
 		} else {
-			q1 = q2
-			q2 = q
+			q1 = p1
+			p1 = q
 			reversed = !reversed
 		}
 	}
@@ -1255,3 +1267,81 @@ func flowDFS(heights [][]int, i int, j int, check [][]bool) {
 	}
 }
 
+func permuteUnique1(nums []int) [][]int {
+	var r [][]int
+	if len(nums) < 1 {
+		return r
+	}
+	sort.Slice(nums, func(i, j int) bool {
+		if nums[i] < nums[j] {
+			return true
+		}
+		return false
+	})
+	check, list := make([]bool, len(nums)), make([]int, 0)
+	permuteBT(nums, check, list, &r)
+	return r
+}
+
+func permuteBT(nums []int, check []bool, list []int, r *[][]int) {
+	if len(list) == len(nums) {
+		tmp := make([]int, 0)
+		tmp = append(tmp, list...)
+		*r = append(*r, tmp)
+		return
+	}
+	for i:=0; i<len(nums); i++ {
+		if check[i] {
+			continue
+		}
+		if i>0 && nums[i] == nums[i-1] && check[i-1] == false {
+			continue
+		}
+		check[i] = true
+		list = append(list, nums[i])
+		permuteBT(nums, check, list, r)
+		check[i] = false
+		list = list[:len(list)-1]
+	}
+	return
+}
+
+/**
+n = 4,
+edges = [
+	[1,0], [1,2], [1,3]
+]
+ */
+func findMinHeightTrees1(n int, edges [][]int) []int {
+	if n < 1 || len(edges) < 1 {
+		return []int{0}
+	}
+	graph, deg := make([][]int, n), make([]int, n)
+	for _, e := range edges {
+		graph[e[0]] = append(graph[e[0]], e[1])
+		graph[e[1]] = append(graph[e[1]], e[0])
+		deg[e[0]] ++
+		deg[e[1]] ++
+	}
+
+	remainNode, q := n, make([]int, 0)
+	for node, cnt := range deg {
+		if cnt == 1 {
+			q = append(q, node)
+		}
+	}
+	for remainNode > 2 {
+		remainNode -= len(q)
+		tmp := q
+		q = []int{}
+		for _, x := range tmp {
+			for _, y := range graph[x] {
+				deg[y] --
+				if deg[y] == 1 {
+					q = append(q, y)
+				}
+			}
+		}
+	}
+	return q
+}
