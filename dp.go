@@ -6,7 +6,9 @@ import (
 
 func main() {
 	//r := climbStairs(47)
-	r := rob([]int{1,2,3,1})
+	//r := rob([]int{1,2,3,1})
+	mat := [][]int{{0,0,0}, {0,1,0}, {0,0,0}}
+	r := updateMatrix(mat)
 	fmt.Println(r)
 }
 
@@ -108,6 +110,13 @@ func minPathSum(grid [][]int) int {
 	return dp[len(grid)-1][len(grid[0])-1]
 }
 
+func min(x, y int) int {
+	if x < y {
+		return x
+	}
+	return y
+}
+
 func minPathSum1(grid [][]int) int {
 	dp := make([]int, len(grid[0]))
 	for i:=0; i<len(grid); i++ {
@@ -131,5 +140,51 @@ func minPathSum1(grid [][]int) int {
 https://leetcode.cn/problems/01-matrix/?utm_source=LCUS&utm_medium=ip_redirect&utm_campaign=transfer2china
  */
 func updateMatrix(mat [][]int) [][]int {
-
+	seen, dist := make([][]int, len(mat)), make([][]int, len(mat))
+	for i := 0; i < len(mat); i++ {
+		seen[i] = make([]int, len(mat[0]))
+		dist[i] = make([]int, len(mat[0]))
+	}
+	if len(mat) < 1 {
+		return dist
+	}
+	q := make([]*P, 0)
+	for i := 0; i < len(mat); i++ {
+		for j := 0; j < len(mat[i]); j++ {
+			if mat[i][j] == 0 {
+				q = append(q, NewP(i, j))
+				seen[i][j] = 1
+			}
+		}
+	}
+	var v *P
+	for len(q) > 0 {
+		v, q = q[0], q[1:]
+		for i := 0; i < 4; i++ {
+			x := v.X + direction[i]
+			y := v.Y + direction[i+1]
+			if x < 0 || x >= len(mat) || y < 0 || y >= len(mat[0]) || seen[x][y] == 1 {
+				continue
+			}
+			seen[x][y] = 1
+			dist[x][y] = dist[v.X][v.Y] + 1
+			q = append(q, NewP(x, y))
+		}
+	}
+	return dist
 }
+
+var direction = []int{-1, 0, 1, 0, -1}
+
+type P struct {
+	X int
+	Y int
+}
+
+func NewP(x, y int) *P {
+	return &P{
+		X:x,
+		Y:y,
+	}
+}
+
