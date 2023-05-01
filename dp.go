@@ -2,13 +2,15 @@ package main
 
 import (
 	"fmt"
+	"golang.org/x/tools/container/intsets"
+	"math"
 )
 
 func main() {
 	//r := climbStairs(47)
 	//r := rob([]int{1,2,3,1})
 	mat := [][]int{{0,0,0}, {0,1,0}, {0,0,0}}
-	r := updateMatrix(mat)
+	r := updateMatrix1(mat)
 	fmt.Println(r)
 }
 
@@ -188,3 +190,44 @@ func NewP(x, y int) *P {
 	}
 }
 
+func updateMatrix1(mat [][]int) [][]int {
+	dist := make([][]int, len(mat))
+	for i := 0; i < len(mat); i++ {
+		tmp := make([]int, len(mat[0]))
+		for j:=0; j<len(tmp); j++ {
+			// 初始化动态规划的数组，所有的距离值都设置为一个很大的数
+			tmp[j] = math.MaxInt16 / 2
+		}
+		dist[i] = append(dist[i], tmp...)
+	}
+	for i := 0; i < len(mat); i++ {
+		for j := 0; j < len(mat[i]); j++ {
+			if mat[i][j] == 0 {
+				dist[i][j] = 0
+			}
+		}
+	}
+	// 只有 水平向左移动 和 竖直向上移动，注意动态规划的计算顺序
+	for i := 0; i < len(mat); i++ {
+		for j := 0; j < len(mat[i]); j++ {
+			if i-1 >= 0 {
+				dist[i][j] = min(dist[i][j], dist[i-1][j]+1)
+			}
+			if j-1 >= 0 {
+				dist[i][j] = min(dist[i][j], dist[i][j-1]+1)
+			}
+		}
+	}
+	// 只有 水平向右移动 和 竖直向下移动，注意动态规划的计算顺序
+	for i:=len(mat)-1; i>=0; i-- {
+		for j:=len(mat[0])-1; j>=0; j-- {
+			if i+1 < len(mat) {
+				dist[i][j] = min(dist[i][j], dist[i+1][j]+1)
+			}
+			if j+1 < len(mat[0]) {
+				dist[i][j] = min(dist[i][j], dist[i][j+1]+1)
+			}
+		}
+	}
+	return dist
+}
