@@ -2,15 +2,15 @@ package main
 
 import (
 	"fmt"
-	"golang.org/x/tools/container/intsets"
 	"math"
 )
 
 func main() {
 	//r := climbStairs(47)
 	//r := rob([]int{1,2,3,1})
-	mat := [][]int{{0,0,0}, {0,1,0}, {0,0,0}}
-	r := updateMatrix1(mat)
+	//mat := [][]int{{0,0,0}, {0,1,0}, {0,0,0}}
+	//r := updateMatrix1(mat)
+	r := numSquares(12)
 	fmt.Println(r)
 }
 
@@ -230,4 +230,110 @@ func updateMatrix1(mat [][]int) [][]int {
 		}
 	}
 	return dist
+}
+
+/**
+221. 最大正方形
+https://leetcode.cn/problems/maximal-square/?utm_source=LCUS&utm_medium=ip_redirect&utm_campaign=transfer2china
+ */
+func maximalSquare(matrix [][]byte) int {
+	if len(matrix) < 1 {
+		return 0
+	}
+	dp := make([][]int, len(matrix))
+	var maxSide int
+	for i := 0; i < len(matrix); i++ {
+		dp[i] = make([]int, len(matrix[i]))
+		for j := 0; j < len(matrix[i]); j++ {
+			dp[i][j] = int(matrix[i][j] - '0')
+			if dp[i][j] == 1 {
+				maxSide = 1
+			}
+
+		}
+	}
+	for i := 1; i < len(matrix); i++ {
+		for j := 1; j < len(matrix[i]); j++ {
+			if dp[i][j] == 1 {
+				dp[i][j] = minVal(dp[i-1][j], dp[i][j-1], dp[i-1][j-1])+1
+				if dp[i][j] > maxSide {
+					maxSide = dp[i][j]
+				}
+			}
+		}
+	}
+	return maxSide * maxSide
+}
+
+func minVal(list... int) int {
+	if len(list) == 0 {
+		return 0
+	}
+	minV := list[0]
+	for i:=1; i<len(list); i++ {
+		if list[i] < minV {
+			minV = list[i]
+		}
+	}
+	return minV
+}
+
+/**
+279. 完全平方数
+https://leetcode.cn/problems/perfect-squares/?utm_source=LCUS&utm_medium=ip_redirect&utm_campaign=transfer2china
+ */
+func numSquares(n int) int {
+	if n <= 0 {
+		return 0
+	}
+	dp := make([]int, n+1)
+	for i:=0; i<len(dp); i++ {
+		dp[i] = math.MaxInt16 / 2
+	}
+	dp[0] = 0
+	for i:=1; i<=n; i++ {
+		for j:=1; j*j<=i; j++ {
+			dp[i] = minVal(dp[i], dp[i-j*j] + 1)
+		}
+	}
+	return dp[n]
+}
+
+/**
+91. 解码方法
+https://leetcode.cn/problems/decode-ways/?utm_source=LCUS&utm_medium=ip_redirect&utm_campaign=transfer2china
+ */
+func numDecodings(s string) int {
+	if len(s) < 1 {
+		return 0
+	}
+	dp := make([]int, len(s)+1)
+	dp[0] = 1
+	for i:=1; i<=len(s); i++ {
+		if s[i-1] != '0' {
+			dp[i] += dp[i-1]
+		}
+		if i-2>=0 && s[i-2] != '0' && ((s[i-2]-'0')*10+(s[i-1]-'0') <= 26) {
+			dp[i] += dp[i-2]
+		}
+	}
+	return dp[len(s)]
+}
+
+func numDecodings1(s string) int {
+	if len(s) < 1 {
+		return 0
+	}
+	a, b, c := 0, 1, 0 // a=s[i-2], b=s[i-1], c=s[i]
+	for i:=1; i<=len(s); i++ {
+		c = 0
+		if s[i-1] != '0' {
+			c += b
+		}
+		if i-2>=0 && s[i-2] != '0' && ((s[i-2]-'0')*10+(s[i-1]-'0') <= 26) {
+			c += a
+		}
+		a, b = b, c
+	}
+	return c
 }
