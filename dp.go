@@ -10,7 +10,8 @@ func main() {
 	//r := rob([]int{1,2,3,1})
 	//mat := [][]int{{0,0,0}, {0,1,0}, {0,0,0}}
 	//r := updateMatrix1(mat)
-	r := numSquares(12)
+	//r := numSquares(12)
+	r := lengthOfLIS([]int{1,3,6,7,9,4,10,5,6})
 	fmt.Println(r)
 }
 
@@ -336,4 +337,56 @@ func numDecodings1(s string) int {
 		a, b = b, c
 	}
 	return c
+}
+
+/**
+139. 单词拆分
+https://leetcode.cn/problems/word-break/
+ */
+func wordBreak(s string, wordDict []string) bool {
+	set := make(map[string]bool)
+	for _, v := range wordDict {
+		set[v] = true
+	}
+	dp := make([]bool, len(s)+1)
+	dp[0] = true
+	for i:=1; i<=len(s); i++ {
+		for j:=0; j<i; j++ {
+			if dp[j] && set[s[j:i]] {
+				dp[i] = true
+				break
+			}
+		}
+	}
+	return dp[len(s)]
+}
+
+/**
+300. 最长递增子序列
+https://leetcode.cn/problems/longest-increasing-subsequence/?utm_source=LCUS&utm_medium=ip_redirect&utm_campaign=transfer2china
+ */
+func lengthOfLIS(nums []int) int {
+	dp := make([]int, len(nums))
+	dp[0] = 1
+	maxVal := 1
+	for i:=1; i<len(nums); i++ {
+		dp[i] = 1
+		for j:=0; j<i; j++ {
+			if nums[j] < nums[i] {
+				dp[i] = max(dp[j]+1, dp[i])
+			}
+		}
+		if dp[i] > maxVal {
+			maxVal = dp[i]
+		}
+	}
+	fmt.Println(dp)
+	return maxVal
+}
+
+func max(i, j int) int {
+	if i > j {
+		return i
+	}
+	return j
 }
