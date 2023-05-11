@@ -11,8 +11,46 @@ func main() {
 	//mat := [][]int{{0,0,0}, {0,1,0}, {0,0,0}}
 	//r := updateMatrix1(mat)
 	//r := numSquares(12)
-	r := lengthOfLIS([]int{1,3,6,7,9,4,10,5,6})
+	//r := lengthOfLIS([]int{1,3,6,7,9,4,10,5,6})
+	weight, value, count, bagCap := []int{1,3,4}, []int{15,20,30}, 3, 4
+	r := bag01Optimize(weight, value, count, bagCap)
 	fmt.Println(r)
+}
+
+/**
+01背包问题
+ */
+func bag01(weight []int, value []int, count, bagCap int) int {
+	dp := make([][]int, count)
+	for i:=0; i<count; i++ {
+		dp[i] = make([]int, bagCap+1)
+	}
+	dp[0][0] = 0
+	for i:=1; i<count; i++ {
+		w, v := weight[i-1], value[i-1]
+		for j:=1; j<bagCap+1; j++ {
+			if j >= w {
+				dp[i][j] = max(dp[i-1][j], dp[i-1][j-w]+v)
+			} else {
+				dp[i][j] = dp[i-1][j]
+			}
+		}
+	}
+	fmt.Println(dp)
+	return dp[count-1][bagCap]
+}
+
+func bag01Optimize(weight []int, value []int, count, bagCap int) int {
+	dp := make([]int, bagCap+1)
+	dp[0] = 0
+	for i := 1; i < count; i++ {
+		w, v := weight[i-1], value[i-1]
+		for j := bagCap; j >= w; j-- {
+			dp[j] = max(dp[j], dp[j-w]+v)
+		}
+	}
+	fmt.Println(dp)
+	return dp[bagCap]
 }
 
 /**
@@ -390,3 +428,27 @@ func max(i, j int) int {
 	}
 	return j
 }
+
+/**
+1143. 最长公共子序列
+https://leetcode.cn/problems/longest-common-subsequence/
+ */
+func longestCommonSubsequence(text1 string, text2 string) int {
+	len1, len2 := len(text1), len(text2)
+	dp := make([][]int, len1+1)
+	for i:=0; i<len1+1; i++ {
+		dp[i] = make([]int, len2+1)
+	}
+	for i:=1; i<=len1; i++ {
+		for j:=1; j<=len2; j++ {
+			if text1[i-1] == text2[j-1] {
+				dp[i][j] = dp[i-1][j-1] + 1
+			} else {
+				dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+			}
+		}
+	}
+	return dp[len1][len2]
+}
+
+
