@@ -15,7 +15,7 @@ func main() {
 	//weight, value, count, bagCap := []int{1,2,3}, []int{10,20,30}, 3, 4
 	//r := bag01Optimize(weight, value, count, bagCap)
 	weight, value, count, bagCap := []int{1,2,3}, []int{12,20,100}, 3, 4
-	r := bagComplete(weight, value, count, bagCap)
+	r := bagCompleteOptimize(weight, value, count, bagCap)
 	fmt.Println(r)
 }
 
@@ -30,16 +30,32 @@ func bagComplete(weight []int, value []int, count, bagCap int) int {
 	dp[0][0] = 0
 	for i:=1; i<=count; i++ {
 		w, v := weight[i-1], value[i-1]
-		for j:=w; j<=bagCap; j++ {
-			dp[i][j] = max(dp[i-1][j], dp[i][j-w]+v)
+		for j:=1; j<=bagCap; j++ {
+			if j >= w {
+				dp[i][j] = max(dp[i-1][j], dp[i][j-w]+v)
+			} else {
+				dp[i][j] = dp[i-1][j]
+			}
 		}
 	}
-	/**
-	dp[2][1] = max(dp[1][1], dp[2][0] + 12)
-	 */
-	//dp[3][4] = max(dp[2][4], dp[3][1] + 100)
 	fmt.Println(dp)
 	return dp[count][bagCap]
+}
+
+/**
+完全背包问题空间压缩
+*/
+func bagCompleteOptimize(weight []int, value []int, count, bagCap int) int {
+	dp := make([]int, bagCap+1)
+	dp[0] = 0
+	for i := 1; i <= count; i++ {
+		w, v := weight[i-1], value[i-1]
+		for j := w; j <= bagCap; j++ {
+			dp[j] = max(dp[j], dp[j-w]+v)
+		}
+	}
+	fmt.Println(dp)
+	return dp[bagCap]
 }
 
 /**
