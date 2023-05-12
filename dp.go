@@ -12,9 +12,34 @@ func main() {
 	//r := updateMatrix1(mat)
 	//r := numSquares(12)
 	//r := lengthOfLIS([]int{1,3,6,7,9,4,10,5,6})
-	weight, value, count, bagCap := []int{1,3,4}, []int{15,20,30}, 3, 4
-	r := bag01Optimize(weight, value, count, bagCap)
+	//weight, value, count, bagCap := []int{1,2,3}, []int{10,20,30}, 3, 4
+	//r := bag01Optimize(weight, value, count, bagCap)
+	weight, value, count, bagCap := []int{1,2,3}, []int{12,20,100}, 3, 4
+	r := bagComplete(weight, value, count, bagCap)
 	fmt.Println(r)
+}
+
+/**
+完全背包问题
+ */
+func bagComplete(weight []int, value []int, count, bagCap int) int {
+	dp := make([][]int, count+1)
+	for i:=0; i<=count; i++ {
+		dp[i] = make([]int, bagCap+1)
+	}
+	dp[0][0] = 0
+	for i:=1; i<=count; i++ {
+		w, v := weight[i-1], value[i-1]
+		for j:=w; j<=bagCap; j++ {
+			dp[i][j] = max(dp[i-1][j], dp[i][j-w]+v)
+		}
+	}
+	/**
+	dp[2][1] = max(dp[1][1], dp[2][0] + 12)
+	 */
+	//dp[3][4] = max(dp[2][4], dp[3][1] + 100)
+	fmt.Println(dp)
+	return dp[count][bagCap]
 }
 
 /**
@@ -40,6 +65,9 @@ func bag01(weight []int, value []int, count, bagCap int) int {
 	return dp[count-1][bagCap]
 }
 
+/**
+01背包空间压缩
+*/
 func bag01Optimize(weight []int, value []int, count, bagCap int) int {
 	dp := make([]int, bagCap+1)
 	dp[0] = 0
