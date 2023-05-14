@@ -16,7 +16,7 @@ func main() {
 	//r := bag01Optimize(weight, value, count, bagCap)
 	//weight, value, count, bagCap := []int{1,2,3}, []int{12,20,100}, 3, 4
 	//r := bagComplete(weight, value, count, bagCap)
-	r := canPartition([]int{3,3,3,4,5})
+	r := canPartition1([]int{2,2,1,1})
 	fmt.Println(r)
 }
 
@@ -509,21 +509,15 @@ func canPartition(nums []int) bool {
 		return false
 	}
 	halfSum := sum / 2  // val, weight := halfSum, len(nums)
-	dp := make([]int, len(nums)+1)
-	dp[0] = 0
+	dp := make([]bool, halfSum+1)
+	dp[0] = true
 	for i:=1; i<=len(nums); i++ {
-		v := nums[i-1]
-		for j:=len(nums); j>0; j-- {
-			dp[i] = max(dp[j], dp[j-1]+v)
+		for j:=halfSum; j>=nums[i-1]; j-- {
+			dp[j] = dp[j] || dp[j-nums[i-1]]
 		}
 	}
 	fmt.Println(dp, halfSum)
-	for _, v := range dp {
-		if v == halfSum {
-			return true
-		}
-	}
-	return false
+	return dp[halfSum]
 }
 
 func sumInt(path []int) int {
@@ -533,5 +527,37 @@ func sumInt(path []int) int {
 	}
 	return sum
 }
+
+func canPartition1(nums []int) bool {
+	if len(nums) < 1 {
+		return true
+	}
+	sum := sumInt(nums)
+	if sum % 2 != 0 {
+		return false
+	}
+	halfSum := sum / 2  // val, weight := halfSum, len(nums)
+	dp := make([][]bool, len(nums)+1)
+	for k, _ := range dp {
+		dp[k] = make([]bool, halfSum+1)
+		dp[k][0] = true
+	}
+
+	for i:=1; i<=len(nums); i++ {
+		for j:=nums[i-1]; j<=halfSum; j ++ {
+			dp[i][j] = dp[i-1][j] || dp[i-1][j-nums[i-1]]
+		}
+	}
+	return dp[len(nums)][halfSum]
+}
+
+/**
+474. 一和零
+https://leetcode.cn/problems/ones-and-zeroes/?utm_source=LCUS&utm_medium=ip_redirect&utm_campaign=transfer2china
+ */
+func findMaxForm(strs []string, m int, n int) int {
+
+}
+
 
 
