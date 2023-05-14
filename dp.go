@@ -14,8 +14,9 @@ func main() {
 	//r := lengthOfLIS([]int{1,3,6,7,9,4,10,5,6})
 	//weight, value, count, bagCap := []int{1,2,3}, []int{10,20,30}, 3, 4
 	//r := bag01Optimize(weight, value, count, bagCap)
-	weight, value, count, bagCap := []int{1,2,3}, []int{12,20,100}, 3, 4
-	r := bagCompleteOptimize(weight, value, count, bagCap)
+	//weight, value, count, bagCap := []int{1,2,3}, []int{12,20,100}, 3, 4
+	//r := bagComplete(weight, value, count, bagCap)
+	r := canPartition([]int{3,3,3,4,5})
 	fmt.Println(r)
 }
 
@@ -493,6 +494,44 @@ func longestCommonSubsequence(text1 string, text2 string) int {
 		}
 	}
 	return dp[len1][len2]
+}
+
+/**
+416. 分割等和子集
+https://leetcode.cn/problems/partition-equal-subset-sum/?utm_source=LCUS&utm_medium=ip_redirect&utm_campaign=transfer2china
+ */
+func canPartition(nums []int) bool {
+	if len(nums) < 1 {
+		return true
+	}
+	sum := sumInt(nums)
+	if sum % 2 != 0 {
+		return false
+	}
+	halfSum := sum / 2  // val, weight := halfSum, len(nums)
+	dp := make([]int, len(nums)+1)
+	dp[0] = 0
+	for i:=1; i<=len(nums); i++ {
+		v := nums[i-1]
+		for j:=len(nums); j>0; j-- {
+			dp[i] = max(dp[j], dp[j-1]+v)
+		}
+	}
+	fmt.Println(dp, halfSum)
+	for _, v := range dp {
+		if v == halfSum {
+			return true
+		}
+	}
+	return false
+}
+
+func sumInt(path []int) int {
+	var sum int
+	for _, val := range path {
+		sum += val
+	}
+	return sum
 }
 
 
