@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"strings"
 )
 
 func main() {
@@ -16,7 +17,8 @@ func main() {
 	//r := bag01Optimize(weight, value, count, bagCap)
 	//weight, value, count, bagCap := []int{1,2,3}, []int{12,20,100}, 3, 4
 	//r := bagComplete(weight, value, count, bagCap)
-	r := canPartition1([]int{2,2,1,1})
+	//r := canPartition1([]int{2,2,1,1})
+	r := coinChange([]int{1, 2, 5}, 11)
 	fmt.Println(r)
 }
 
@@ -556,8 +558,51 @@ func canPartition1(nums []int) bool {
 https://leetcode.cn/problems/ones-and-zeroes/?utm_source=LCUS&utm_medium=ip_redirect&utm_campaign=transfer2china
  */
 func findMaxForm(strs []string, m int, n int) int {
-
+	dp := make([][]int, m+1)
+	for k, _ := range dp {
+		dp[k] = make([]int, n+1)
+	}
+	for _, str := range strs {
+		zeroCnt := strings.Count(str, "0")
+		oneCnt := len(str) - zeroCnt
+		for i:=m; i>=zeroCnt; i-- {
+			for j:=n; j>=oneCnt; j-- {
+				dp[i][j] = max(dp[i][j], dp[i-zeroCnt][j-oneCnt]+1)
+			}
+		}
+	}
+	return dp[m][n]
 }
 
+/**
+322. 零钱兑换
+https://leetcode.cn/problems/coin-change/?utm_source=LCUS&utm_medium=ip_redirect&utm_campaign=transfer2china
+ */
+func coinChange(coins []int, amount int) int {
+	dp := make([]int, amount+1)
+	for i:=1; i<len(dp); i++ {
+		dp[i] = amount+1
+	}
+	dp[0] = 0
+	for i:=1; i<=amount; i++ {
+		for _, coin := range coins {
+			if i >= coin {
+				dp[i] = min(dp[i], dp[i-coin]+1)
+			}
+		}
+	}
+	fmt.Println(dp)
+	if dp[amount] > amount {
+		return -1
+	}
+	return dp[amount]
+}
 
+/**
+72. 编辑距离
+https://leetcode.cn/problems/edit-distance/?utm_source=LCUS&utm_medium=ip_redirect&utm_campaign=transfer2china
+ */
+func minDistance(word1 string, word2 string) int {
+
+}
 
