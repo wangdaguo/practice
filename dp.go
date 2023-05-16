@@ -18,7 +18,8 @@ func main() {
 	//weight, value, count, bagCap := []int{1,2,3}, []int{12,20,100}, 3, 4
 	//r := bagComplete(weight, value, count, bagCap)
 	//r := canPartition1([]int{2,2,1,1})
-	r := coinChange([]int{1, 2, 5}, 11)
+	//r := coinChange([]int{1, 2, 5}, 11)
+	r := minDistance("horse", "ros")
 	fmt.Println(r)
 }
 
@@ -603,6 +604,39 @@ func coinChange(coins []int, amount int) int {
 https://leetcode.cn/problems/edit-distance/?utm_source=LCUS&utm_medium=ip_redirect&utm_campaign=transfer2china
  */
 func minDistance(word1 string, word2 string) int {
+	dp := make([][]int, len(word1)+1)
+	for i, _ := range dp {
+		dp[i] = make([]int, len(word2)+1)
+	}
+	for i:=0; i<=len(word1); i++ {
+		dp[i][0] = i
+	}
+	for j:=0; j<=len(word2); j++ {
+		dp[0][j] = j
+	}
+	for i:=1; i<=len(word1); i++ {
+		for j:=1; j<=len(word2); j++ {
+			if word1[i-1] == word2[j-1] {
+				dp[i][j] = dp[i-1][j-1]
+			} else {
+				dp[i][j] = mostMin(dp[i-1][j-1], dp[i][j-1], dp[i-1][j]) + 1
+			}
+		}
+	}
+	fmt.Println(dp)
+	return dp[len(word1)][len(word2)]
+}
 
+func mostMin(list... int) int {
+	if len(list) < 1 {
+		return 0
+	}
+	min := list[0]
+	for i:=1; i<len(list); i++ {
+		if min > list[i] {
+			min = list[i]
+		}
+	}
+	return min
 }
 
