@@ -19,7 +19,8 @@ func main() {
 	//r := bagComplete(weight, value, count, bagCap)
 	//r := canPartition1([]int{2,2,1,1})
 	//r := coinChange([]int{1, 2, 5}, 11)
-	r := minDistance("horse", "ros")
+	//r := minDistance("horse", "ros")
+	r := minSteps(3)
 	fmt.Println(r)
 }
 
@@ -640,3 +641,56 @@ func mostMin(list... int) int {
 	return min
 }
 
+/**
+650. 只有两个键的键盘
+https://leetcode.cn/problems/2-keys-keyboard/?utm_source=LCUS&utm_medium=ip_redirect&utm_campaign=transfer2china
+ */
+func minSteps(n int) int {
+	dp := make([]int, n+1)
+	dp[0] = 0
+	h := int(math.Sqrt(float64(n)))
+	for i:=2; i<=n; i++ {
+		dp[i] = i
+		for j:=2; j<=h; j++ {
+			if i % j == 0 {
+				dp[i] = dp[j] + dp[i/j]
+			}
+		}
+	}
+	fmt.Println(dp)
+	return dp[n]
+}
+
+/**
+10. 正则表达式匹配
+https://leetcode.cn/problems/regular-expression-matching/?utm_source=LCUS&utm_medium=ip_redirect&utm_campaign=transfer2china
+ */
+func isMatch(s string, p string) bool {
+	dp := make([][]bool, len(s)+1)
+	for i := range dp {
+		dp[i] = make([]bool, len(p)+1)
+	}
+	dp[0][0] = true
+	match := func(i, j int) bool {
+		if i == 0 {
+			return false
+		}
+		if p[j-1] == '.' {
+			return true
+		}
+		return s[i-1] == p[j-1]
+	}
+	for i:=0; i<=len(s); i++ {
+		for j:=1; j<=len(p); j++ {
+			if p[j-1] == '*' {
+				dp[i][j] = dp[i][j] || dp[i][j-2]
+				if match(i, j-1) {
+					dp[i][j] = dp[i][j] || dp[i-1][j]
+				}
+			} else if match(i, j) {
+				dp[i][j] = dp[i][j] || dp[i-1][j-1]
+			}
+		}
+	}
+	return dp[len(s)][len(p)]
+}
