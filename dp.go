@@ -20,7 +20,8 @@ func main() {
 	//r := canPartition1([]int{2,2,1,1})
 	//r := coinChange([]int{1, 2, 5}, 11)
 	//r := minDistance("horse", "ros")
-	r := minSteps(3)
+	//r := minSteps(3)
+	r := maxProfit([]int{7,1,5,3,6,4})
 	fmt.Println(r)
 }
 
@@ -693,4 +694,40 @@ func isMatch(s string, p string) bool {
 		}
 	}
 	return dp[len(s)][len(p)]
+}
+
+/**
+121. 买卖股票的最佳时机
+https://leetcode.cn/problems/best-time-to-buy-and-sell-stock/?utm_source=LCUS&utm_medium=ip_redirect&utm_campaign=transfer2china
+ */
+func maxProfit(prices []int) int {
+	if len(prices) < 1 {
+		return 0
+	}
+	var sell int
+	buy := math.MaxInt16
+	for i:=0; i<len(prices); i++ {
+		buy = min(buy, prices[i])
+		sell = max(sell, prices[i]-buy)
+	}
+	return sell
+}
+
+/**
+1049. 最后一块石头的重量 II
+https://leetcode.cn/problems/last-stone-weight-ii/
+ */
+func lastStoneWeightII(stones []int) int {
+	/**
+	dp[i] = dp[j] - dp[i-j]
+	 */
+	return 0
+}
+
+/**
+188. 买卖股票的最佳时机 IV
+https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-iv/
+ */
+func maxProfit2(k int, prices []int) int {
+
 }
