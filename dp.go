@@ -21,7 +21,8 @@ func main() {
 	//r := coinChange([]int{1, 2, 5}, 11)
 	//r := minDistance("horse", "ros")
 	//r := minSteps(3)
-	r := maxProfit([]int{7,1,5,3,6,4})
+	//r := maxProfit([]int{7,1,5,3,6,4})
+	r := maxProfit3([]int{1,2,3,0,2})
 	fmt.Println(r)
 }
 
@@ -729,5 +730,49 @@ func lastStoneWeightII(stones []int) int {
 https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-iv/
  */
 func maxProfit2(k int, prices []int) int {
+	if len(prices) < 2 {
+		return 0
+	}
+	if k > len(prices) {
+		return maxProfitUnlimited(prices)
+	}
+	buy, sell := make([]int, len(prices)+1), make([]int, len(prices)+1)
+	for i := range buy {
+		buy[i] = math.MinInt32
+	}
+	for i:=0; i<len(prices); i++ {
+		for j:=1; j<=k; j++ {
+			buy[j] = max(buy[j], sell[j-1]-prices[i])
+			sell[j] = max(sell[j], buy[j] + prices[i])
+		}
+	}
+	return sell[k]
+}
 
+func maxProfitUnlimited(prices []int) int {
+	var maxProfit int
+	for i:=1; i<len(prices); i++ {
+		if prices[i] > prices[i-1] {
+			maxProfit += prices[i] - prices[i-1]
+		}
+	}
+	return maxProfit
+}
+
+/**
+309. 最佳买卖股票时机含冷冻期
+https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-with-cooldown/
+ */
+func maxProfit3(prices []int) int {
+	// 分别是  买入、不动、卖出、冻结
+	buy, s1, sell, s2 := make([]int, len(prices)+1), make([]int, len(prices)+1), make([]int, len(prices)+1), make([]int, len(prices)+1)
+	buy[0], s1[0] = -prices[0], -prices[0]
+	sell[0], s2[0] = 0, 0
+	for i:=1; i<len(prices); i++ {
+		buy[i] = s2[i-1] - prices[i]
+		s1[i] = max(s1[i-1], buy[i-1])
+		sell[i] = max(buy[i-1], s1[i-1]) + prices[i]
+		s2[i] = max(s2[i-1], sell[i-1])
+	}
+	return max(s2[len(prices)-1], sell[len(prices)-1])
 }
