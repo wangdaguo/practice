@@ -22,7 +22,8 @@ func main() {
 	//r := minDistance("horse", "ros")
 	//r := minSteps(3)
 	//r := maxProfit([]int{7,1,5,3,6,4})
-	r := maxProfit3([]int{1,2,3,0,2})
+	//r := maxProfit3([]int{1,2,3,0,2})
+	r := rob1([]int{1,2,3})
 	fmt.Println(r)
 }
 
@@ -775,4 +776,36 @@ func maxProfit3(prices []int) int {
 		s2[i] = max(s2[i-1], sell[i-1])
 	}
 	return max(s2[len(prices)-1], sell[len(prices)-1])
+}
+
+/**
+213. 打家劫舍 II
+https://leetcode.cn/problems/house-robber-ii/
+2,3,2
+
+i != len(nums)-1
+dp[i] = max(dp[i-1], dp[i-2] + nums[i])
+
+i == len(nums)-1 && 选择了第1个
+dp[i] = dp[i-1]
+ */
+func rob1(nums []int) int {
+	if len(nums) < 1 {
+		return 0
+	}
+	have1Dp, notHave1Dp := make([]int, len(nums)+1), make([]int, len(nums)+1)
+	have1Dp[0], have1Dp[1] = 0, nums[0]
+	notHave1Dp[0], notHave1Dp[1] = 0, 0
+
+	for i := 2; i <= len(nums); i++ {
+		if i == len(nums) {
+			have1Dp[i] = have1Dp[i-1]
+			notHave1Dp[i] = max(notHave1Dp[i-1], notHave1Dp[i-2]+nums[i-1])
+		} else {
+			have1Dp[i] = max(have1Dp[i-1], have1Dp[i-2]+nums[i-1])
+			notHave1Dp[i] = max(notHave1Dp[i-1], notHave1Dp[i-2]+nums[i-1])
+		}
+	}
+	fmt.Println(have1Dp, notHave1Dp)
+	return max(have1Dp[len(nums)], notHave1Dp[len(nums)])
 }
