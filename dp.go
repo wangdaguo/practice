@@ -25,7 +25,8 @@ func main() {
 	//r := maxProfit3([]int{1,2,3,0,2})
 	//r := rob1([]int{1,2,3})
 	//r := maxSubArray2([]int{-1,-7,-3})
-	r := integerBreak(10)
+	//r := integerBreak(10)
+	r := minDistance1("sea", "eat")
 	fmt.Println(r)
 }
 
@@ -844,4 +845,32 @@ func integerBreak(n int) int {
 	}
 	fmt.Println(dp)
 	return dp[n]
+}
+
+/**
+583. 两个字符串的删除操作
+https://leetcode.cn/problems/delete-operation-for-two-strings/
+ */
+func minDistance1(word1 string, word2 string) int {
+	dp := make([][]int, len(word1)+1)
+	for i := range dp {
+		dp[i] = make([]int, len(word2)+1)
+		dp[i][0] = i
+	}
+	for j := range dp[0] {
+		dp[0][j] = j
+	}
+
+	//dp[i][j] 表示word1[:i] 与 word2[:j] 保持相同所需要删除的最小步数
+	for i:=1; i<=len(word1); i++ {
+		for j:=1; j<=len(word2); j++ {
+			if word1[i-1] == word2[j-1] {
+				dp[i][j] = dp[i-1][j-1]
+			} else {
+				dp[i][j] = min(dp[i-1][j], dp[i][j-1]) + 1
+			}
+		}
+	}
+	fmt.Println(dp)
+	return dp[len(word1)][len(word2)]
 }
