@@ -24,7 +24,8 @@ func main() {
 	//r := maxProfit([]int{7,1,5,3,6,4})
 	//r := maxProfit3([]int{1,2,3,0,2})
 	//r := rob1([]int{1,2,3})
-	r := maxSubArray2([]int{-1,-7,-3})
+	//r := maxSubArray2([]int{-1,-7,-3})
+	r := integerBreak(10)
 	fmt.Println(r)
 }
 
@@ -826,4 +827,21 @@ func maxSubArray2(nums []int) int {
 		}
 	}
 	return max
+}
+
+/**
+343. 整数拆分
+https://leetcode.cn/problems/integer-break/
+ */
+func integerBreak(n int) int {
+	dp := make([]int, n+1)
+	dp[0], dp[1] = 0, 1
+	for i:=2; i<=n; i++ {
+		for j:=1; j<=i; j++ {
+			dp[i] = max(dp[i], dp[i-j] * j)
+			dp[i] = max(dp[i], j * (i-j))
+		}
+	}
+	fmt.Println(dp)
+	return dp[n]
 }
