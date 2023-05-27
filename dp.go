@@ -23,7 +23,8 @@ func main() {
 	//r := minSteps(3)
 	//r := maxProfit([]int{7,1,5,3,6,4})
 	//r := maxProfit3([]int{1,2,3,0,2})
-	r := rob1([]int{1,2,3})
+	//r := rob1([]int{1,2,3})
+	r := maxSubArray2([]int{-1,-7,-3})
 	fmt.Println(r)
 }
 
@@ -781,13 +782,6 @@ func maxProfit3(prices []int) int {
 /**
 213. 打家劫舍 II
 https://leetcode.cn/problems/house-robber-ii/
-2,3,2
-
-i != len(nums)-1
-dp[i] = max(dp[i-1], dp[i-2] + nums[i])
-
-i == len(nums)-1 && 选择了第1个
-dp[i] = dp[i-1]
  */
 func rob1(nums []int) int {
 	if len(nums) < 1 {
@@ -808,4 +802,28 @@ func rob1(nums []int) int {
 	}
 	fmt.Println(have1Dp, notHave1Dp)
 	return max(have1Dp[len(nums)], notHave1Dp[len(nums)])
+}
+
+/**
+53. 最大子数组和
+https://leetcode.cn/problems/maximum-subarray/
+ */
+func maxSubArray2(nums []int) int {
+	if len(nums) < 1 {
+		return 0
+	}
+	tmp, max := nums[0], nums[0]
+	for i, v := range nums {
+		if i == 0 {
+			continue
+		}
+		tmp += v
+		if tmp < v {
+			tmp = v
+		}
+		if tmp > max {
+			max = tmp
+		}
+	}
+	return max
 }
