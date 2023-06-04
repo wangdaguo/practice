@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func main() {
@@ -11,8 +13,13 @@ func main() {
 	//r := lcm(10, 5)
 	//r := convertToBase7(10)
 	//r := trailingZeroes(5)
-	r := addStrings("11", "123")
-	fmt.Println(r)
+	//r := addStrings("11", "123")
+	//r := isPowerOfThree(3)
+	s := Constructor([]int{1,2,3})
+	fmt.Println(s.Nums)
+	fmt.Println(s.Shuffle())
+	fmt.Println(s.Reset())
+	//fmt.Println(r)
 }
 
 func gcd2(a, b int) int  {
@@ -148,3 +155,61 @@ func addStrings(num1 string, num2 string) string {
 	}
 	return strings.Join(r, "")
 }
+
+/**
+326. 3 的幂
+https://leetcode.cn/problems/power-of-three/
+ */
+func isPowerOfThree(n int) bool {
+	if n < 1 {
+		return false
+	}
+	if n == 1 {
+		return true
+	}
+	res := 3
+	for res < n {
+		res *= 3
+	}
+	if res == n {
+		return true
+	}
+	return false
+}
+
+/**
+384. 打乱数组
+https://leetcode.cn/problems/shuffle-an-array/
+ */
+type Solution struct {
+	Nums []int
+}
+
+func Constructor(nums []int) Solution {
+	s := Solution{
+		Nums:        nums,
+	}
+	return s
+}
+
+func (s *Solution) Reset() []int {
+	return s.Nums
+}
+
+func (s *Solution) Shuffle() []int {
+	if len(s.Nums) < 1 {
+		return []int{}
+	}
+	r := make([]int, len(s.Nums))
+	for k, v := range s.Nums {
+		r[k] = v
+	}
+	rand.Seed(time.Now().UnixNano()) // unix 时间戳，秒
+	for i:=0; i<len(s.Nums); i++ {
+		index := rand.Intn(len(s.Nums))
+		r[i], r[index] = r[index], r[i]
+	}
+	return r
+}
+
+
