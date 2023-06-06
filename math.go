@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -15,10 +16,27 @@ func main() {
 	//r := trailingZeroes(5)
 	//r := addStrings("11", "123")
 	//r := isPowerOfThree(3)
-	s := Constructor([]int{1,2,3})
-	fmt.Println(s.Nums)
-	fmt.Println(s.Shuffle())
-	fmt.Println(s.Reset())
+	//s := Constructor1([]int{1,2,3})
+	//fmt.Println(s.Nums)
+	//fmt.Println(s.Shuffle())
+	//fmt.Println(s.Reset())
+
+	//s := Constructor2([]int{3,1,2,4})
+	//fmt.Println(s.pre)
+	node3 := &ListNode{
+		Val:  3,
+		Next: nil,
+	}
+	node2 := &ListNode{
+		Val:  2,
+		Next: node3,
+	}
+	node1 := &ListNode{
+		Val:  1,
+		Next: node2,
+	}
+	s := Constructor(node1)
+	fmt.Println(s.GetRandom())
 	//fmt.Println(r)
 }
 
@@ -181,22 +199,22 @@ func isPowerOfThree(n int) bool {
 384. 打乱数组
 https://leetcode.cn/problems/shuffle-an-array/
  */
-type Solution struct {
+type Solution1 struct {
 	Nums []int
 }
 
-func Constructor(nums []int) Solution {
-	s := Solution{
+func Constructor1(nums []int) Solution1 {
+	s := Solution1{
 		Nums:        nums,
 	}
 	return s
 }
 
-func (s *Solution) Reset() []int {
+func (s *Solution1) Reset() []int {
 	return s.Nums
 }
 
-func (s *Solution) Shuffle() []int {
+func (s *Solution1) Shuffle() []int {
 	if len(s.Nums) < 1 {
 		return []int{}
 	}
@@ -212,4 +230,72 @@ func (s *Solution) Shuffle() []int {
 	return r
 }
 
+/**
+528. 按权重随机选择
+https://leetcode.cn/problems/random-pick-with-weight/
+ */
+type Solution2 struct {
+	pre []int
+}
 
+/**
+[3,1,2,4]
+ */
+func Constructor2(w []int) Solution2 {
+	for i:=1; i<len(w); i++ {
+		w[i] += w[i-1]
+	}
+	return Solution2{w}
+}
+
+func (s *Solution2) PickIndex() int {
+	i := rand.Intn(s.pre[len(s.pre)-1])+1
+	return sort.SearchInts(s.pre, i)
+}
+
+/**
+382. 链表随机节点
+https://leetcode.cn/problems/linked-list-random-node
+ */
+type ListNode struct {
+		Val  int
+	Next *ListNode
+}
+
+type Solution struct {
+	head *ListNode
+	len int
+}
+
+func Constructor(head *ListNode) Solution {
+	s := Solution{
+		head: head,
+	}
+	node, len := head, 0
+	for node != nil {
+		len ++
+		node = node.Next
+	}
+	s.len = len
+	return s
+}
+
+func (s *Solution) GetRandom() int {
+	rand.Seed(time.Now().UnixNano())
+	i := rand.Intn(s.len) + 1
+	r, node := 0, s.head
+	for i > 0 {
+		r = node.Val
+		node = node.Next
+		i --
+	}
+	return r
+}
+
+/**
+168. Excel表列名称
+https://leetcode.cn/problems/excel-sheet-column-title/
+ */
+func convertToTitle(columnNumber int) string {
+
+}
