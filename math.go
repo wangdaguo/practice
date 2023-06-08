@@ -23,21 +23,23 @@ func main() {
 
 	//s := Constructor2([]int{3,1,2,4})
 	//fmt.Println(s.pre)
-	node3 := &ListNode{
-		Val:  3,
-		Next: nil,
-	}
-	node2 := &ListNode{
-		Val:  2,
-		Next: node3,
-	}
-	node1 := &ListNode{
-		Val:  1,
-		Next: node2,
-	}
-	s := Constructor(node1)
-	fmt.Println(s.GetRandom())
-	//fmt.Println(r)
+	//node3 := &ListNode{
+	//	Val:  3,
+	//	Next: nil,
+	//}
+	//node2 := &ListNode{
+	//	Val:  2,
+	//	Next: node3,
+	//}
+	//node1 := &ListNode{
+	//	Val:  1,
+	//	Next: node2,
+	//}
+	//s := Constructor(node1)
+	//fmt.Println(s.GetRandom())
+	//r := convertToTitle(701)
+	r := addBinary("11", "1")
+	fmt.Println(r)
 }
 
 func gcd2(a, b int) int  {
@@ -297,5 +299,53 @@ func (s *Solution) GetRandom() int {
 https://leetcode.cn/problems/excel-sheet-column-title/
  */
 func convertToTitle(columnNumber int) string {
-
+	var r string
+	for columnNumber > 0 {
+		s := columnNumber % 26
+		if s == 0 {
+			s = 26
+			columnNumber --
+		}
+		r = string('A' + s - 1) + r
+		columnNumber = columnNumber / 26
+	}
+	return r
 }
+
+/**
+67. 二进制求和
+https://leetcode.cn/problems/add-binary
+ */
+func addBinary(a string, b string) string {
+	if len(a) < 1 {
+		return b
+	}
+	if len(b) < 1 {
+		return a
+	}
+	cnt, cb, sum, r := len(a), 0, 0, ""
+	if len(b) > len(a) {
+		 cnt = len(b)
+	}
+	for i:=0; i<cnt; i++ {
+		if i < len(a) && i < len(b) {
+			sum = int(a[len(a)-i-1]-'0') + int(b[len(b)-i-1]-'0') + cb
+		} else if i < len(a) {
+			sum = int(a[len(a)-i-1]-'0') + cb
+		} else if i < len(b) {
+			sum = int(b[len(b)-i-1]-'0') + cb
+		}
+		r = fmt.Sprintf("%d%s", sum%2, r)
+		cb = sum/2
+		sum = 0
+	}
+	if cb > 0 {
+		r = fmt.Sprintf("%d%s", cb, r)
+	}
+	return r
+}
+
+/**
+238. 除自身以外数组的乘积
+https://leetcode.cn/problems/product-of-array-except-self/
+ */
