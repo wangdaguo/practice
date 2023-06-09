@@ -349,3 +349,34 @@ func addBinary(a string, b string) string {
 238. 除自身以外数组的乘积
 https://leetcode.cn/problems/product-of-array-except-self/
  */
+func productExceptSelf(nums []int) []int {
+	ans, R := make([]int, len(nums)), 1
+	for i:=1; i<len(nums); i++ {
+		ans[i] = ans[i-1] * nums[i-1]
+	}
+	for i:=len(nums)-1; i>=0; i-- {
+		ans[i] *= R
+		R *= nums[i]
+	}
+	return ans
+}
+
+/**
+462. 最小操作次数使数组元素相等 II
+https://leetcode.cn/problems/minimum-moves-to-equal-array-elements-ii/
+ */
+func minMoves2(nums []int) int {
+	sort.Ints(nums)
+	x, r := nums[len(nums)/2], 0
+	for _, num := range nums {
+		r += abs(x-num)
+	}
+	return r
+}
+
+func abs(num int) int {
+	if num < 0 {
+		return -num
+	}
+	return num
+}
