@@ -38,8 +38,10 @@ func main() {
 	//s := Constructor(node1)
 	//fmt.Println(s.GetRandom())
 	//r := convertToTitle(701)
-	r := addBinary("11", "1")
-	fmt.Println(r)
+	//r := addBinary("11", "1")
+	//r := majorityElement([]int{10,9,9,9,10})
+	rand7()
+	//fmt.Println(r)
 }
 
 func gcd2(a, b int) int  {
@@ -374,9 +376,46 @@ func minMoves2(nums []int) int {
 	return r
 }
 
-func abs(num int) int {
-	if num < 0 {
-		return -num
+/**
+169. 多数元素
+https://leetcode.cn/problems/majority-element/
+*/
+func majorityElement(nums []int) int {
+	if len(nums) < 1 {
+		return 0
 	}
-	return num
+	r, cnt := nums[0], 1
+	for i:=1; i<len(nums); i++ {
+		if cnt == 0 {
+			r = nums[i]
+			cnt = 1
+			continue
+		}
+		if nums[i] != r {
+			cnt --
+		} else {
+			cnt ++
+		}
+	}
+	return r
 }
+
+/**
+470. 用 Rand7() 实现 Rand10()
+https://leetcode.cn/problems/implement-rand10-using-rand7/
+ */
+func rand10() int {
+	for {
+		x, y := rand7(), rand7()
+		r := (x-1) * 7 + y
+		if r <= 40 {
+			return 1+(r-1)%10
+		}
+	}
+}
+
+func rand7() int {
+	rand.Seed(time.Now().UnixNano())
+	return rand.Intn(7)+1
+}
+
