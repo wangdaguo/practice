@@ -40,8 +40,9 @@ func main() {
 	//r := convertToTitle(701)
 	//r := addBinary("11", "1")
 	//r := majorityElement([]int{10,9,9,9,10})
-	rand7()
-	//fmt.Println(r)
+	//r := rand10()
+	r := isHappy(2)
+	fmt.Println(r)
 }
 
 func gcd2(a, b int) int  {
@@ -417,5 +418,32 @@ func rand10() int {
 func rand7() int {
 	rand.Seed(time.Now().UnixNano())
 	return rand.Intn(7)+1
+}
+
+/**
+202. 快乐数
+https://leetcode.cn/problems/happy-number/?utm_source=LCUS&utm_medium=ip_redirect&utm_campaign=transfer2china
+ */
+func isHappy(n int) bool {
+	if n == 1 {
+		return true
+	}
+	sum, i, mp := 0, n, make(map[int]struct{})
+	for i > 0 {
+		sum += (i%10) * (i%10)
+		i /= 10
+		if i == 0 {
+			if sum == 1 {
+				return true
+			}
+			if _, ok := mp[sum]; ok {
+				return false
+			}
+			mp[sum] = struct{}{}
+			i = sum
+			sum = 0
+		}
+	}
+	return false
 }
 
