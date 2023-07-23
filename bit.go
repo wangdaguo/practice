@@ -8,7 +8,10 @@ func main() {
 	//r := hammingDistance1(3, 1)
 	//r := reverseBits(0b00000010100101000001111010011100)
 	//r := singleNumber([]int{2,2,1})
-	r := countBits(5)
+	//r := countBits(5)
+	//r := missingNumber([]int{19,58,31,51,54,47,68,25,85,9,83,70,24,75,30,78,62,38,41,21,56,60,94,1,45,15,72,52,28,93,14,96,35,17,95,89,74,46,13,82,57,76,55,20,36,63,44,61,6,92,65,50,91,42,98,34,8,33,40,12,7,48,11,80,10,71,97,39,73,26,99,43,90,5,3,2,23,29,0,79,53,64,4,27,37,84,69,81,22,86,67,32,66,18,16,77,59,49,87})
+	//r := hasAlternatingBits(17)
+	r := findComplement(1)
 	fmt.Println(r)
 }
 
@@ -123,4 +126,76 @@ func countBits(n int) []int {
 		}
 	}
 	return dp
+}
+
+/**
+268. 丢失的数字
+https://leetcode.cn/problems/missing-number/
+ */
+func missingNumber(nums []int) int {
+	var r int
+	for i, v := range nums {
+		r ^= i ^ v
+	}
+	return r ^ len(nums)
+}
+
+func missingNumber1(nums []int) int {
+	mask, end, cnt := 0, len(nums), 0
+	for i:=0; i<len(nums); i++ {
+		mask |= 1 << nums[i]
+	}
+	for cnt <= end {
+		if mask & 1 == 0 {
+			return cnt
+		}
+		mask >>= 1
+		cnt ++
+	}
+	return -1
+}
+
+/**
+693. 交替位二进制数
+https://leetcode.cn/problems/binary-number-with-alternating-bits/
+ */
+func hasAlternatingBits(n int) bool {
+	a := n ^ (n >> 1)
+	return a & (a+1) == 0
+}
+
+/**
+476. 数字的补数
+https://leetcode.cn/problems/number-complement/
+ */
+func findComplement(num int) int {
+	r, cnt, tmp := 0, 0, 0
+	for num > 0 {
+		tmp = (num & 1) ^ 1
+		tmp <<= cnt
+		r += tmp
+		num >>= 1
+		cnt ++
+	}
+	return r
+}
+
+/**
+260. 只出现一次的数字 III
+https://leetcode.cn/problems/single-number-iii/
+ */
+func singleNumber1(nums []int) []int {
+	xorSum, type1, type2 := 0, 0, 0
+	for _, v := range nums {
+		xorSum ^= v
+	}
+	l1 := xorSum & -xorSum
+	for _, v := range nums {
+		if v & l1 > 0 {
+			type1 ^= v
+		} else {
+			type2 ^= v
+		}
+	}
+	return []int{type1, type2}
 }
