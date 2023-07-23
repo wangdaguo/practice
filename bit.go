@@ -7,7 +7,8 @@ import (
 func main() {
 	//r := hammingDistance1(3, 1)
 	//r := reverseBits(0b00000010100101000001111010011100)
-	r := singleNumber([]int{2,2,1})
+	//r := singleNumber([]int{2,2,1})
+	r := countBits(5)
 	fmt.Println(r)
 }
 
@@ -77,4 +78,49 @@ func isPowerOfFour(n int) bool {
 		return false
 	}
 	return true
+}
+
+/**
+318. 最大单词长度乘积
+https://leetcode.cn/problems/maximum-product-of-word-lengths/
+ */
+func maxProduct(words []string) int {
+	mp, ans := make(map[int]int), 0
+	for _, word := range words {
+		mask := 0
+		for i:=0; i<len(word); i++ {
+			mask |= 1 << (word[i]-'a')
+		}
+		mp[mask] = max(mp[mask], len(word))
+		for _m, _len := range mp {
+			if _m & mask == 0 {
+				ans = max(ans, len(word) * _len)
+			}
+		}
+	}
+	return ans
+}
+
+func max(i, j int) int {
+	if i > j {
+		return i
+	}
+	return j
+}
+
+/**
+338. 比特位计数
+https://leetcode.cn/problems/counting-bits/
+ */
+func countBits(n int) []int {
+	dp := make([]int, n+1)
+	dp[0] = 0
+	for i:=1; i<=n; i++ {
+		if i & 1 == 1 {
+			dp[i] = dp[i-1] + 1
+		} else {
+			dp[i] = dp[i>>1]
+		}
+	}
+	return dp
 }
