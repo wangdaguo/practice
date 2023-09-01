@@ -22,8 +22,7 @@ func main() {
 	//rotate(r)
 	//r := maxChunksToSorted([]int{1,0,2,3,4})
 	//r := minPathSum3([][]int{{1,2,3}, {4,5,6}})
-	r := []int{1,2,3}
-	r = r[:len(r)-1]
+	r := dailyTemperatures([]int{73,74,75,71,69,72,76,73})
 	fmt.Println(r)
 }
 
@@ -267,7 +266,7 @@ type MyQueue struct {
 	pushStack *MyStack
 }
 
-func Constructor() MyQueue {
+func Constructor1() MyQueue {
 	return MyQueue{
 		popStack: NewMyStack(),
 		pushStack: NewMyStack(),
@@ -358,4 +357,58 @@ func (s *MinStack) GetMin() int {
 		return 0
 	}
 	return s.MinData[len(s.MinData)-1]
+}
+
+/**
+20. 有效的括号
+https://leetcode.cn/problems/valid-parentheses/
+ */
+func isValid(s string) bool {
+	stack := make([]string, 0)
+	if len(s) < 1 {
+		return true
+	}
+	for _, v := range s {
+		if v == '{' || v == '[' || v == '(' {
+			stack = append(stack, string(v))
+		} else {
+			if len(stack) < 1 {
+				return false
+			}
+			for len(stack) > 0 {
+				p := stack[len(stack)-1]
+				stack = stack[:len(stack)-1]
+				if (v == '}' && p != "{") || (v == ']' && p != "[") || (v == ')' && p != "(") {
+					return false
+				}
+				break
+			}
+		}
+	}
+	if len(stack) >0 {
+		return false
+	}
+	return true
+}
+
+/**
+739. 每日温度
+https://leetcode.cn/problems/daily-temperatures/
+ */
+func dailyTemperatures(temperatures []int) []int {
+	// [73,74,75,71,69,72,76,73]
+	stack, r := make([]int, 0), make([]int, len(temperatures))
+	for k, v := range temperatures {
+		for len(stack) > 0 {
+			peek := stack[len(stack)-1]
+			if temperatures[peek] < v {
+				stack = stack[:len(stack)-1]
+				r[peek] = k - peek
+			} else {
+				break
+			}
+		}
+		stack = append(stack, k)
+	}
+	return r
 }
