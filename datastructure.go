@@ -22,7 +22,38 @@ func main() {
 	//rotate(r)
 	//r := maxChunksToSorted([]int{1,0,2,3,4})
 	//r := minPathSum3([][]int{{1,2,3}, {4,5,6}})
-	r := dailyTemperatures([]int{73,74,75,71,69,72,76,73})
+	//r := dailyTemperatures([]int{73,74,75,71,69,72,76,73})
+
+	//node2 := &ListNode{
+	//	Val: 2,
+	//	Next: nil,
+	//}
+	//node3 := &ListNode{
+	//	Val: 3,
+	//	Next: node2,
+	//}
+	//node4 := &ListNode{
+	//	Val: 4,
+	//	Next: node3,
+	//}
+	//node1 := &ListNode{
+	//	Val: 1,
+	//	Next: node4,
+	//}
+	//r := heapSort(node1)
+
+	node3 := &ListNode{
+		Val: -1,
+		Next: nil,
+	}
+
+	var node2 *ListNode
+
+	node1 := &ListNode{
+		Val: 2,
+		Next: nil,
+	}
+	r := mergeKLists([]*ListNode{node1, node2, node3})
 	fmt.Println(r)
 }
 
@@ -411,4 +442,131 @@ func dailyTemperatures(temperatures []int) []int {
 		stack = append(stack, k)
 	}
 	return r
+}
+
+/**
+23. 合并 K 个升序链表
+https://leetcode.cn/problems/merge-k-sorted-lists/
+ */
+
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+func mergeKLists(lists []*ListNode) *ListNode {
+	if len(lists) < 1 {
+		return nil
+	}
+	head := &ListNode {Val: 0}
+	tmpHead := head
+	for _, node := range lists {
+		tmpHead.Next = node
+		for tmpHead.Next != nil {
+			tmpHead = tmpHead.Next
+		}
+	}
+	r := heapSort(head.Next)
+	return r
+}
+
+type Heap struct {
+	data []*ListNode
+}
+
+func NewHeap() *Heap {
+	return &Heap{
+		data: make([]*ListNode, 0),
+	}
+}
+
+func (heap *Heap) siftUp(node *ListNode)  {
+	if len(heap.data) < 1 {
+		heap.data = append(heap.data, []*ListNode{{Val: 0}, node}...)
+		return
+	}
+	heap.data = append(heap.data, node)
+	i := len(heap.data)-1
+	for i > 1 {
+		p := i/2
+		if heap.data[i].Val < heap.data[p].Val {
+			heap.data[i], heap.data[p] = heap.data[p], heap.data[i]
+			i = p
+			continue
+		}
+		break
+	}
+	return
+}
+
+func (heap *Heap) siftDown(node *ListNode)  {
+	if len(heap.data) < 1 {
+		heap.data = append(heap.data, []*ListNode{{Val: 0}, node}...)
+		return
+	}
+	i := 1
+	for i < len(heap.data) {
+		p := 2*i
+		if p >= len(heap.data) {
+			break
+		}
+		if p+1<len(heap.data) && heap.data[p+1].Val < heap.data[p].Val {
+			p ++
+		}
+		if heap.data[p].Val < node.Val {
+			heap.data[p], heap.data[i] = heap.data[i], heap.data[p]
+			i = p
+			continue
+		}
+		break
+	}
+	if i < len(heap.data) {
+		heap.data[i] = node
+	}
+	return
+}
+
+func (heap *Heap) extractMin() *ListNode {
+	defer func() {
+		lastNode := heap.data[len(heap.data)-1]
+		heap.data = heap.data[:len(heap.data)-1]
+		heap.siftDown(lastNode)
+	}()
+	return heap.data[1]
+}
+
+func heapSort(node *ListNode) (head *ListNode) {
+	heap := NewHeap()
+	for node != nil {
+		tmpNode := &ListNode{
+			Val: node.Val,
+		}
+		heap.siftUp(tmpNode)
+		node = node.Next
+	}
+	heap.printNodeVal()
+
+	head = &ListNode{
+		Val: 0,
+		Next: nil,
+	}
+	/**
+	1 - 4 - 3 - 2
+	 */
+	tmp := head
+	for len(heap.data) > 1 {
+		tmp.Next = heap.extractMin()
+		tmp = tmp.Next
+	}
+	return head.Next
+}
+
+func (heap *Heap) printNodeVal() {
+	r := []int{}
+	for _, node := range heap.data {
+		r = append(r, node.Val)
+		node = node.Next
+	}
+	fmt.Println(r)
+	return
 }
