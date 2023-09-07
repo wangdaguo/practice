@@ -1,6 +1,7 @@
 package main
 
 import (
+	"container/heap"
 	"fmt"
 	"sort"
 )
@@ -42,18 +43,19 @@ func main() {
 	//}
 	//r := heapSort(node1)
 
-	node3 := &ListNode{
-		Val: -1,
-		Next: nil,
-	}
-
-	var node2 *ListNode
-
-	node1 := &ListNode{
-		Val: 2,
-		Next: nil,
-	}
-	r := mergeKLists([]*ListNode{node1, node2, node3})
+	//node3 := &ListNode{
+	//	Val: -1,
+	//	Next: nil,
+	//}
+	//
+	//var node2 *ListNode
+	//
+	//node1 := &ListNode{
+	//	Val: 2,
+	//	Next: nil,
+	//}
+	//r := mergeKLists([]*ListNode{node1, node2, node3})
+	r := maxSlidingWindow1([]int{1,3,-1,-3,5,3,6,7}, 3)
 	fmt.Println(r)
 }
 
@@ -569,4 +571,71 @@ func (heap *Heap) printNodeVal() {
 	}
 	fmt.Println(r)
 	return
+}
+
+/**
+239. 滑动窗口最大值
+https://leetcode.cn/problems/sliding-window-maximum/
+ */
+var a []int
+type hp struct {
+	sort.IntSlice
+}
+func (h hp) Less(i, j int) bool {
+	return a[h.IntSlice[i]] > a[h.IntSlice[j]]
+}
+
+func (h *hp) Push(i interface{}) {
+	h.IntSlice = append(h.IntSlice, i.(int))
+}
+
+func (h *hp) Pop() interface{} {
+	l := h.IntSlice[len(h.IntSlice)-1]
+	h.IntSlice = h.IntSlice[:len(h.IntSlice)-1]
+	return l
+}
+
+func maxSlidingWindow(nums []int, k int) []int {
+	a = nums
+	hp := &hp{make([]int, k)}
+	for i:=0; i<k; i++ {
+		hp.IntSlice[i] = i
+	}
+	heap.Init(hp)
+	r := make([]int, 1)
+	r[0] = nums[hp.IntSlice[0]]
+	for i:=k; i<len(nums); i++ {
+	heap.Push(hp, i)
+		for hp.IntSlice[0] <= i-k {
+			heap.Pop(hp)
+		}
+		r = append(r, nums[hp.IntSlice[0]])
+	}
+	return r
+}
+
+// 1,3,-1,-3,5,3,6,7
+func maxSlidingWindow1(nums []int, k int) []int {
+	q := make([]int, 0)
+
+	push := func(i int) {
+		for len(q) > 0 && nums[i] > nums[q[len(q)-1]]  {
+			q = q[:len(q)-1]
+		}
+		q = append(q, i)
+	}
+
+	for i:=0; i<k; i++ {
+		push(i)
+	}
+	r := make([]int, 0)
+	r = append(r, nums[q[0]])
+	for i:=k; i<len(nums); i++ {
+		push(i)
+		for q[0] <= i-k {
+			q = q[1:]
+		}
+		r = append(r, nums[q[0]])
+	}
+	return r
 }
