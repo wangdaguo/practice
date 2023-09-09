@@ -639,3 +639,21 @@ func maxSlidingWindow1(nums []int, k int) []int {
 	}
 	return r
 }
+
+/**
+1. 两数之和
+https://leetcode.cn/problems/two-sum/description/
+ */
+func twoSum(nums []int, target int) []int {
+	if len(nums) < 1 {
+		return []int{}
+	}
+	mp :=make(map[int]int, len(nums))
+	for i:=0; i<len(nums); i++ {
+		if k, ok := mp[target-nums[i]]; ok {
+			return []int{i, k}
+		}
+		mp[nums[i]] = i
+	}
+	return []int{}
+}
