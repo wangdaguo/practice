@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-func main()  {
+func main() {
 
 	//r := binarySearch1([]int{1,2,3,4,5,6}, 0)
 	//r := mySqrtTest(8)
@@ -15,11 +15,12 @@ func main()  {
 	//target := 5
 	//r := search33(nums, target)
 	//r := findMin1([]int{1,3,5})
-	r := singleNonDuplicate([]int{1,1,2,2,4,4,5,5,9})
+	r := singleNonDuplicate([]int{1, 1, 2, 2, 4, 4, 5, 5, 9})
 	fmt.Println(r)
 }
 
-/**
+/*
+*
 69. x 的平方根
 
 给你一个非负整数 x ，计算并返回 x 的 算术平方根 。
@@ -42,9 +43,9 @@ func mySqrtTest(x int) int {
 	start, end := 1, x
 	for start <= end {
 		middle := start + (end-start)/2
-		if middle * middle  > x {
+		if middle*middle > x {
 			end = middle - 1
-		} else if middle * middle < x {
+		} else if middle*middle < x {
 			start = middle + 1
 		} else {
 			return middle
@@ -53,16 +54,17 @@ func mySqrtTest(x int) int {
 	return end
 }
 
-/**
+/*
+*
 二分查找
- */
+*/
 func binarySearch1(nums []int, target int) int {
 	if len(nums) < 1 {
 		return -1
 	}
 	start, end := 0, len(nums)-1
 	for start <= end {
-		middle := start + (end-start) / 2
+		middle := start + (end-start)/2
 		if nums[middle] == target {
 			return middle
 		} else if nums[middle] < target {
@@ -81,7 +83,7 @@ func binarySearch1(nums []int, target int) int {
 
 进阶：
 你可以设计并实现时间复杂度为 O(log n) 的算法解决此问题吗？
- 
+
 示例 1：
 输入：nums = [5,7,7,8,8,10], target = 8
 输出：[3,4]
@@ -112,7 +114,7 @@ func binarySearch(nums []int, target int, isFindLeft bool) int {
 	start, end, r := 0, len(nums)-1, -1
 	for start <= end {
 		middle := start + (end-start)/2
-		if nums[middle]  > target {
+		if nums[middle] > target {
 			end = middle - 1
 		} else if nums[middle] < target {
 			start = middle + 1
@@ -120,7 +122,7 @@ func binarySearch(nums []int, target int, isFindLeft bool) int {
 			r = middle
 			if isFindLeft {
 				end = middle - 1
-			} else  {
+			} else {
 				start = middle + 1
 			}
 		}
@@ -128,7 +130,8 @@ func binarySearch(nums []int, target int, isFindLeft bool) int {
 	return r
 }
 
-/**
+/*
+*
 https://leetcode-cn.com/problems/search-in-rotated-sorted-array/
 81. 搜索旋转排序数组 II
 已知存在一个按非降序排列的整数数组 nums ，数组中的值不必互不相同。
@@ -145,28 +148,28 @@ https://leetcode-cn.com/problems/search-in-rotated-sorted-array/
 示例 2：
 输入：nums = [2,5,6,0,0,1,2], target = 3
 输出：false
- */
+*/
 func search(nums []int, target int) bool {
 	if len(nums) < 1 {
 		return false
 	}
 	start, end := 0, len(nums)-1
 	for start <= end {
-		middle := start + (end - start) / 2
+		middle := start + (end-start)/2
 		if nums[middle] == target {
 			return true
 		} else if nums[start] == nums[middle] {
-			start ++
+			start++
 		} else if nums[middle] <= nums[end] {
 			if target > nums[middle] && target <= nums[end] {
 				start = middle + 1
-			} else  {
+			} else {
 				end = middle - 1
 			}
-		} else  {
+		} else {
 			if target >= nums[start] && target < nums[middle] {
 				end = middle - 1
-			} else  {
+			} else {
 				start = middle + 1
 			}
 		}
@@ -174,10 +177,11 @@ func search(nums []int, target int) bool {
 	return false
 }
 
-/**
+/*
+*
 33. 搜索旋转排序数组
 https://leetcode-cn.com/problems/search-in-rotated-sorted-array/
- */
+*/
 func search33(nums []int, target int) int {
 	if len(nums) < 1 {
 		return -1
@@ -188,11 +192,11 @@ func search33(nums []int, target int) int {
 		if nums[middle] == target {
 			return middle
 		} else if nums[start] == nums[middle] {
-			start ++
+			start++
 		} else if nums[middle] <= nums[end] {
 			if target > nums[middle] && target <= nums[end] {
 				start = middle + 1
-			} else  {
+			} else {
 				end = middle - 1
 			}
 		} else {
@@ -206,7 +210,8 @@ func search33(nums []int, target int) int {
 	return -1
 }
 
-/**
+/*
+*
 https://leetcode-cn.com/problems/find-minimum-in-rotated-sorted-array/
 153. 寻找旋转排序数组中的最小值
 已知一个长度为 n 的数组，预先按照升序排列，经由 1 到 n 次 旋转 后，得到输入数组。例如，原数组 nums = [0,1,2,4,5,6,7] 在变化后可能得到：
@@ -232,7 +237,7 @@ https://leetcode-cn.com/problems/find-minimum-in-rotated-sorted-array/
 输入：nums = [11,13,15,17]
 输出：11
 解释：原数组为 [11,13,15,17] ，旋转 4 次得到输入数组。
- */
+*/
 func findMin(nums []int) int {
 	if len(nums) < 1 {
 		return 0
@@ -245,17 +250,18 @@ func findMin(nums []int) int {
 			start = middle + 1
 		} else if nums[middle] < nums[start] {
 			end = middle
-		} else {  // nums[middle] <= nums[end] && nums[middle] >= nums[start]
+		} else { // nums[middle] <= nums[end] && nums[middle] >= nums[start]
 			end = middle - 1
 		}
 	}
 	return nums[start]
 }
 
-/**
+/*
+*
 https://leetcode.cn/problems/find-minimum-in-rotated-sorted-array-ii/
 154. 寻找旋转排序数组中的最小值 II
- */
+*/
 func findMin1(nums []int) int {
 	if len(nums) < 1 {
 		return 0
@@ -268,7 +274,7 @@ func findMin1(nums []int) int {
 		} else if nums[middle] < nums[start] {
 			end = middle
 		} else if nums[middle] == nums[end] {
-			end --
+			end--
 		} else {
 			end = middle - 1
 		}
@@ -276,7 +282,8 @@ func findMin1(nums []int) int {
 	return nums[start]
 }
 
-/**
+/*
+*
 540. 有序数组中的单一元素
 https://leetcode.cn/problems/single-element-in-a-sorted-array/
 
@@ -289,7 +296,7 @@ https://leetcode.cn/problems/single-element-in-a-sorted-array/
 
 输入: nums =  [3,3,7,7,10,11,11]
 输出: 10
- */
+*/
 func singleNonDuplicate(nums []int) int {
 	if len(nums) < 1 {
 		return -1
@@ -303,7 +310,7 @@ func singleNonDuplicate(nums []int) int {
 	for start < end {
 		middle := start + (end-start)/2
 		if middle-1 >= 0 && nums[middle] == nums[middle-1] {
-			r := singleNonDuplicate(nums[0:middle-1])
+			r := singleNonDuplicate(nums[0 : middle-1])
 			if r > -1 {
 				return r
 			}
@@ -312,12 +319,12 @@ func singleNonDuplicate(nums []int) int {
 				return r
 			}
 			return -1
-		} else if middle + 1 <= len(nums)-1 && nums[middle] == nums[middle+1] {
+		} else if middle+1 <= len(nums)-1 && nums[middle] == nums[middle+1] {
 			r := singleNonDuplicate(nums[0:middle])
 			if r > -1 {
 				return r
 			}
-			if middle + 2 <= len(nums)-1 {
+			if middle+2 <= len(nums)-1 {
 				r = singleNonDuplicate(nums[middle+2:])
 				if r > -1 {
 					return r
@@ -331,7 +338,8 @@ func singleNonDuplicate(nums []int) int {
 	return -1
 }
 
-/**
+/*
+*
 https://leetcode.cn/problems/median-of-two-sorted-arrays/
 4. 寻找两个正序数组的中位数
 
@@ -345,15 +353,15 @@ https://leetcode.cn/problems/median-of-two-sorted-arrays/
 输入：nums1 = [1,2], nums2 = [3,4]
 输出：2.50000
 解释：合并数组 = [1,2,3,4] ，中位数 (2 + 3) / 2 = 2.5
- */
+*/
 func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
 	totalLen := len(nums1) + len(nums2)
-	if totalLen % 2 == 1 {
+	if totalLen%2 == 1 {
 		midIndex := totalLen / 2
 		return float64(getKthElement(nums1, nums2, midIndex+1))
 	} else {
-		minIndex1, minIndex2 := totalLen / 2 - 1, totalLen / 2
-		return float64(getKthElement(nums1, nums2, minIndex1+1) + getKthElement(nums1, nums2, minIndex2+1)) / 2
+		minIndex1, minIndex2 := totalLen/2-1, totalLen/2
+		return float64(getKthElement(nums1, nums2, minIndex1+1)+getKthElement(nums1, nums2, minIndex2+1)) / 2
 	}
 }
 
@@ -361,10 +369,10 @@ func getKthElement(nums1, nums2 []int, k int) int {
 	var index1, index2 int
 	for {
 		if index1 == len(nums1) {
-			return nums2[index2 + k - 1]
+			return nums2[index2+k-1]
 		}
 		if index2 == len(nums2) {
-			return nums1[index1 + k - 1]
+			return nums1[index1+k-1]
 		}
 		if k == 1 {
 			return min(nums1[index1], nums2[index2])
