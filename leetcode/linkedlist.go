@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"time"
 )
 
 func main() {
@@ -123,6 +124,121 @@ func main() {
 
 	r := maxProfit([]int{2, 1, 2, 1, 0, 1, 2})
 	fmt.Println(r)
+	return
+}
+
+type TwitterNode struct {
+	Val  int
+	Time int64
+	Next *TwitterNode
+}
+
+type Twitter struct {
+	followeeList  map[int][]int
+	userTweetList map[int]*TwitterNode
+	//feedList      *TwitterNode
+}
+
+func ConstructorTwitter() Twitter {
+	t := Twitter{
+		followeeList:  make(map[int][]int),
+		userTweetList: make(map[int]*TwitterNode),
+		//feedList:      &TwitterNode{},
+	}
+	return t
+}
+
+func (t *Twitter) PostTweet(userId int, tweetId int) {
+	newNode := &TwitterNode{
+		Val:  tweetId,
+		Time: time.Now().Unix(),
+	}
+	n, ok := t.userTweetList[userId]
+	if ok {
+		newNode.Next = n
+	}
+	t.userTweetList[userId] = newNode
+	return
+}
+
+func (t *Twitter) GetNewsFeed(userId int) []int {
+	list, ok := t.followeeList[userId]
+	if !ok {
+		return []int{}
+	}
+	var nodeList []*TwitterNode
+	if n, ok := t.userTweetList[userId]; ok {
+		nodeList = append(nodeList, n)
+	}
+	for _, l := range list {
+		nodeList = append(nodeList, t.userTweetList[l])
+	}
+	head := mergeMoreList(nodeList, 0, len(nodeList)-1)
+	r, h, cnt := make([]int, 0), head, 0
+	for h != nil && cnt < 10 {
+		r = append(r, h.Val)
+		cnt++
+		h = h.Next
+	}
+	return r
+}
+
+func mergeMoreList(list []*TwitterNode, start, end int) *TwitterNode {
+	if len(list) < 1 || start > end {
+		return nil
+	}
+	if start == end {
+		return list[start]
+	}
+	middle := start + (end-start)/2
+	return mergeSortList(mergeMoreList(list, start, middle), mergeMoreList(list, middle+1, end))
+}
+
+func mergeSortList(l1, l2 *TwitterNode) *TwitterNode {
+	head := &TwitterNode{}
+	h := head
+	for l1 != nil && l2 != nil {
+		if l1.Time > l2.Time {
+			h.Next = l2
+			l2 = l2.Next
+		} else {
+			h.Next = l1
+			l1 = l1.Next
+		}
+		h = h.Next
+	}
+	if l1 != nil {
+		h.Next = l1
+	}
+	if l2 != nil {
+		h.Next = l2
+	}
+	return head.Next
+}
+
+func (t *Twitter) Follow(followerId int, followeeId int) {
+	if _, ok := t.followeeList[followerId]; !ok {
+		t.followeeList[followerId] = make([]int, 0)
+	}
+	t.followeeList[followerId] = append(t.followeeList[followerId], followeeId)
+	return
+}
+
+func (t *Twitter) Unfollow(followerId int, followeeId int) {
+	if _, ok := t.followeeList[followerId]; !ok {
+		return
+	}
+	followeeList, followeePos := t.followeeList[followerId], -1
+	for k, v := range followeeList {
+		if v == followeeId {
+			followeePos = k
+			break
+		}
+	}
+	if followeePos == -1 {
+		return
+	}
+	t.followeeList[followerId] = append(t.followeeList[followerId][:followeePos], t.followeeList[followerId][followeePos+1:]...)
 	return
 }
 
