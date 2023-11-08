@@ -242,6 +242,14 @@ func (t *Twitter) Unfollow(followerId int, followeeId int) {
 	return
 }
 
+//func sortList1(head *ListNode) *ListNode {
+//	if head == nil {
+//		return head
+//	}
+//	pre, slow, fast := head, head, head
+//
+//}
+
 func PrintList(head *ListNode) {
 	h := head
 	var arr []int

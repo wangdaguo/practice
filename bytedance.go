@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"math/rand"
 	"sort"
 	"strings"
 )
@@ -55,8 +56,88 @@ func main() {
    //r := maxArea([]int{1,8,6,2,5,4,8,3,7})
    //r := dailyTemperatures([]int{73,74,75,71,69,72,76,73})
    //r := maxProfit([]int{7,1,5,3,6,4})
-   r := findMedianSortedArraysB([]int{1,3}, []int{2})
-   fmt.Println(r)
+   //r := findMedianSortedArraysB([]int{1,3}, []int{2})
+
+	node5 := &ListNode{
+		Val:  5,
+		Next: nil,
+	}
+	node4 := &ListNode{
+		Val:  4,
+		Next: node5,
+	}
+	node3 := &ListNode{
+		Val:  3,
+		Next: node4,
+	}
+	node2 := &ListNode{
+		Val:  2,
+		Next: node3,
+	}
+	head := &ListNode{
+		Val:  1,
+		Next: node2,
+	}
+	r := reverseBetween(head, 2, 4)
+	PrintList(r)
+	fmt.Println(r)
+}
+
+func productExceptSelf(nums []int) []int {
+	ans, r := make([]int, len(nums)), 1
+	ans[0] = 1
+	for i:=1; i<len(nums); i++ {
+		ans[i] = ans[i-1] * nums[i]
+	}
+	for i:=len(nums)-1; i>=0; i-- {
+		ans[i] = ans[i] * r
+		r = r * nums[i]
+	}
+	return ans
+}
+
+func productExceptSelf(nums []int) []int {
+	ans, R := make([]int, len(nums)), 1
+	ans[0] = 1
+	for i:=1; i<len(ans); i++ {
+		ans[i] = ans[i-1] * nums[i-1]
+	}
+
+	for i:=len(nums)-1; i>=0; i-- {
+		ans[i] = ans[i] * R
+		R *= nums[i]
+	}
+	return ans
+}
+
+func reverseBetween(head *ListNode, left int, right int) *ListNode {
+	if head == nil {
+		return head
+	}
+	dummyHead := &ListNode{Next: head}
+	i, pre, slow, fast := right - left, dummyHead, dummyHead, dummyHead
+	for i > 0 {
+		fast = fast.Next
+		i --
+	}
+	i = 0
+	for i < left {
+		i ++
+		pre = slow
+		slow = slow.Next
+		fast = fast.Next
+	}
+	next, s := fast.Next, slow
+	var p *ListNode
+	for s != next {
+		n := s.Next
+		s.Next = p
+		p = s
+		s = n
+	}
+	pre.Next = fast
+	slow.Next = next
+	return dummyHead.Next
 }
 
 func findMedianSortedArraysB(nums1 []int, nums2 []int) float64 {

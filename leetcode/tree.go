@@ -132,6 +132,41 @@ type TreeNode struct {
 236. 二叉树的最近公共祖先
 https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-tree/
 */
+func lowestCommonAncestor223(root, p, q *TreeNode) *TreeNode {
+	if root == nil {
+		return nil
+	}
+	mp, visited := make(map[int]*TreeNode), make(map[*TreeNode]struct{})
+	var dfs func(node *TreeNode)
+	dfs = func(r *TreeNode) {
+		if r == nil {
+			return
+		}
+		if r.Left != nil {
+			mp[r.Left.Val] = r
+			dfs(r.Left)
+		}
+		if r.Right != nil {
+			mp[r.Right.Val] = r
+			dfs(r.Right)
+		}
+	}
+	dfs(root)
+	for p != nil {
+		visited[p] = struct{}{}
+		p = mp[p.Val]
+	}
+	for q != nil {
+		if _, ok := visited[q]; ok {
+			return q
+		}
+		q = mp[q.Val]
+	}
+	return nil
+}
+
+
+
 func lowestCommonAncestor22(root, p, q *TreeNode) *TreeNode {
 	l1, r1, l2, r2 := make([]*TreeNode, 0), []*TreeNode{}, make([]*TreeNode, 0), []*TreeNode{}
 	DFSFind(root, p, l1, r1)
