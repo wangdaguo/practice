@@ -36,28 +36,33 @@ func convert(s string, numRows int) string {
 28. 找出字符串中第一个匹配项的下标
 https://leetcode.cn/problems/find-the-index-of-the-first-occurrence-in-a-string/?
 */
-func strStr(haystack string, needle string) int {
-	if len(needle) > len(haystack) {
-		return -1
-	}
-	if len(needle) == len(haystack) && haystack != needle {
-		return -1
-	}
-	idx, j := -1, 0
-	for k:=0; k<len(haystack); k++ {
-		if haystack[k] == needle[j] {
-			j++
-			if j == len(needle)-1 {
-				return idx
-			}
-			if idx == -1 {
-				idx = k
-			}
-			continue
-		} else {
-			j = 0
-			idx = -1
-		}
-	}
-	return idx
-}
+//func strStr(haystack string, needle string) int {
+//	if len(needle) > len(haystack) {
+//		return -1
+//	}
+//	if len(needle) == len(haystack) && haystack != needle {
+//		return -1
+//	}
+//	idx, i, j := -1, 0, 0
+//	for i < len(haystack) {
+//	}
+//
+//	//for k := 0; k < len(haystack); k++ {
+//	//	if haystack[k] == needle[j] {
+//	//		j++
+//	//		if j == len(needle)-1 {
+//	//			return idx
+//	//		}
+//	//		if idx == -1 {
+//	//			idx = k
+//	//			i = k
+//	//		}
+//	//		continue
+//	//	} else {
+//	//		j = 0
+//	//		i++
+//	//		idx = -1
+//	//	}
+//	//}
+//	//return idx
+//}
