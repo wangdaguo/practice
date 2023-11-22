@@ -1,11 +1,15 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func main() {
 	r := lengthOfLongestSubstring("aabaab!bb")
 	fmt.Print(r)
+
 }
+
 
 /*
 *
