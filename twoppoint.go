@@ -26,36 +26,6 @@ func main() {
 
 /*
 *
-209. 长度最小的子数组
-https://leetcode.cn/problems/minimum-size-subarray-sum/?envType=study-plan-v2&envId=top-interview-150
-*/
-func minSubArrayLen(s int, nums []int) int {
-	if len(nums) < 1 {
-		return 0
-	}
-	left, sum, r := 0, 0, math.MaxInt32
-	for k, _ := range nums {
-		sum += nums[k]
-		for sum >= s {
-			r = min(r, k-left+1)
-			sum -= nums[left]
-			left++
-		}
-	}
-	if r != math.MaxInt32 {
-		return r
-	}
-	return 0
-}
-func min(x, y int) int {
-	if x < y {
-		return x
-	}
-	return y
-}
-
-/*
-*
 167. 两数之和 II - 输入有序数组
 给定一个已按照 升序排列  的整数数组 numbers ，请你从数组中找出两个数满足相加之和等于目标数 target 。
 函数应该以长度为 2 的整数数组的形式返回这两个数的下标值。numbers 的下标 从 1 开始计数 ，所以答案数组应当满足 1 <= answer[0] < answer[1] <= numbers.length 。
