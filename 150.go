@@ -160,43 +160,20 @@ func setZeroes(matrix [][]int) {
 https://leetcode.cn/problems/game-of-life/?envType=study-plan-v2&envId=top-interview-150
 */
 func gameOfLife(board [][]int) {
-	for i := 0; i < len(board); i++ {
-		u, d := true, true
-		for j := 0; j < len(board[0]); j++ {
-			alive, die, l, r := 0, 0, true, true
-			if i > 0 && i<len(board)-1 && j>0 && j<len(board[0])-1 {
-				if board[i-1][j] == 0 {
-					die++
-				} else {
-					alive++
+	neighbors := []int{0, 1, -1}
+	for row := 0; row < len(board); row++ {
+		for col := 0; col < len(board[0]); col++ {
+			alive := 0
+			for i:=0; i<3; i++ {
+				for j:=0; j<3; j++ {
+					if !(neighbors[i] == 0 && neighbors[j] == 0) {
+						r := row + neighbors[i]
+						c := col + neighbors[j]
+						if r >=0 && r < len(board) && c >=0 && c<len(board[0]) && board[r][c] == 1 {
+							alive ++
+						}
+					}
 				}
-			}
-			if i == 0 {
-
-			}
-			if i == len(board)-1 {
-				u, d = false, true
-				if board[i-1][j] == 0 {
-					die++
-				} else {
-					alive++
-				}
-			}
-			if j == 0 {
-
-			}
-			if j == len(board[0])-1 {
-
-			}
-
-			if board[i][j] == 1 && alive < 2 {
-				// 小于2
-			} else if board[i][j] == 1 && (alive == 2 || alive == 3) {
-				// 2/3个
-			} else if board[i][j] == 1 && alive > 3{
-				// 超过3个
-			} else if board[i][j] == 0 && alive == 3 {
-
 			}
 		}
 	}
