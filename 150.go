@@ -161,18 +161,43 @@ https://leetcode.cn/problems/game-of-life/?envType=study-plan-v2&envId=top-inter
 */
 func gameOfLife(board [][]int) {
 	for i := 0; i < len(board); i++ {
-		u, d := false, false
+		u, d := true, true
 		for j := 0; j < len(board[0]); j++ {
-			alive, die, l, r := 0, 0, false, false
-			if i-1 >= 0 {
-				u = true
+			alive, die, l, r := 0, 0, true, true
+			if i > 0 && i<len(board)-1 && j>0 && j<len(board[0])-1 {
 				if board[i-1][j] == 0 {
 					die++
 				} else {
 					alive++
 				}
 			}
-			if i
+			if i == 0 {
+
+			}
+			if i == len(board)-1 {
+				u, d = false, true
+				if board[i-1][j] == 0 {
+					die++
+				} else {
+					alive++
+				}
+			}
+			if j == 0 {
+
+			}
+			if j == len(board[0])-1 {
+
+			}
+
+			if board[i][j] == 1 && alive < 2 {
+				// 小于2
+			} else if board[i][j] == 1 && (alive == 2 || alive == 3) {
+				// 2/3个
+			} else if board[i][j] == 1 && alive > 3{
+				// 超过3个
+			} else if board[i][j] == 0 && alive == 3 {
+
+			}
 		}
 	}
 }
