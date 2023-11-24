@@ -9,22 +9,23 @@ func main() {
 	fmt.Print(r)
 }
 
-/**
+/*
+*
 36. 有效的数独
 https://leetcode.cn/problems/valid-sudoku/solutions/1001859/you-xiao-de-shu-du-by-leetcode-solution-50m6/
- */
+*/
 func isValidSudoku(board [][]byte) bool {
 	var rows, cols [9][9]int
-	var subboxes [3][3][9] int
+	var subboxes [3][3][9]int
 	for i, row := range board {
 		for j, c := range row {
 			if c == '.' {
 				continue
 			}
 			idx := c - '1'
-			rows[i][idx] ++
-			cols[j][idx] ++
-			subboxes[i/3][j/3][idx] ++
+			rows[i][idx]++
+			cols[j][idx]++
+			subboxes[i/3][j/3][idx]++
 			if rows[i][idx] > 1 || cols[j][idx] > 1 || subboxes[i/3][j/3][idx] > 1 {
 				return false
 			}
@@ -63,45 +64,45 @@ func min(x, y int) int {
 	return y
 }
 
-/**
+/*
+*
 54. 螺旋矩阵
 https://leetcode.cn/problems/spiral-matrix/solutions/7155/cxiang-xi-ti-jie-by-youlookdeliciousc-3/
- */
+*/
 func spiralOrder(matrix [][]int) []int {
 	u, d, l, r, ans := 0, len(matrix)-1, 0, len(matrix[0])-1, make([]int, 0)
 	for {
-		for i:=l; i<=r; i++ {  // 向右
+		for i := l; i <= r; i++ { // 向右
 			ans = append(ans, matrix[u][i])
 		}
-		u ++
-		if u > d {  // 重新设定上边界
+		u++
+		if u > d { // 重新设定上边界
 			break
 		}
-		for i:=u; i<=d; i++ {  // 向下
+		for i := u; i <= d; i++ { // 向下
 			ans = append(ans, matrix[i][r])
 		}
-		r --
-		if r < l {   // 重新设定右边界
+		r--
+		if r < l { // 重新设定右边界
 			break
 		}
-		for i:=r; i>=l; i-- {  // 向左
+		for i := r; i >= l; i-- { // 向左
 			ans = append(ans, matrix[d][i])
 		}
-		d --
-		if d < u {   // 重新设定下边界
+		d--
+		if d < u { // 重新设定下边界
 			break
 		}
-		for i:=d; i>=u; i-- {   // 向上
+		for i := d; i >= u; i-- { // 向上
 			ans = append(ans, matrix[i][l])
 		}
-		l ++
+		l++
 		if l > r {
 			break
 		}
 	}
 	return ans
 }
-
 
 /*
 *
@@ -163,18 +164,43 @@ func gameOfLife(board [][]int) {
 	neighbors := []int{0, 1, -1}
 	for row := 0; row < len(board); row++ {
 		for col := 0; col < len(board[0]); col++ {
+
 			alive := 0
-			for i:=0; i<3; i++ {
-				for j:=0; j<3; j++ {
+			for i := 0; i < 3; i++ {
+				for j := 0; j < 3; j++ {
 					if !(neighbors[i] == 0 && neighbors[j] == 0) {
 						r := row + neighbors[i]
 						c := col + neighbors[j]
-						if r >=0 && r < len(board) && c >=0 && c<len(board[0]) && board[r][c] == 1 {
-							alive ++
+						if r >= 0 && r < len(board) && c >= 0 && c < len(board[0]) && abs(board[r][c]) == 1 {
+							alive++
 						}
 					}
 				}
 			}
+
+			if board[row][col] == 1 && (alive < 2 || alive > 3) {
+				board[row][col] = -1
+			}
+			if board[row][col] == 0 && alive == 3 {
+				board[row][col] = 2
+			}
 		}
 	}
+	for row := 0; row < len(board); row++ {
+		for col := 0; col < len(board[0]); col++ {
+			if board[row][col] > 0 {
+				board[row][col] = 1
+			} else {
+				board[row][col] = 0
+			}
+		}
+	}
+	return
+}
+
+func abs(value int) int {
+	if value < 0 {
+		return -value
+	}
+	return value
 }
