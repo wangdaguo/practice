@@ -6,6 +6,7 @@ import (
 )
 
 func main() {
+	r := isIsomorphic("paper", "title")
 	fmt.Print(r)
 }
 
@@ -203,4 +204,61 @@ func abs(value int) int {
 		return -value
 	}
 	return value
+}
+
+/**
+383. 赎金信
+https://leetcode.cn/problems/ransom-note
+ */
+func canConstruct(ransomNote string, magazine string) bool {
+	mp := make(map[byte]int)
+	for _, ch := range magazine {
+		mp[byte(ch)] ++
+	}
+	for _, ch := range ransomNote {
+		cnt, ok := mp[byte(ch)]
+		if !ok || cnt < 1 {
+			return false
+		}
+		mp[byte(ch)] --
+	}
+	return true
+}
+
+/**
+205. 同构字符串
+https://leetcode.cn/problems/isomorphic-strings/?envType=study-plan-v2&envId=top-interview-150
+ */
+func isIsomorphic(s string, t string) bool {
+	mp, set := make(map[rune]rune), make(map[rune]struct{})
+	for i := range s {
+		var b2 rune
+		b1 := rune(s[i])
+		if i < len(t) {
+			b2 = rune(t[i])
+		} else {
+			b2 = rune(0)
+		}
+		/**
+			r := isIsomorphic("paper", "title")  e=>l  r=>e
+			r := isIsomorphic("badc", "baba")    b=>a  d=>a
+		 */
+		b1r, ok1 := mp[b1]
+		_, ok2 := set[b2]
+		if !ok1 && !ok2{
+			mp[b1] = b2
+			set[b2] = struct{}{}
+		} else if (ok1 && b1r != b2) || (!ok1 && ok2) {   // ok1 || ok2
+			return false
+		}
+	}
+	return true
+}
+
+/**
+290. 单词规律
+https://leetcode.cn/problems/word-pattern/?envType=study-plan-v2&envId=top-interview-150
+ */
+func wordPattern(pattern string, s string) bool {
+
 }
