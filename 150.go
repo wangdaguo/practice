@@ -3,12 +3,15 @@ package main
 import (
 	"fmt"
 	"math"
+	"sort"
 	"strings"
 )
 
 func main() {
 	//r := isIsomorphic("paper", "title")
-	r := wordPattern("abc", "b c a")
+	//r := wordPattern("abc", "b c a")
+	//r := isAnagram("anagram", "nagaram")
+	r := longestConsecutive([]int{100, 4, 200, 1, 3, 2})
 	fmt.Print(r)
 }
 
@@ -208,29 +211,31 @@ func abs(value int) int {
 	return value
 }
 
-/**
+/*
+*
 383. 赎金信
 https://leetcode.cn/problems/ransom-note
- */
+*/
 func canConstruct(ransomNote string, magazine string) bool {
 	mp := make(map[byte]int)
 	for _, ch := range magazine {
-		mp[byte(ch)] ++
+		mp[byte(ch)]++
 	}
 	for _, ch := range ransomNote {
 		cnt, ok := mp[byte(ch)]
 		if !ok || cnt < 1 {
 			return false
 		}
-		mp[byte(ch)] --
+		mp[byte(ch)]--
 	}
 	return true
 }
 
-/**
+/*
+*
 205. 同构字符串
 https://leetcode.cn/problems/isomorphic-strings/?envType=study-plan-v2&envId=top-interview-150
- */
+*/
 func isIsomorphic(s string, t string) bool {
 	mp, set := make(map[rune]rune), make(map[rune]struct{})
 	for i := range s {
@@ -242,25 +247,26 @@ func isIsomorphic(s string, t string) bool {
 			b2 = rune(0)
 		}
 		/**
-			r := isIsomorphic("paper", "title")  e=>l  r=>e
-			r := isIsomorphic("badc", "baba")    b=>a  d=>a
-		 */
+		r := isIsomorphic("paper", "title")  e=>l  r=>e
+		r := isIsomorphic("badc", "baba")    b=>a  d=>a
+		*/
 		b1r, ok1 := mp[b1]
 		_, ok2 := set[b2]
-		if !ok1 && !ok2{
+		if !ok1 && !ok2 {
 			mp[b1] = b2
 			set[b2] = struct{}{}
-		} else if (ok1 && b1r != b2) || (!ok1 && ok2) {   // ok1 || ok2
+		} else if (ok1 && b1r != b2) || (!ok1 && ok2) { // ok1 || ok2
 			return false
 		}
 	}
 	return true
 }
 
-/**
+/*
+*
 290. 单词规律
 https://leetcode.cn/problems/word-pattern/?envType=study-plan-v2&envId=top-interview-150
- */
+*/
 func wordPattern(pattern string, s string) bool {
 	wordList := strings.Split(s, " ")
 	if len(pattern) != len(wordList) {
@@ -281,4 +287,141 @@ func wordPattern(pattern string, s string) bool {
 		return false
 	}
 	return true
+}
+
+/*
+*
+242. 有效的字母异位词
+https://leetcode.cn/problems/valid-anagram/?envType=study-plan-v2&envId=top-interview-150
+*/
+func isAnagram(s string, t string) bool {
+	if len(s) != len(t) {
+		return false
+	}
+	mp := make(map[byte]int)
+	for i := range s {
+		if _, ok := mp[s[i]]; !ok {
+			mp[s[i]] = 1
+		} else {
+			mp[s[i]]++
+		}
+		if _, ok := mp[t[i]]; !ok {
+			mp[t[i]] = -1
+		} else {
+			mp[t[i]]--
+		}
+	}
+	for _, v := range mp {
+		if v != 0 {
+			return false
+		}
+	}
+	return true
+}
+
+/*
+*
+49. 字母异位词分组
+https://leetcode.cn/problems/group-anagrams/?envType=study-plan-v2&envId=top-interview-150
+*/
+func groupAnagrams(strs []string) [][]string {
+	r, mp := make([][]string, 0), make(map[string][]string)
+	for _, s := range strs {
+		bl := ByteList(s)
+		bl.Sort()
+		if _, ok := mp[string(bl)]; !ok {
+			mp[string(bl)] = []string{s}
+		} else {
+			mp[string(bl)] = append(mp[string(bl)], s)
+		}
+	}
+	for _, v := range mp {
+		r = append(r, v)
+	}
+	return r
+}
+
+type ByteList []byte
+
+func (bl ByteList) Len() int {
+	return len(bl)
+}
+
+func (bl ByteList) Less(i, j int) bool {
+	return bl[i] < bl[j]
+}
+
+func (bl ByteList) Swap(i, j int) {
+	bl[i], bl[j] = bl[j], bl[i]
+}
+
+func (bl ByteList) Sort() {
+	sort.Sort(bl)
+}
+
+/*
+*
+202. 快乐数
+https://leetcode.cn/problems/happy-number/?envType=study-plan-v2&envId=top-interview-150
+*/
+func isHappy(n int) bool {
+	sum, i, mp := 0, n, make(map[int]struct{})
+	for i > 0 {
+		sum += (i % 10) * (i % 10)
+		i = i / 10
+		if i == 0 {
+			if sum == 1 {
+				return true
+			}
+			if _, ok := mp[sum]; ok {
+				return false
+			}
+			mp[sum] = struct{}{}
+			i = sum
+			sum = 0
+		}
+	}
+	return false
+}
+
+/*
+219. 存在重复元素 II
+*https://leetcode.cn/problems/contains-duplicate-ii/?envType=study-plan-v2&envId=top-interview-150
+*/
+func containsNearbyDuplicate(nums []int, k int) bool {
+	mp := make(map[int]int)
+	for i := range nums {
+		idx, ok := mp[nums[i]]
+		if ok && i-idx <= k {
+			return true
+		}
+		mp[nums[i]] = i
+	}
+	return false
+}
+
+/*
+*
+128. 最长连续序列
+https://leetcode.cn/problems/longest-consecutive-sequence/?envType=study-plan-v2&envId=top-interview-150
+*/
+func longestConsecutive(nums []int) int {
+	r, subLen, mp := 0, 0, make(map[int]bool)
+	for i := range nums {
+		mp[nums[i]] = true
+	}
+	for num := range mp {
+		if !mp[num-1] {
+			cur := num
+			subLen = 1
+			for mp[cur+1] {
+				cur++
+				subLen++
+			}
+			if subLen > r {
+				r = subLen
+			}
+		}
+	}
+	return r
 }
