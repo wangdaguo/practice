@@ -3,10 +3,12 @@ package main
 import (
 	"fmt"
 	"math"
+	"strings"
 )
 
 func main() {
-	r := isIsomorphic("paper", "title")
+	//r := isIsomorphic("paper", "title")
+	r := wordPattern("abc", "b c a")
 	fmt.Print(r)
 }
 
@@ -260,5 +262,23 @@ func isIsomorphic(s string, t string) bool {
 https://leetcode.cn/problems/word-pattern/?envType=study-plan-v2&envId=top-interview-150
  */
 func wordPattern(pattern string, s string) bool {
-
+	wordList := strings.Split(s, " ")
+	if len(pattern) != len(wordList) {
+		return false
+	}
+	mp1, mp2 := make(map[string]string), make(map[string]string)
+	for i, p := range pattern {
+		s1, ok1 := mp1[string(p)]
+		s2, ok2 := mp2[wordList[i]]
+		if ok1 && ok2 && s1 == mp1[s2] {
+			continue
+		}
+		if !ok1 && !ok2 {
+			mp1[string(p)] = wordList[i]
+			mp2[wordList[i]] = string(p)
+			continue
+		}
+		return false
+	}
+	return true
 }
