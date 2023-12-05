@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"sort"
+	"strconv"
 	"strings"
 )
 
@@ -11,7 +12,8 @@ func main() {
 	//r := isIsomorphic("paper", "title")
 	//r := wordPattern("abc", "b c a")
 	//r := isAnagram("anagram", "nagaram")
-	r := longestConsecutive([]int{100, 4, 200, 1, 3, 2})
+	//r := longestConsecutive([]int{100, 4, 200, 1, 3, 2})\
+	r := summaryRanges([]int{0, 1, 2, 4, 5, 7})
 	fmt.Print(r)
 }
 
@@ -424,4 +426,47 @@ func longestConsecutive(nums []int) int {
 		}
 	}
 	return r
+}
+
+/*
+*
+228. 汇总区间
+https://leetcode.cn/problems/summary-ranges/description/?envType=study-plan-v2&envId=top-interview-150
+*/
+func summaryRanges(nums []int) []string {
+	if len(nums) == 0 {
+		return []string{}
+	}
+	list, start, end := make([][]int, 0), 0, 0
+	for i := range nums {
+		if i == 0 {
+			start, end = i, i
+			continue
+		}
+		if nums[i]-nums[i-1] == 1 {
+			end = i
+		} else {
+			list = append(list, []int{nums[start], nums[end]})
+			start, end = i, i
+		}
+	}
+	list = append(list, []int{nums[start], nums[end]})
+	r := make([]string, 0)
+	for i := range list {
+		if list[i][0] == list[i][1] {
+			r = append(r, fmt.Sprintf("%s", strconv.Itoa(list[i][1])))
+		} else {
+			r = append(r, fmt.Sprintf("%s->%s", strconv.Itoa(list[i][0]), strconv.Itoa(list[i][1])))
+		}
+	}
+	return r
+}
+
+/*
+*
+56. 合并区间
+https://leetcode.cn/problems/merge-intervals/?envType=study-plan-v2&envId=top-interview-150
+*/
+func merge(intervals [][]int) [][]int {
+
 }
