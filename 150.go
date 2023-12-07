@@ -13,7 +13,14 @@ func main() {
 	//r := wordPattern("abc", "b c a")
 	//r := isAnagram("anagram", "nagaram")
 	//r := longestConsecutive([]int{100, 4, 200, 1, 3, 2})\
-	r := summaryRanges([]int{0, 1, 2, 4, 5, 7})
+	//r := summaryRanges([]int{0, 1, 2, 4, 5, 7})
+	r := merge([][]int{
+		{2, 3},
+		{4, 5},
+		{6, 7},
+		{8, 9},
+		{1, 10},
+	})
 	fmt.Print(r)
 }
 
@@ -468,5 +475,27 @@ func summaryRanges(nums []int) []string {
 https://leetcode.cn/problems/merge-intervals/?envType=study-plan-v2&envId=top-interview-150
 */
 func merge(intervals [][]int) [][]int {
-
+	sort.Slice(intervals, func(i, j int) bool {
+		if intervals[i][0] < intervals[j][0] || (intervals[i][0] == intervals[j][0] && intervals[i][1] < intervals[j][1]) {
+			return true
+		}
+		return false
+	})
+	fmt.Println(intervals)
+	r, start, end := make([][]int, 0), intervals[0][0], intervals[0][1]
+	for i := 1; i < len(intervals); i++ {
+		// [1,3] [2,4]
+		if end >= intervals[i][0] && intervals[i][1] >= end {
+			end = intervals[i][1]
+		} else if start <= intervals[i][0] && end >= intervals[i][1] { // [1,4] [1,3]
+			continue
+		} else if start >= intervals[i][0] && end <= intervals[i][1] { // [1,4] [1, 9]
+			end = intervals[i][1]
+		} else {
+			r = append(r, []int{start, end})
+			start, end = intervals[i][0], intervals[i][1]
+		}
+	}
+	r = append(r, []int{start, end})
+	return r
 }
