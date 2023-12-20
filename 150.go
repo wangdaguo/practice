@@ -14,13 +14,15 @@ func main() {
 	//r := isAnagram("anagram", "nagaram")
 	//r := longestConsecutive([]int{100, 4, 200, 1, 3, 2})\
 	//r := summaryRanges([]int{0, 1, 2, 4, 5, 7})
-	r := merge([][]int{
-		{2, 3},
-		{4, 5},
-		{6, 7},
-		{8, 9},
-		{1, 10},
-	})
+	//r := merge([][]int{
+	//	{2, 3},
+	//	{4, 5},
+	//	{6, 7},
+	//	{8, 9},
+	//	{1, 10},
+	//})
+	//r := insert([][]int{{1,2},{3,5},{6,7},{8,10},{12,16}}, []int{4,8})
+	r := insert([][]int{{1,5}}, []int{2,3})
 	fmt.Print(r)
 }
 
@@ -497,5 +499,49 @@ func merge(intervals [][]int) [][]int {
 		}
 	}
 	r = append(r, []int{start, end})
+	return r
+}
+
+/**
+57. 插入区间
+https://leetcode.cn/problems/insert-interval/description/?envType=study-plan-v2&envId=top-interview-150
+{1,5}}, []int{2,3}
+ */
+func insert(intervals [][]int, newInterval []int) [][]int {
+	if len(intervals) < 1 {
+		return [][]int{newInterval}
+	}
+	r, hasAppnewInterval, i := [][]int{}, false, 0
+	for i < len(intervals)  {
+		if hasAppnewInterval {
+			r = append(r, intervals[i])
+			continue
+		}
+		if intervals[i][0] <= newInterval[0] && intervals[i][1] >= newInterval[0] {
+			newInterval[0] = intervals[i][0]
+			if intervals[i][1] >= newInterval[1] {
+				newInterval[1] = intervals[i][1]
+			}
+			i ++
+		} else if intervals[i][0] <= newInterval[1] && intervals[i][1] >= newInterval[1] {
+			newInterval[1] = intervals[i][1]
+			if intervals[i][0] < newInterval[0] {
+				newInterval[0] = intervals[i][0]
+			}
+			i ++
+		} else if intervals[i][0] > newInterval[1] {
+			r = append(r, newInterval)
+			hasAppnewInterval = true
+			if i == len(intervals) - 1 {
+				r = append(r, intervals[i])
+			}
+		} else if intervals[i][1] < newInterval[0] {
+			r = append(r, intervals[i])
+			i ++
+		}
+	}
+	if !hasAppnewInterval {
+		r = append(r, newInterval)
+	}
 	return r
 }
