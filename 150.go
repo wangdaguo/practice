@@ -22,7 +22,9 @@ func main() {
 	//	{1, 10},
 	//})
 	//r := insert([][]int{{1,2},{3,5},{6,7},{8,10},{12,16}}, []int{4,8})
-	r := insert([][]int{{1,5}}, []int{2,3})
+	//r := insert([][]int{{1, 3}, {6, 9}}, []int{2, 5})
+	//r := insert([][]int{{1, 5}}, []int{2, 3})
+	r := findMinArrowShots([][]int{{10, 16}, {2, 8}, {1, 6}, {7, 12}})
 	fmt.Print(r)
 }
 
@@ -502,46 +504,74 @@ func merge(intervals [][]int) [][]int {
 	return r
 }
 
-/**
+/*
+*
 57. 插入区间
 https://leetcode.cn/problems/insert-interval/description/?envType=study-plan-v2&envId=top-interview-150
-{1,5}}, []int{2,3}
- */
+{{1,5}}, []int{2,3}
+*/
 func insert(intervals [][]int, newInterval []int) [][]int {
 	if len(intervals) < 1 {
 		return [][]int{newInterval}
 	}
-	r, hasAppnewInterval, i := [][]int{}, false, 0
-	for i < len(intervals)  {
-		if hasAppnewInterval {
-			r = append(r, intervals[i])
-			continue 
-		}
-		if intervals[i][0] <= newInterval[0] && intervals[i][1] >= newInterval[0] {
-			newInterval[0] = intervals[i][0]
-			if intervals[i][1] >= newInterval[1] {
-				newInterval[1] = intervals[i][1]
+	left, right, merged, r := newInterval[0], newInterval[1], false, [][]int{}
+	for _, interval := range intervals {
+		if interval[0] > newInterval[1] {
+			if !merged {
+				merged = true
+				r = append(r, []int{left, right})
 			}
-			i ++
-		} else if intervals[i][0] <= newInterval[1] && intervals[i][1] >= newInterval[1] {
-			newInterval[1] = intervals[i][1]
-			if intervals[i][0] < newInterval[0] {
-				newInterval[0] = intervals[i][0]
-			}
-			i ++
-		} else if intervals[i][0] > newInterval[1] {
-			r = append(r, newInterval)
-			hasAppnewInterval = true
-			if i == len(intervals) - 1 {
-				r = append(r, intervals[i])
-			}
-		} else if intervals[i][1] < newInterval[0] {
-			r = append(r, intervals[i])
-			i ++
+			r = append(r, interval)
+		} else if interval[1] < newInterval[0] {
+			r = append(r, interval)
+		} else {
+			left = min(left, interval[0])
+			right = max(right, interval[1])
 		}
 	}
-	if !hasAppnewInterval {
-		r = append(r, newInterval)
+	if !merged {
+		r = append(r, []int{left, right})
 	}
 	return r
+}
+
+func min(x, y int) int {
+	if x < y {
+		return x
+	}
+	return y
+}
+
+func max(i, j int) int {
+	if i > j {
+		return i
+	}
+	return j
+}
+
+/*
+*
+452. 用最少数量的箭引爆气球
+https://leetcode.cn/problems/minimum-number-of-arrows-to-burst-balloons/description/?envType=study-plan-v2&envId=top-interview-150
+*/
+func findMinArrowShots(points [][]int) int {
+	if len(points) < 1 {
+		return 0
+	}
+	sort.Slice(points, func(i, j int) bool {
+		if points[i][0] < points[j][0] {
+			return true
+		}
+		return false
+	})
+	cnt, left, right := 1, points[0][0], points[0][1]
+	for i := 1; i < len(points); i++ {
+		if points[i][0] > right {
+			left, right = points[i][0], points[i][1]
+			cnt++
+		} else {
+			right = min(right, points[i][0])
+		}
+	}
+	return cnt
 }
