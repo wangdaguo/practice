@@ -515,7 +515,7 @@ func insert(intervals [][]int, newInterval []int) [][]int {
 	for i < len(intervals)  {
 		if hasAppnewInterval {
 			r = append(r, intervals[i])
-			continue
+			continue 
 		}
 		if intervals[i][0] <= newInterval[0] && intervals[i][1] >= newInterval[0] {
 			newInterval[0] = intervals[i][0]
