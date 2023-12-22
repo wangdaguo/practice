@@ -25,7 +25,8 @@ func main() {
 	//r := insert([][]int{{1, 3}, {6, 9}}, []int{2, 5})
 	//r := insert([][]int{{1, 5}}, []int{2, 3})
 	//r := findMinArrowShots([][]int{{1, 2}, {3, 4}, {5, 6}, {7, 8}})
-	r := simplifyPath("/a/./b/../../c/")
+	//r := simplifyPath("/a/./b/../../c/")
+	r := evalRPN([]string{"4","13","5","/","+"})
 	fmt.Print(r)
 }
 
@@ -681,4 +682,43 @@ func (s *MinStack) GetMin() int {
 		return -1
 	}
 	return s.MinData[len(s.MinData)-1]
+}
+
+/**
+150. 逆波兰表达式求值
+https://leetcode.cn/problems/evaluate-reverse-polish-notation/?envType=study-plan-v2&envId=top-interview-150
+ */
+func evalRPN(tokens []string) int {
+	if len(tokens) < 1 {
+		return 0
+	}
+	stack := make([]int, 0)
+	for _, s := range tokens {
+		if n, err := strconv.Atoi(s); err == nil {
+			stack = append(stack, n)
+			continue
+		}
+		i, j := stack[len(stack)-2], stack[len(stack)-1]
+		stack = stack[:len(stack)-2]
+		var tmp int
+		if s == "+" {
+			tmp = i + j
+		} else if s == "-" {
+			tmp = i - j
+		} else if s == "*" {
+			tmp = i * j
+		} else  {
+			tmp = int(math.Floor(float64(i) / float64(j)))
+		}
+		stack = append(stack, tmp)
+ 	}
+ 	return stack[0]
+}
+
+/**
+224. 基本计算器
+https://leetcode.cn/problems/basic-calculator/?envType=study-plan-v2&envId=top-interview-150
+ */
+func calculate(s string) int {
+
 }
