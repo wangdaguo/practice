@@ -26,8 +26,43 @@ func main() {
 	//r := insert([][]int{{1, 5}}, []int{2, 3})
 	//r := findMinArrowShots([][]int{{1, 2}, {3, 4}, {5, 6}, {7, 8}})
 	//r := simplifyPath("/a/./b/../../c/")
-	r := evalRPN([]string{"4","13","5","/","+"})
-	fmt.Print(r)
+	//r := evalRPN([]string{"4","13","5","/","+"})
+	node7 := &ListNode{
+		Val:  7,
+		Next: nil,
+	}
+	node6 := &ListNode{
+		Val:  6,
+		Next: node7,
+	}
+	head1:= &ListNode{
+		Val:  1,
+		Next: node6,
+	}
+
+	node5 := &ListNode{
+		Val:  5,
+		Next: nil,
+	}
+	node4 := &ListNode{
+		Val:  4,
+		Next: node5,
+	}
+	node3 := &ListNode{
+		Val:  3,
+		Next: node4,
+	}
+	node2 := &ListNode{
+		Val:  2,
+		Next: node3,
+	}
+	head2 := &ListNode{
+		Val:  1,
+		Next: node2,
+	}
+	r := addTwoNumbers(head1, head2)
+	PrintList(r)
+	//fmt.Print(r)
 }
 
 /*
@@ -720,5 +755,80 @@ func evalRPN(tokens []string) int {
 https://leetcode.cn/problems/basic-calculator/?envType=study-plan-v2&envId=top-interview-150
  */
 func calculate(s string) int {
+	return 0
+}
 
+/**
+2. 两数相加
+https://leetcode.cn/problems/add-two-numbers/?envType=study-plan-v2&envId=top-interview-150
+ */
+type ListNode struct {
+    Val int
+    Next *ListNode
+}
+
+func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
+	if l1 == nil {
+		return l2
+	}
+	if l2 == nil {
+		return l1
+	}
+	rl1, rl2, jw, l := l1, l2, 0, &ListNode{}
+	h := l
+	for rl1 != nil || rl2 != nil || jw > 0 {
+		v1, v2 := 0, 0
+		if rl1 != nil {
+			v1 = rl1.Val
+			rl1 = rl1.Next
+		}
+		if rl2 != nil {
+			v2 = rl2.Val
+			rl2 = rl2.Next
+		}
+		sum := v1 + v2 + jw
+		jw = sum / 10
+		sum = sum % 10
+		node := &ListNode{
+			Val: sum,
+		}
+		l.Next = node
+		l = l.Next
+	}
+	return h.Next
+}
+
+func PrintList(head *ListNode)  {
+	h := head
+	var arr []int
+	for h != nil {
+		arr = append(arr, h.Val)
+		h = h.Next
+	}
+	fmt.Println(arr)
+}
+
+func reverseList1(l *ListNode) *ListNode {
+	if l == nil {
+		return l
+	}
+	var pre *ListNode
+	cur := l
+	for cur != nil {
+		next := cur.Next
+		cur.Next = pre
+		pre = cur
+		cur = next
+	}
+	return pre
+}
+
+func reverseList2(l *ListNode) *ListNode {
+	if l == nil || l.Next == nil {
+		return l
+	}
+	h := reverseList2(l.Next)
+	l.Next.Next = l
+	l.Next = nil
+	return h
 }
