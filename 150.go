@@ -24,7 +24,8 @@ func main() {
 	//r := insert([][]int{{1,2},{3,5},{6,7},{8,10},{12,16}}, []int{4,8})
 	//r := insert([][]int{{1, 3}, {6, 9}}, []int{2, 5})
 	//r := insert([][]int{{1, 5}}, []int{2, 3})
-	r := findMinArrowShots([][]int{{10, 16}, {2, 8}, {1, 6}, {7, 12}})
+	//r := findMinArrowShots([][]int{{1, 2}, {3, 4}, {5, 6}, {7, 8}})
+	r := simplifyPath("/a/./b/../../c/")
 	fmt.Print(r)
 }
 
@@ -75,12 +76,6 @@ func minSubArrayLen(s int, nums []int) int {
 		return r
 	}
 	return 0
-}
-func min(x, y int) int {
-	if x < y {
-		return x
-	}
-	return y
 }
 
 /*
@@ -570,8 +565,120 @@ func findMinArrowShots(points [][]int) int {
 			left, right = points[i][0], points[i][1]
 			cnt++
 		} else {
-			right = min(right, points[i][0])
+			left = max(left, points[i][0])
+			right = min(right, points[i][1])
 		}
 	}
 	return cnt
+}
+
+/**
+20. 有效的括号
+https://leetcode.cn/problems/valid-parentheses/?envType=study-plan-v2&envId=top-interview-150
+ */
+func isValid(s string) bool {
+	if len(s) < 1 {
+		return false
+	}
+	stack := make([]byte, 0)
+	for _, c := range s {
+		if c == '(' || c == '[' || c == '{' {
+			stack = append(stack, byte(c))
+		} else {
+			if len(stack) < 1 {
+				return false
+			}
+			peek := stack[len(stack)-1]
+			stack = stack[:len(stack)-1]
+			if (c == ')' && peek != '(') || (c == ']' && peek != '[') || (c == '}' && peek != '{') {
+				return false
+			}
+		}
+	}
+	if len(stack) > 0 {
+		return false
+	}
+	return true
+}
+
+/**
+71. 简化路径
+https://leetcode.cn/problems/simplify-path/?envType=study-plan-v2&envId=top-interview-150
+ */
+func simplifyPath(path string) string {
+	if len(path) < 1 {
+		return ""
+	}
+	list, stack := strings.Split(path, "/"), make([]string, 0)
+	for _, s := range list {
+		if s == "" || s == "."{
+			continue
+		}
+		if s == ".." {
+			if len(stack) > 0 {
+				stack = stack[:len(stack)-1]
+			}
+			continue
+		}
+		stack = append(stack, fmt.Sprintf("/%s", s))
+	}
+	if len(stack) == 0 {
+		return "/"
+	}
+	return strings.Join(stack, "")
+}
+
+/**
+155. 最小栈
+https://leetcode.cn/problems/min-stack/?envType=study-plan-v2&envId=top-interview-150
+ */
+type MinStack struct {
+	Data []int
+	MinData []int
+}
+
+func Constructor() MinStack {
+	return MinStack{
+		Data: make([]int, 0),
+		MinData: make([]int, 0),
+	}
+}
+
+func (s *MinStack) Push(val int)  {
+	s.Data = append(s.Data, val)
+	if len(s.MinData) == 0 {
+		s.MinData = append(s.MinData, val)
+	} else {
+		peek := s.MinData[len(s.MinData)-1]
+		if val <= peek {
+			s.MinData = append(s.MinData, val)
+		}
+	}
+	return
+}
+
+func (s *MinStack) Pop()  {
+	if len(s.Data) == 0 {
+		return
+	}
+	peek := s.Data[len(s.Data)-1]
+	s.Data = s.Data[:len(s.Data)-1]
+	if len(s.MinData) > 0 && peek == s.MinData[len(s.MinData)-1] {
+		s.MinData = s.MinData[:len(s.MinData)-1]
+	}
+	return
+}
+
+func (s *MinStack) Top() int {
+	if len(s.Data) == 0 {
+		return 0
+	}
+	return s.Data[len(s.Data)-1]
+}
+
+func (s *MinStack) GetMin() int {
+	if len(s.MinData) == 0 {
+		return -1
+	}
+	return s.MinData[len(s.MinData)-1]
 }
