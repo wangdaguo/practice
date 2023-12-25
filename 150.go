@@ -573,7 +573,7 @@ func min(x, y int) int {
 	return y
 }
 
-func max(i, j int) int {
+func max(i, j int)
 	if i > j {
 		return i
 	}
@@ -831,4 +831,36 @@ func reverseList2(l *ListNode) *ListNode {
 	l.Next.Next = l
 	l.Next = nil
 	return h
+}
+
+/**
+138. 随机链表的复制
+https://leetcode.cn/problems/copy-list-with-random-pointer/?envType=study-plan-v2&envId=top-interview-150
+ */
+type Node struct {
+   Val int
+   Next *Node
+   Random *Node
+}
+
+func copyRandomList(head *Node) *Node {
+	if head == nil {
+		return nil
+	}
+	h, mp := head, make(map[*Node]*Node)
+	return deepCopyNode(mp, h)
+}
+
+func deepCopyNode(mp map[*Node]*Node, h *Node) *Node {
+	if h == nil {
+		return nil
+	}
+	if n, ok := mp[h]; ok {
+		return n
+	}
+	n := &Node{Val: h.Val}
+	mp[h] = n
+	n.Next = deepCopyNode(mp, h.Next)
+	n.Random = deepCopyNode(mp, h.Random)
+	return n
 }
