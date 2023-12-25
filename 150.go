@@ -27,18 +27,18 @@ func main() {
 	//r := findMinArrowShots([][]int{{1, 2}, {3, 4}, {5, 6}, {7, 8}})
 	//r := simplifyPath("/a/./b/../../c/")
 	//r := evalRPN([]string{"4","13","5","/","+"})
-	node7 := &ListNode{
-		Val:  7,
-		Next: nil,
-	}
-	node6 := &ListNode{
-		Val:  6,
-		Next: node7,
-	}
-	head1:= &ListNode{
-		Val:  1,
-		Next: node6,
-	}
+	//node7 := &ListNode{
+	//	Val:  7,
+	//	Next: nil,
+	//}
+	//node6 := &ListNode{
+	//	Val:  6,
+	//	Next: node7,
+	//}
+	//head1:= &ListNode{
+	//	Val:  1,
+	//	Next: node6,
+	//}
 
 	node5 := &ListNode{
 		Val:  5,
@@ -60,7 +60,8 @@ func main() {
 		Val:  1,
 		Next: node2,
 	}
-	r := addTwoNumbers(head1, head2)
+	//r := addTwoNumbers(head1, head2)
+	r := reverseBetween(head2, 2, 4)
 	PrintList(r)
 	//fmt.Print(r)
 }
@@ -573,7 +574,7 @@ func min(x, y int) int {
 	return y
 }
 
-func max(i, j int)
+func max(i, j int) int {
 	if i > j {
 		return i
 	}
@@ -608,10 +609,11 @@ func findMinArrowShots(points [][]int) int {
 	return cnt
 }
 
-/**
+/*
+*
 20. 有效的括号
 https://leetcode.cn/problems/valid-parentheses/?envType=study-plan-v2&envId=top-interview-150
- */
+*/
 func isValid(s string) bool {
 	if len(s) < 1 {
 		return false
@@ -637,17 +639,18 @@ func isValid(s string) bool {
 	return true
 }
 
-/**
+/*
+*
 71. 简化路径
 https://leetcode.cn/problems/simplify-path/?envType=study-plan-v2&envId=top-interview-150
- */
+*/
 func simplifyPath(path string) string {
 	if len(path) < 1 {
 		return ""
 	}
 	list, stack := strings.Split(path, "/"), make([]string, 0)
 	for _, s := range list {
-		if s == "" || s == "."{
+		if s == "" || s == "." {
 			continue
 		}
 		if s == ".." {
@@ -664,23 +667,24 @@ func simplifyPath(path string) string {
 	return strings.Join(stack, "")
 }
 
-/**
+/*
+*
 155. 最小栈
 https://leetcode.cn/problems/min-stack/?envType=study-plan-v2&envId=top-interview-150
- */
+*/
 type MinStack struct {
-	Data []int
+	Data    []int
 	MinData []int
 }
 
 func Constructor() MinStack {
 	return MinStack{
-		Data: make([]int, 0),
+		Data:    make([]int, 0),
 		MinData: make([]int, 0),
 	}
 }
 
-func (s *MinStack) Push(val int)  {
+func (s *MinStack) Push(val int) {
 	s.Data = append(s.Data, val)
 	if len(s.MinData) == 0 {
 		s.MinData = append(s.MinData, val)
@@ -693,7 +697,7 @@ func (s *MinStack) Push(val int)  {
 	return
 }
 
-func (s *MinStack) Pop()  {
+func (s *MinStack) Pop() {
 	if len(s.Data) == 0 {
 		return
 	}
@@ -719,10 +723,11 @@ func (s *MinStack) GetMin() int {
 	return s.MinData[len(s.MinData)-1]
 }
 
-/**
+/*
+*
 150. 逆波兰表达式求值
 https://leetcode.cn/problems/evaluate-reverse-polish-notation/?envType=study-plan-v2&envId=top-interview-150
- */
+*/
 func evalRPN(tokens []string) int {
 	if len(tokens) < 1 {
 		return 0
@@ -742,29 +747,31 @@ func evalRPN(tokens []string) int {
 			tmp = i - j
 		} else if s == "*" {
 			tmp = i * j
-		} else  {
+		} else {
 			tmp = int(math.Floor(float64(i) / float64(j)))
 		}
 		stack = append(stack, tmp)
- 	}
- 	return stack[0]
+	}
+	return stack[0]
 }
 
-/**
+/*
+*
 224. 基本计算器
 https://leetcode.cn/problems/basic-calculator/?envType=study-plan-v2&envId=top-interview-150
- */
+*/
 func calculate(s string) int {
 	return 0
 }
 
-/**
+/*
+*
 2. 两数相加
 https://leetcode.cn/problems/add-two-numbers/?envType=study-plan-v2&envId=top-interview-150
- */
+*/
 type ListNode struct {
-    Val int
-    Next *ListNode
+	Val  int
+	Next *ListNode
 }
 
 func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
@@ -798,7 +805,7 @@ func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
 	return h.Next
 }
 
-func PrintList(head *ListNode)  {
+func PrintList(head *ListNode) {
 	h := head
 	var arr []int
 	for h != nil {
@@ -833,14 +840,15 @@ func reverseList2(l *ListNode) *ListNode {
 	return h
 }
 
-/**
+/*
+*
 138. 随机链表的复制
 https://leetcode.cn/problems/copy-list-with-random-pointer/?envType=study-plan-v2&envId=top-interview-150
- */
+*/
 type Node struct {
-   Val int
-   Next *Node
-   Random *Node
+	Val    int
+	Next   *Node
+	Random *Node
 }
 
 func copyRandomList(head *Node) *Node {
@@ -863,4 +871,36 @@ func deepCopyNode(mp map[*Node]*Node, h *Node) *Node {
 	n.Next = deepCopyNode(mp, h.Next)
 	n.Random = deepCopyNode(mp, h.Random)
 	return n
+}
+
+func reverseBetween(head *ListNode, left int, right int) *ListNode {
+	if left == right {
+		return head
+	}
+	dummyHead := &ListNode{Next: head}
+	pre, end, h, i := dummyHead, dummyHead, dummyHead, 0
+	for i < right-left {
+		end = end.Next
+		i++
+	}
+	i = 0
+	for i < left {
+		pre = h
+		h = h.Next
+		end = end.Next
+		i++
+	}
+	if end != nil {
+		end = end.Next
+	}
+	p := end
+	cur := pre.Next
+	for cur != end {
+		n := cur.Next
+		cur.Next = p
+		p = cur
+		cur = n
+	}
+	pre.Next = p
+	return dummyHead.Next
 }
