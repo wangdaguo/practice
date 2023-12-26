@@ -873,6 +873,11 @@ func deepCopyNode(mp map[*Node]*Node, h *Node) *Node {
 	return n
 }
 
+/*
+*
+92. 反转链表 II
+https://leetcode.cn/problems/reverse-linked-list-ii/?envType=study-plan-v2&envId=top-interview-150
+*/
 func reverseBetween(head *ListNode, left int, right int) *ListNode {
 	if left == right {
 		return head
@@ -902,5 +907,30 @@ func reverseBetween(head *ListNode, left int, right int) *ListNode {
 		cur = n
 	}
 	pre.Next = p
+	return dummyHead.Next
+}
+
+/*
+*
+82. 删除排序链表中的重复元素 II
+https://leetcode.cn/problems/remove-duplicates-from-sorted-list-ii/?envType=study-plan-v2&envId=top-interview-150
+[1,2,3,3,4,4,5]
+*/
+func deleteDuplicates(head *ListNode) *ListNode {
+	if head == nil {
+		return head
+	}
+	dummyHead := &ListNode{Next: head, Val: head.Val - 1}
+	h := dummyHead
+	for h.Next != nil {
+		val := h.Next.Val
+		if h.Next.Next != nil && h.Next.Next.Val == val {
+			for h.Next != nil && h.Next.Val == val {
+				h.Next = h.Next.Next
+			}
+		} else {
+			h = h.Next
+		}
+	}
 	return dummyHead.Next
 }
