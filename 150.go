@@ -934,3 +934,32 @@ func deleteDuplicates(head *ListNode) *ListNode {
 	}
 	return dummyHead.Next
 }
+
+/*
+*
+61. 旋转链表
+https://leetcode.cn/problems/rotate-list/?envType=study-plan-v2&envId=top-interview-150
+*/
+func rotateRight(head *ListNode, k int) *ListNode {
+	if head == nil {
+		return head
+	}
+	l, h := 0, head
+	for h != nil {
+		h = h.Next
+		l++
+	}
+	moveK, i, slow, fast := k%l, 0, head, head
+	for i < moveK {
+		fast = fast.Next
+		i++
+	}
+	for fast.Next != nil {
+		slow = slow.Next
+		fast = fast.Next
+	}
+	newHead := slow.Next
+	slow.Next = nil
+	fast.Next = head
+	return newHead
+}
