@@ -963,3 +963,123 @@ func rotateRight(head *ListNode, k int) *ListNode {
 	fast.Next = head
 	return newHead
 }
+
+/*
+86. 分隔链表
+*https://leetcode.cn/problems/partition-list/description/?envType=study-plan-v2&envId=top-interview-150
+*/
+func partition(head *ListNode, x int) *ListNode {
+	if head == nil {
+		return head
+	}
+	large, small, h := &ListNode{}, &ListNode{}, head
+	l, s := large, small
+	for h != nil {
+		if h.Val > x {
+			l.Next = h
+			l = l.Next
+		} else {
+			s.Next = h
+			s = s.Next
+		}
+		h = h.Next
+	}
+	l.Next = nil
+	s.Next = large.Next
+	return small.Next
+}
+
+/*
+146. LRU 缓存
+https://leetcode.cn/problems/lru-cache/?envType=study-plan-v2&envId=top-interview-150
+*/
+type DLinkedNode struct {
+	key, value int
+	prev, next *DLinkedNode
+}
+
+type LRUCache struct {
+	mp          map[int]*DLinkedNode
+	head, tail  *DLinkedNode
+	maxLen, len int
+}
+
+func Constructor(capacity int) LRUCache {
+	l := LRUCache{
+		maxLen: capacity,
+		mp:     make(map[int]*DLinkedNode),
+		head:   &DLinkedNode{},
+		tail:   &DLinkedNode{},
+	}
+	l.head.next = l.tail
+	l.tail.prev = l.head
+	return l
+}
+
+func (l *LRUCache) Get(key int) int {
+	node, ok := l.mp[key]
+	if ok {
+		l.moveToHead(node)
+		return node.value
+	}
+	return -1
+}
+
+func (l *LRUCache) Put(key int, value int) {
+
+	v, ok := l.mp[key]
+	if ok {
+		v.value = value
+		l.moveToHead(v)
+		return
+	}
+	node := &DLinkedNode{
+		key:   key,
+		value: value,
+	}
+	l.AddToHead(node)
+	l.mp[key] = node
+	if l.len < l.maxLen {
+		l.len++
+	} else {
+		removed := l.RemoveTail()
+		delete(l.mp, removed.key)
+	}
+	return
+}
+
+func (l *LRUCache) AddToHead(node *DLinkedNode) {
+	n := l.head.next
+	l.head.next = node
+	node.prev = l.head
+	node.next = n
+	if n != nil {
+		n.prev = node
+	}
+	return
+
+	/**
+	node.prev = l.head
+	node.next = l.head.next
+	l.head.next.prev = node
+	l.head.next = node
+	*/
+}
+
+func (l *LRUCache) RemoveTail() *DLinkedNode {
+	node := l.tail.prev
+	l.RemoveNode(node)
+	return node
+}
+
+func (l *LRUCache) RemoveNode(node *DLinkedNode) {
+	node.prev.next = node.next
+	node.next.prev = node.prev
+	return
+}
+
+func (l *LRUCache) moveToHead(node *DLinkedNode) {
+	l.RemoveNode(node)
+	l.AddToHead(node)
+	return
+}
