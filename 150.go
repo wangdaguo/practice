@@ -1076,3 +1076,50 @@ func (l *LRUCache) moveToHead(node *DLinkedNode) {
 	l.AddToHead(node)
 	return
 }
+
+/*
+*104. 二叉树的最大深度
+https://leetcode.cn/problems/maximum-depth-of-binary-tree/description/?envType=study-plan-v2&envId=top-interview-150
+*/
+func maxDepth(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+	if root.Left == nil && root.Right == nil {
+		return 1
+	}
+	maxDept := 0
+	if root.Left != nil {
+		maxDept = max(maxDept, maxDepth(root.Left)+1)
+	}
+	if root.Right != nil {
+		maxDept = max(maxDept, maxDepth(root.Right)+1)
+	}
+	return maxDept
+}
+
+/*
+*
+100. 相同的树
+https://leetcode.cn/problems/same-tree/?envType=study-plan-v2&envId=top-interview-150
+*/
+func isSameTree(p *TreeNode, q *TreeNode) bool {
+	if p == nil && q == nil {
+		return true
+	}
+	if (p == nil && q != nil) || (p != nil && q == nil) || (p.Val != q.Val) {
+		return false
+	}
+	return isSameTree(p.Left, q.Left) && isSameTree(p.Right, q.Right)
+}
+
+/*
+226. 翻转二叉树
+https://leetcode.cn/problems/invert-binary-tree/?envType=study-plan-v2&envId=top-interview-150
+*/
+func invertTree(root *TreeNode) *TreeNode {
+	if root == nil || (root.Left == ) {
+		return root
+	}
+	if root
+}
