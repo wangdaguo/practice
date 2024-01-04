@@ -1057,13 +1057,6 @@ func (l *LRUCache) AddToHead(node *DLinkedNode) {
 		n.prev = node
 	}
 	return
-
-	/**
-	node.prev = l.head
-	node.next = l.head.next
-	l.head.next.prev = node
-	l.head.next = node
-	*/
 }
 
 func (l *LRUCache) RemoveTail() *DLinkedNode {
