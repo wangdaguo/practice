@@ -1118,8 +1118,51 @@ func isSameTree(p *TreeNode, q *TreeNode) bool {
 https://leetcode.cn/problems/invert-binary-tree/?envType=study-plan-v2&envId=top-interview-150
 */
 func invertTree(root *TreeNode) *TreeNode {
-	if root == nil || (root.Left == ) {
+	if root == nil || (root.Left == nil && root.Right == nil) {
 		return root
 	}
-	if root
+	root.Left, root.Right = invertTree(root.Right), invertTree(root.Left)
+	return root
+}
+
+/*
+*
+101. 对称二叉树
+https://leetcode.cn/problems/symmetric-tree/description/?envType=study-plan-v2&envId=top-interview-150
+*/
+func isSymmetric(root *TreeNode) bool {
+	if root == nil {
+		return true
+	}
+	return isSymmetricImpl(root.Left, root.Right)
+}
+
+func isSymmetricImpl(l, r *TreeNode) bool {
+	if l == nil && r == nil {
+		return true
+	} else if l == nil || r == nil {
+		return false
+	}
+	if l.Val != r.Val {
+		return false
+	}
+	return isSymmetricImpl(l.Left, r.Right) && isSymmetricImpl(l.Right, r.Left)
+}
+
+/*
+102. 二叉树的层序遍历
+*https://leetcode.cn/problems/binary-tree-level-order-traversal/?envType=study-plan-v2&envId=top-interview-150
+*/
+func levelOrder(root *TreeNode) [][]int {
+	if root == nil {
+		return [][]int{}
+	}
+	r, queue := make([][]int, 0), make([]*TreeNode, 0)
+	queue = append(queue, root)
+	for len(queue) > 1 {
+		node := queue[0]
+		queue = queue[1:]
+
+	}
+
 }
