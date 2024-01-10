@@ -1159,10 +1159,96 @@ func levelOrder(root *TreeNode) [][]int {
 	}
 	r, queue := make([][]int, 0), make([]*TreeNode, 0)
 	queue = append(queue, root)
-	for len(queue) > 1 {
-		node := queue[0]
-		queue = queue[1:]
-
+	for len(queue) > 0 {
+		l := len(queue)
+		tmp := make([]int, 0)
+		for l > 0 {
+			node := queue[0]
+			queue = queue[1:]
+			if node.Left != nil {
+				queue = append(queue, node.Left)
+			}
+			if node.Right != nil {
+				queue = append(queue, node.Right)
+			}
+			tmp = append(tmp, node.Val)
+			l--
+		}
+		if len(tmp) > 0 {
+			r = append(r, tmp)
+		}
 	}
+	return r
+}
 
+/*
+*
+199. 二叉树的右视图
+https://leetcode.cn/problems/binary-tree-right-side-view/?envType=study-plan-v2&envId=top-interview-150
+*/
+func rightSideView(root *TreeNode) []int {
+	if root == nil {
+		return []int{}
+	}
+	r, queue := make([]int, 0), make([]*TreeNode, 0)
+	queue = append(queue, root)
+	for len(queue) > 0 {
+		l := len(queue)
+		for l > 0 {
+			node := queue[0]
+			queue = queue[1:]
+			if node.Left != nil {
+				queue = append(queue, node.Left)
+			}
+			if node.Right != nil {
+				queue = append(queue, node.Right)
+			}
+			l--
+			if l == 0 {
+				r = append(r, node.Val)
+			}
+		}
+	}
+	return r
+}
+
+/*
+*
+103. 二叉树的锯齿形层序遍历
+https://leetcode.cn/problems/binary-tree-zigzag-level-order-traversal/description/?envType=study-plan-v2&envId=top-interview-150
+*/
+func zigzagLevelOrder(root *TreeNode) [][]int {
+	if root == nil {
+		return [][]int{}
+	}
+	r, queue, isReverse := make([][]int, 0), make([]*TreeNode, 0), false
+	queue = append(queue, root)
+	for len(queue) > 0 {
+		isReverse = !isReverse
+		l := len(queue)
+		tmp := make([]int, 0)
+		for l > 0 {
+			node := queue[0]
+			queue = queue[1:]
+			if isReverse {
+				if node.Right != nil {
+					queue = append(queue, node.Right)
+				}
+				if node.Left != nil {
+					queue = append(queue, node.Left)
+				}
+			} else {
+				if node.Left != nil {
+					queue = append(queue, node.Left)
+				}
+				if node.Right != nil {
+					queue = append(queue, node.Right)
+				}
+			}
+			l--
+			tmp = append(tmp, node.Val)
+		}
+		r = append(r, tmp)
+	}
+	return r
 }
