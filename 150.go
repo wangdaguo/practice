@@ -40,30 +40,43 @@ func main() {
 	//	Next: node6,
 	//}
 
-	node5 := &ListNode{
-		Val:  5,
-		Next: nil,
-	}
-	node4 := &ListNode{
-		Val:  4,
-		Next: node5,
-	}
-	node3 := &ListNode{
-		Val:  3,
-		Next: node4,
-	}
-	node2 := &ListNode{
-		Val:  2,
-		Next: node3,
-	}
-	head2 := &ListNode{
-		Val:  1,
-		Next: node2,
-	}
-	//r := addTwoNumbers(head1, head2)
-	r := reverseBetween(head2, 2, 4)
-	PrintList(r)
+	//node5 := &ListNode{
+	//	Val:  5,
+	//	Next: nil,
+	//}
+	//node4 := &ListNode{
+	//	Val:  4,
+	//	Next: node5,
+	//}
+	//node3 := &ListNode{
+	//	Val:  3,
+	//	Next: node4,
+	//}
+	//node2 := &ListNode{
+	//	Val:  2,
+	//	Next: node3,
+	//}
+	//head2 := &ListNode{
+	//	Val:  1,
+	//	Next: node2,
+	//}
+	////r := addTwoNumbers(head1, head2)
+	//r := reverseBetween(head2, 2, 4)
+	//PrintList(r)
 	//fmt.Print(r)
+
+	grid := [][]byte{
+		//{'1', '1', '0', '0', '0'},
+		//{'1', '1', '0', '0', '0'},
+		//{'0', '0', '1', '0', '0'},
+		//{'0', '0', '0', '1', '1'},
+		{'1', '1', '1', '1', '0'},
+		{'1', '1', '0', '1', '0'},
+		{'1', '1', '0', '0', '0'},
+		{'0', '0', '0', '0', '0'},
+	}
+	r := numIslands(grid)
+	fmt.Println(r)
 }
 
 /*
@@ -677,7 +690,7 @@ type MinStack struct {
 	MinData []int
 }
 
-func Constructor() MinStack {
+func Constructor11() MinStack {
 	return MinStack{
 		Data:    make([]int, 0),
 		MinData: make([]int, 0),
@@ -1004,7 +1017,7 @@ type LRUCache struct {
 	maxLen, len int
 }
 
-func Constructor(capacity int) LRUCache {
+func Constructor123(capacity int) LRUCache {
 	l := LRUCache{
 		maxLen: capacity,
 		mp:     make(map[int]*DLinkedNode),
@@ -1081,6 +1094,12 @@ func (l *LRUCache) moveToHead(node *DLinkedNode) {
 *104. 二叉树的最大深度
 https://leetcode.cn/problems/maximum-depth-of-binary-tree/description/?envType=study-plan-v2&envId=top-interview-150
 */
+type TreeNode struct {
+	Val   int
+	Left  *TreeNode
+	Right *TreeNode
+}
+
 func maxDepth(root *TreeNode) int {
 	if root == nil {
 		return 0
@@ -1246,4 +1265,318 @@ func zigzagLevelOrder(root *TreeNode) [][]int {
 		r = append(r, tmp)
 	}
 	return r
+}
+
+/*
+*
+530. 二叉搜索树的最小绝对差
+https://leetcode.cn/problems/minimum-absolute-difference-in-bst/?envType=study-plan-v2&envId=top-interview-150
+*/
+func getMinimumDifference(root *TreeNode) int {
+	if root == nil || (root.Left == nil && root.Right == nil) {
+		return root.Val
+	}
+	r, pre := math.MaxInt64, -1
+	var dfs func(*TreeNode)
+	dfs = func(node *TreeNode) {
+		if node == nil {
+			return
+		}
+		dfs(node.Left)
+		if pre != -1 && node.Val-pre < r {
+			r = node.Val - pre
+		}
+		pre = node.Val
+		dfs(node.Right)
+	}
+	dfs(root)
+	return r
+}
+
+/*
+*
+230. 二叉搜索树中第K小的元素
+https://leetcode.cn/problems/kth-smallest-element-in-a-bst/?envType=study-plan-v2&envId=top-interview-150
+*/
+func kthSmallest(root *TreeNode, k int) int {
+	stack := make([]*TreeNode, 0)
+	for {
+		for root != nil {
+			stack = append(stack, root)
+			root = root.Left
+		}
+		stack, root = stack[:len(stack)-1], stack[len(stack)-1]
+		k--
+		if k == 0 {
+			return root.Val
+		}
+		root = root.Right
+	}
+}
+
+/*
+*
+98. 验证二叉搜索树
+https://leetcode.cn/problems/validate-binary-search-tree/?envType=study-plan-v2&envId=top-interview-150
+*/
+func isValidBST(root *TreeNode) bool {
+	pre, r := -1, true
+	var dfs func(*TreeNode)
+	dfs = func(node *TreeNode) {
+		if node == nil {
+			return
+		}
+		dfs(node.Left)
+		if pre != -1 && pre < node.Val {
+			r = false
+			return
+		}
+		pre = node.Val
+		dfs(node.Right)
+		if pre > node.Val {
+			r = false
+			return
+		}
+	}
+	return r
+}
+
+/*
+200. 岛屿数量
+https://leetcode.cn/problems/number-of-islands/?envType=study-plan-v2&envId=top-interview-150
+*/
+func numIslands(grid [][]byte) int {
+	if len(grid) < 1 {
+		return 0
+	}
+	r := 0
+	for i := 0; i < len(grid); i++ {
+		for j := 0; j < len(grid[i]); j++ {
+			if grid[i][j] == '1' {
+				bfsSearchIslands(grid, i, j)
+				r++
+			}
+		}
+	}
+	return r
+}
+
+// 左、上、右、下
+var direction = []int{-1, 0, 1, 0, -1}
+
+func bfsSearchIslands(grid [][]byte, i int, j int) {
+	if i < 0 || i >= len(grid) || j < 0 || j >= len(grid[0]) || grid[i][j] == '0' || grid[i][j] == '2' {
+		return
+	}
+	grid[i][j] = '2'
+	for k := 0; k < 4; k++ {
+		x := i + direction[k]
+		y := j + direction[k+1]
+		bfsSearchIslands(grid, x, y)
+	}
+	return
+}
+
+/*
+*
+130. 被围绕的区域
+https://leetcode.cn/problems/surrounded-regions/?envType=study-plan-v2&envId=top-interview-150
+*/
+func solve(board [][]byte) {
+	if len(board) < 1 {
+		return
+	}
+	for i := 0; i < len(board); i++ {
+		bfsSolve(board, i, 0)
+		bfsSolve(board, i, len(board[0])-1)
+	}
+	for j := 0; j < len(board[0]); j++ {
+		bfsSolve(board, 0, j)
+		bfsSolve(board, len(board)-1, j)
+	}
+	for i := 0; i < len(board); i++ {
+		for j := 0; j < len(board[0]); j++ {
+			if board[i][j] == 'O' {
+				board[i][j] = 'X'
+			} else if board[i][j] == 'Y' {
+				board[i][j] = 'O'
+			}
+		}
+	}
+	return
+}
+
+func bfsSolve(board [][]byte, i int, j int) {
+	if i < 0 || i >= len(board) || j < 0 || j >= len(board[0]) || board[i][j] == 'X' || board[i][j] == 'Y' {
+		return
+	}
+	board[i][j] = 'Y'
+	for k := 0; k < 4; k++ {
+		x := i + direction[k]
+		y := j + direction[k+1]
+		bfsSolve(board, x, y)
+	}
+	return
+}
+
+/*
+133. 克隆图
+*https://leetcode.cn/problems/clone-graph/?envType=study-plan-v2&envId=top-interview-150
+*/
+type NodeG struct {
+	Val       int
+	Neighbors []*NodeG
+}
+
+func cloneGraph(node *NodeG) *NodeG {
+	if node == nil {
+		return nil
+	}
+	mp := make(map[*NodeG]*NodeG)
+	var cg func(node *NodeG) *NodeG
+	cg = func(node *NodeG) *NodeG {
+		if node == nil {
+			return node
+		}
+		if _, ok := mp[node]; ok {
+			return mp[node]
+		}
+		cloneNode := &NodeG{
+			Val:       node.Val,
+			Neighbors: []*NodeG{},
+		}
+		mp[node] = cloneNode
+		for _, n := range node.Neighbors {
+			cloneNode.Neighbors = append(cloneNode.Neighbors, cg(n))
+		}
+		return cloneNode
+	}
+	return cg(node)
+}
+
+/*
+*207. 课程表
+https://leetcode.cn/problems/course-schedule/description/?envType=study-plan-v2&envId=top-interview-150
+*/
+func canFinishBFS(numCourses int, prerequisites [][]int) bool {
+	edges, indeg, r, q := make([][]int, numCourses), make([]int, numCourses), make([]int, 0), make([]int, 0)
+	for _, arr := range prerequisites {
+		edges[arr[1]] = append(edges[arr[1]], arr[0])
+		indeg[arr[0]]++
+	}
+	for i := 0; i < numCourses; i++ {
+		if indeg[i] == 0 {
+			q = append(q, i)
+		}
+	}
+	for len(q) > 0 {
+		u := q[0]
+		q = q[1:]
+		r = append(r, u)
+		for _, v := range edges[u] {
+			indeg[v]--
+			if indeg[v] == 0 {
+				q = append(q, v)
+			}
+		}
+	}
+	return len(r) == numCourses
+}
+
+func canFinishDFS(numCourses int, prerequisites [][]int) bool {
+	edges, visited, valid, result := make([][]int, numCourses), make([]int, numCourses), true, make([]int, 0)
+	var dfs func(u int)
+	dfs = func(u int) {
+		visited[u] = 1
+		for _, v := range edges[u] {
+			if visited[v] == 0 {
+				dfs(v)
+				if !valid {
+					return
+				}
+			} else if visited[v] == 1 {
+				valid = false
+				return
+			}
+		}
+		visited[u] = 2
+		result = append(result, u)
+	}
+	for _, arr := range prerequisites {
+		edges[arr[1]] = append(edges[arr[1]], arr[0])
+	}
+	for i := 0; i < numCourses && valid; i++ {
+		if visited[i] == 0 {
+			dfs(i)
+		}
+	}
+	return len(result) == numCourses && valid
+}
+
+/*
+210. 课程表 II
+https://leetcode.cn/problems/course-schedule-ii/description/
+*/
+func findOrderBFS(numCourses int, prerequisites [][]int) []int {
+	edges, indeg, resut, q := make([][]int, numCourses), make([]int, numCourses), make([]int, 0), make([]int, 0)
+	for _, arr := range prerequisites {
+		edges[arr[1]] = append(edges[arr[1]], arr[0])
+		indeg[arr[0]]++
+	}
+	for i := 0; i < numCourses; i++ {
+		if indeg[i] == 0 {
+			q = append(q, i)
+		}
+	}
+	for len(q) > 0 {
+		v := q[0]
+		q = q[1:]
+		resut = append(resut, v)
+		for _, t := range edges[v] {
+			indeg[t]--
+			if indeg[t] == 0 {
+				q = append(q, t)
+			}
+		}
+	}
+	if len(resut) != numCourses {
+		return []int{}
+	}
+	return resut
+}
+
+func findOrderDFS(numCourses int, prerequisites [][]int) []int {
+	edges, visited, valid, result := make([][]int, numCourses), make([]int, numCourses), true, make([]int, 0)
+	var dfs func(u int)
+	dfs = func(u int) {
+		visited[u] = 1
+		for _, v := range edges[u] {
+			if visited[v] == 1 {
+				valid = false
+				return
+			} else if visited[v] == 0 {
+				dfs(v)
+				if !valid {
+					return
+				}
+			}
+		}
+		visited[u] = 2
+		result = append(result, u)
+	}
+	for _, arr := range prerequisites {
+		edges[arr[1]] = append(edges[arr[1]], arr[0])
+	}
+	for i := 0; i < numCourses && valid; i++ {
+		if visited[i] == 0 {
+			dfs(i)
+		}
+	}
+	if !valid {
+		return []int{}
+	}
+	for i := 0; i < len(result)/2; i++ {
+		result[i], result[len(result)-i-1] = result[len(result)-i-1], result[i]
+	}
+	return result
 }
