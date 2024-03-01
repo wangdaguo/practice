@@ -1580,3 +1580,93 @@ func findOrderDFS(numCourses int, prerequisites [][]int) []int {
 	}
 	return result
 }
+
+/*
+*
+433. 最小基因变化
+https://leetcode.cn/problems/minimum-genetic-mutation/description/?envType=study-plan-v2&envId=top-interview-150
+*/
+func minMutation(startGene string, endGene string, bank []string) int {
+	if startGene == endGene {
+		return 0
+	}
+	mp := make(map[string]struct{})
+	for _, s := range bank {
+		mp[s] = struct{}{}
+	}
+	if _, ok := mp[endGene]; !ok {
+		return -1
+	}
+	q, step := []string{startGene}, 0
+	for len(q) > 0 {
+		step++
+		tmp := q
+		q = nil
+		for _, cur := range tmp {
+			for i, x := range cur {
+				for _, y := range "ACGT" {
+					if x != y {
+						s := cur[:i] + string(y) + cur[i+1:]
+						if _, ok := mp[s]; !ok {
+							continue
+						}
+						if s == endGene {
+							return step
+						}
+						delete(mp, s)
+						q = append(q, s)
+					}
+				}
+			}
+		}
+	}
+	return -1
+}
+
+/*
+*
+208. 实现 Trie (前缀树)
+https://leetcode.cn/problems/implement-trie-prefix-tree/?envType=study-plan-v2&envId=top-interview-150
+*/
+type Trie struct {
+	Data  [26]*Trie
+	IsEnd bool
+}
+
+func Constructor() Trie {
+	return Trie{}
+}
+
+func (t *Trie) Insert(word string) {
+	tmp := t
+	for _, b := range word {
+		if tmp.Data[b-'a'] == nil {
+			tt := Constructor()
+			tmp.Data[b-'a'] = &tt
+		}
+		tmp = tmp.Data[b-'a']
+	}
+	tmp.IsEnd = true
+	return
+}
+
+func (t *Trie) SearchPrefix(word string) *Trie {
+	tmp := t
+	for _, s := range word {
+		if tmp.Data[s-'a'] == nil {
+			return nil
+		}
+		tmp = tmp.Data[s-'a']
+	}
+	return tmp
+}
+
+func (t *Trie) Search(word string) bool {
+	n := t.SearchPrefix(word)
+	return n != nil && n.IsEnd
+}
+
+func (t *Trie) StartsWith(prefix string) bool {
+	n := t.SearchPrefix(prefix)
+	return n != nil
+}
