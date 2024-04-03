@@ -64,18 +64,21 @@ func main() {
 	//r := reverseBetween(head2, 2, 4)
 	//PrintList(r)
 	//fmt.Print(r)
-
-	grid := [][]byte{
-		//{'1', '1', '0', '0', '0'},
-		//{'1', '1', '0', '0', '0'},
-		//{'0', '0', '1', '0', '0'},
-		//{'0', '0', '0', '1', '1'},
-		{'1', '1', '1', '1', '0'},
-		{'1', '1', '0', '1', '0'},
-		{'1', '1', '0', '0', '0'},
-		{'0', '0', '0', '0', '0'},
-	}
-	r := numIslands(grid)
+	//
+	//grid := [][]byte{
+	//	//{'1', '1', '0', '0', '0'},
+	//	//{'1', '1', '0', '0', '0'},
+	//	//{'0', '0', '1', '0', '0'},
+	//	//{'0', '0', '0', '1', '1'},
+	//	{'1', '1', '1', '1', '0'},
+	//	{'1', '1', '0', '1', '0'},
+	//	{'1', '1', '0', '0', '0'},
+	//	{'0', '0', '0', '0', '0'},
+	//}
+	//r := numIslands(grid)
+	//r := letterCombinations("3")
+	//r := combine(4, 2)
+	r := permute([]int{1, 2, 3})
 	fmt.Println(r)
 }
 
@@ -1669,4 +1672,176 @@ func (t *Trie) Search(word string) bool {
 func (t *Trie) StartsWith(prefix string) bool {
 	n := t.SearchPrefix(prefix)
 	return n != nil
+}
+
+/*
+*
+211. 添加与搜索单词 - 数据结构设计
+https://leetcode.cn/problems/design-add-and-search-words-data-structure/description/
+*/
+type TrieTree struct {
+	Data  [26]*TrieTree
+	IsEnd bool
+}
+
+func NewTrieTree() *TrieTree {
+	return &TrieTree{}
+}
+
+func (t *TrieTree) Insert(word string) {
+	tmp := t
+	for _, c := range word {
+		if tmp.Data[c-'a'] == nil {
+			tmp.Data[c-'a'] = NewTrieTree()
+		}
+		tmp = tmp.Data[c-'a']
+	}
+	tmp.IsEnd = true
+	return
+}
+
+func (t *TrieTree) Search(idx int, word string) bool {
+	tmp := t
+	for i, c := range word {
+		if idx == len(word) {
+			return tmp.IsEnd
+		}
+		if tmp.IsEnd {
+			return false
+		}
+		if c == '.' {
+			tmp.Search(i+1, word)
+		} else {
+			if tmp.Data[c-'a'] == nil {
+				return false
+			}
+		}
+	}
+	return tmp != nil && tmp.IsEnd
+}
+
+type WordDictionary struct {
+	trie *TrieTree
+}
+
+func NewWordDictionary() WordDictionary {
+	return WordDictionary{
+		trie: NewTrieTree(),
+	}
+}
+
+func (w *WordDictionary) AddWord(word string) {
+	w.trie.Insert(word)
+}
+
+func (w *WordDictionary) Search(word string) bool {
+	var dfs func(idx int, node *TrieTree) bool
+	dfs = func(idx int, node *TrieTree) bool {
+		if idx == len(word) {
+			return node.IsEnd
+		}
+		char := word[idx]
+		if char != '.' {
+			child := node.Data[char-'a']
+			if child != nil && dfs(idx+1, child) {
+				return true
+			}
+		} else {
+			for i, _ := range node.Data {
+				child := node.Data[i]
+				if child != nil && dfs(idx+1, child) {
+					return true
+				}
+			}
+		}
+		return false
+	}
+	return dfs(0, w.trie)
+}
+
+/*
+*
+17. 电话号码的字母组合
+https://leetcode.cn/problems/letter-combinations-of-a-phone-number
+*/
+var table = []string{"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"}
+var r []string
+
+func letterCombinations(digits string) []string {
+	if len(digits) < 1 {
+		return []string{}
+	}
+	r = []string{}
+	letterCombinationsImpl(digits, 0, "")
+	return r
+}
+
+// digits = "23"
+func letterCombinationsImpl(digits string, j int, s string) {
+	if j == len(digits) {
+		r = append(r, s)
+		return
+	}
+	letters := table[digits[j]-'0']
+	for i := 0; i < len(letters); i++ {
+		letterCombinationsImpl(digits, j+1, fmt.Sprintf("%s%s", s, string(letters[i])))
+	}
+}
+
+/*
+*
+77. 组合
+https://leetcode.cn/problems/combinations/
+*/
+func combine(n int, k int) [][]int {
+	r, data := make([][]int, 0), make([]int, 0)
+	combineImpl(n, k, 1, &r, data)
+	return r
+}
+
+func combineImpl(n, k, level int, r *[][]int, data []int) {
+	if len(data) == k {
+		tmp := make([]int, 0)
+		tmp = append(tmp, data...)
+		*r = append(*r, tmp)
+		return
+	}
+	for i := level; i <= n; i++ {
+		data = append(data, i)
+		combineImpl(n, k, i+1, r, data)
+		data = data[:len(data)-1]
+	}
+}
+
+/*
+*
+46. 全排列
+https://leetcode.cn/problems/permutations/description
+*/
+func permute(nums []int) [][]int {
+	if len(nums) < 1 {
+		return [][]int{}
+	}
+	r, data, check := make([][]int, 0), make([]int, 0), make(map[int]bool)
+	permuteImpl(nums, data, check, &r)
+	return r
+}
+
+func permuteImpl(nums []int, data []int, check map[int]bool, r *[][]int) {
+	if len(data) == len(nums) {
+		tmp := make([]int, 0)
+		tmp = append(tmp, data...)
+		*r = append(*r, tmp)
+		return
+	}
+	for i := 0; i < len(nums); i++ {
+		if b, ok := check[nums[i]]; ok && b {
+			continue
+		}
+		data = append(data, nums[i])
+		check[nums[i]] = true
+		permuteImpl(nums, data, check, r)
+		data = data[:len(data)-1]
+		delete(check, nums[i])
+	}
 }
