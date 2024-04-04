@@ -78,7 +78,9 @@ func main() {
 	//r := numIslands(grid)
 	//r := letterCombinations("3")
 	//r := combine(4, 2)
-	r := permute([]int{1, 2, 3})
+	//r := permute([]int{1, 2, 3})
+	//r := permuteUnique([]int{1, 1, 2})
+	r := combinationSum3(3, 9)
 	fmt.Println(r)
 }
 
@@ -1814,7 +1816,6 @@ func combineImpl(n, k, level int, r *[][]int, data []int) {
 }
 
 /*
-*
 46. 全排列
 https://leetcode.cn/problems/permutations/description
 */
@@ -1844,4 +1845,111 @@ func permuteImpl(nums []int, data []int, check map[int]bool, r *[][]int) {
 		data = data[:len(data)-1]
 		delete(check, nums[i])
 	}
+}
+
+func combinationSum2(candidates []int, target int) [][]int {
+	if len(candidates) < 1 {
+		return [][]int{}
+	}
+	sort.Slice(candidates, func(i, j int) bool {
+		if candidates[i] <= candidates[j] {
+			return true
+		}
+		return false
+	})
+	r, data, level := make([][]int, 0), make([]int, 0), 0
+	bfsCombinationSum(candidates, data, target, level, &r)
+	return r
+}
+
+func bfsCombinationSum2(candidates []int, data []int, target, level int, r *[][]int) {
+	if sliceSum(data) > target {
+		return
+	}
+	if sliceSum(data) == target {
+		tmp := make([]int, 0)
+		tmp = append(tmp, data...)
+		*r = append(*r, tmp)
+		return
+	}
+	for i := level; i < len(candidates); i++ {
+		if i > level && candidates[i] == candidates[i-1] {
+			continue
+		}
+		data = append(data, candidates[i])
+		bfsCombinationSum(candidates, data, target, i+1, r)
+		data = data[:len(data)-1]
+	}
+}
+
+func sliceSum(list []int) int {
+	var sum int
+	for _, n := range list {
+		sum += n
+	}
+	return sum
+}
+
+func combinationSum(candidates []int, target int) [][]int {
+	if len(candidates) < 1 {
+		return [][]int{}
+	}
+	sort.Slice(candidates, func(i, j int) bool {
+		if candidates[i] <= candidates[j] {
+			return true
+		}
+		return false
+	})
+	r, data, level := make([][]int, 0), make([]int, 0), 0
+	bfsCombinationSum(candidates, data, target, level, &r)
+	return r
+}
+
+func bfsCombinationSum(candidates []int, data []int, target, level int, r *[][]int) {
+	if sliceSum(data) > target {
+		return
+	}
+	if sliceSum(data) == target {
+		tmp := make([]int, 0)
+		tmp = append(tmp, data...)
+		*r = append(*r, tmp)
+		return
+	}
+	for i := level; i < len(candidates); i++ {
+		if target-sliceSum(data)-candidates[i] < 0 {
+			break
+		}
+		data = append(data, candidates[i])
+		bfsCombinationSum(candidates, data, target, i, r)
+		data = data[:len(data)-1]
+	}
+}
+
+/*
+*
+216. 组合总和 III
+https://leetcode.cn/problems/combination-sum-iii/
+*/
+func combinationSum3(k int, n int) [][]int {
+	r, data, level := make([][]int, 0), make([]int, 0), 1
+	combinationSum3BT(k, n, level, data, &r)
+	return r
+}
+
+func combinationSum3BT(k int, n int, level int, data []int, r *[][]int) {
+	if len(data) > k || sliceSum(data) > n {
+		return
+	}
+	if sliceSum(data) == n && len(data) == k {
+		tmp := make([]int, 0)
+		tmp = append(tmp, data...)
+		*r = append(*r, tmp)
+		return
+	}
+	for i := level; i < 10; i++ {
+		data = append(data, i)
+		combinationSum3BT(k, n, i+1, data, r)
+		data = data[:len(data)-1]
+	}
+	return
 }
