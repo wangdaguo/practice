@@ -80,7 +80,15 @@ func main() {
 	//r := combine(4, 2)
 	//r := permute([]int{1, 2, 3})
 	//r := permuteUnique([]int{1, 1, 2})
-	r := combinationSum3(3, 9)
+	//r := combinationSum3(3, 9)
+	//r := subsets([]int{1, 2, 3})
+	//r := combinationSum4([]int{1, 2, 3}, 4)
+	//r := subsetsWithDup([]int{1, 2, 2})
+	r := exist([][]byte{
+		{'A', 'B', 'C', 'E'},
+		{'S', 'F', 'C', 'S'},
+		{'A', 'D', 'E', 'E'},
+	}, "ABCB")
 	fmt.Println(r)
 }
 
@@ -1926,7 +1934,6 @@ func bfsCombinationSum(candidates []int, data []int, target, level int, r *[][]i
 }
 
 /*
-*
 216. 组合总和 III
 https://leetcode.cn/problems/combination-sum-iii/
 */
@@ -1951,5 +1958,186 @@ func combinationSum3BT(k int, n int, level int, data []int, r *[][]int) {
 		combinationSum3BT(k, n, i+1, data, r)
 		data = data[:len(data)-1]
 	}
+	return
+}
+
+/*
+*
+377. 组合总和 Ⅳ
+https://leetcode.cn/problems/combination-sum-iv/
+*/
+func combinationSum4(nums []int, target int) int {
+	dict, r := make(map[int]int), 0
+	sort.Slice(nums, func(i, j int) bool {
+		if nums[i] <= nums[j] {
+			return true
+		}
+		return false
+	})
+	combinationSum4BT(nums, target, dict, &r)
+	return r
+}
+
+func combinationSum4BT(nums []int, target int, dict map[int]int, r *int) {
+	if target == 0 {
+		*r++
+		return
+	}
+	for i := 0; i < len(nums); i++ {
+		if target < nums[i] {
+			break
+		}
+		target -= nums[i]
+		if v, ok := dict[target]; ok {
+			*r += v
+		} else {
+			var tmpR int
+			combinationSum4BT(nums, target, dict, &tmpR)
+			dict[target] = tmpR
+			*r += tmpR
+		}
+		target += nums[i]
+	}
+	return
+}
+
+/*
+*
+78. 子集
+https://leetcode.cn/problems/subsets/
+*/
+func subsets(nums []int) [][]int {
+	if len(nums) < 1 {
+		return [][]int{}
+	}
+	r, data, level := make([][]int, 0), make([]int, 0), 0
+	subsetsBT(nums, data, level, &r)
+	return r
+}
+
+func subsetsBT(nums []int, data []int, level int, r *[][]int) {
+	tmp := make([]int, 0)
+	tmp = append(tmp, data...)
+	*r = append(*r, tmp)
+
+	for i := level; i < len(nums); i++ {
+		data = append(data, nums[i])
+		subsetsBT(nums, data, i+1, r)
+		data = data[:len(data)-1]
+	}
+}
+
+/*
+*
+90. 子集 II
+https://leetcode.cn/problems/subsets-ii/
+*/
+func subsetsWithDup(nums []int) [][]int {
+	if len(nums) < 1 {
+		return [][]int{}
+	}
+	sort.Slice(nums, func(i, j int) bool {
+		if nums[i] <= nums[j] {
+			return true
+		}
+		return false
+	})
+	level, r, data := 0, make([][]int, 0), make([]int, 0)
+	subsetsWithDupBT(nums, data, level, &r)
+	return r
+}
+
+func subsetsWithDupBT(nums []int, data []int, level int, r *[][]int) {
+	tmp := make([]int, 0)
+	tmp = append(tmp, data...)
+	*r = append(*r, tmp)
+	for i := level; i < len(nums); i++ {
+		if level != i && nums[i] == nums[i-1] {
+			continue
+		}
+		data = append(data, nums[i])
+		subsetsWithDupBT(nums, data, i+1, r)
+		data = data[:len(data)-1]
+	}
+	return
+}
+
+/*
+*
+93. 复原 IP 地址
+https://leetcode.cn/problems/restore-ip-addresses/
+*/
+func restoreIpAddresses(s string) []string {
+	if len(s) < 3 || len(s) > 12 {
+		return []string{}
+	}
+	r := make([]string, 0)
+	restoreIpAddressesBT(s, []string{}, r)
+	return r
+}
+
+func restoreIpAddressesBT(s string, tmp []string, r []string) {
+	if len(tmp) == 4 && len(s) == 0 {
+		r = append(r, tmp[0]+"."+tmp[1]+"."+tmp[2]+"."+tmp[3])
+		return
+	}
+	for i := 1; i < 4; i++ {
+		if len(s) < i {
+			return
+		}
+		str := s[:i]
+		if len(str) == 3 && strings.Compare(str, "255") > 0 {
+			return
+		}
+		if len(str) > 1 && str[0] == '0' {
+			return
+		}
+		tmp = append(tmp, str)
+		restoreIpAddressesBT(s[i:], tmp, r)
+		tmp = tmp[:len(tmp)-1]
+	}
+	return
+}
+
+/*
+*
+79. 单词搜索
+https://leetcode.cn/problems/word-search/
+*/
+func exist(board [][]byte, word string) bool {
+	used, r := make(map[string]struct{}), false
+	for i := 0; i < len(board); i++ {
+		for j := 0; j < len(board[0]); j++ {
+			if board[i][j] == word[0] {
+				BFSExist(board, word, i, j, 0, used, &r)
+				if r {
+					return true
+				}
+			}
+		}
+	}
+	return false
+}
+
+func BFSExist(board [][]byte, word string, i, j, n int, used map[string]struct{}, b *bool) {
+	_, ok := used[string(i)+string(j)]
+	if i < 0 || i >= len(board) || j < 0 || j >= len(board[0]) || n >= len(word) || board[i][j] != word[n] || ok {
+		return
+	}
+	if n == len(word)-1 {
+		*b = true
+		return
+	}
+	n++
+	used[string(i)+string(j)] = struct{}{}
+	for k := 0; k < 4; k++ {
+		if *b {
+			break
+		}
+		x := i + direction[k]
+		y := j + direction[k+1]
+		BFSExist(board, word, x, y, n, used, b)
+	}
+	delete(used, string(i)+string(j))
 	return
 }
