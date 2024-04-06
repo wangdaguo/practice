@@ -84,11 +84,12 @@ func main() {
 	//r := subsets([]int{1, 2, 3})
 	//r := combinationSum4([]int{1, 2, 3}, 4)
 	//r := subsetsWithDup([]int{1, 2, 2})
-	r := exist([][]byte{
-		{'A', 'B', 'C', 'E'},
-		{'S', 'F', 'C', 'S'},
-		{'A', 'D', 'E', 'E'},
-	}, "ABCB")
+	//r := exist([][]byte{
+	//	{'A', 'B', 'C', 'E'},
+	//	{'S', 'F', 'C', 'S'},
+	//	{'A', 'D', 'E', 'E'},
+	//}, "ABCB")
+	r := generateParenthesis(3)
 	fmt.Println(r)
 }
 
@@ -2140,4 +2141,32 @@ func BFSExist(board [][]byte, word string, i, j, n int, used map[string]struct{}
 	}
 	delete(used, string(i)+string(j))
 	return
+}
+
+/*
+*
+22. 括号生成
+https://leetcode.cn/problems/generate-parentheses/description/?envType=study-plan-v2&envId=top-interview-150
+*/
+func generateParenthesis(n int) []string {
+	if n == 0 {
+		return []string{}
+	}
+	l, r, s, res := n, n, "", make([]string, 0)
+	generateParenthesisBT(l, r, s, &res)
+	return res
+}
+
+func generateParenthesisBT(l int, r int, s string, res *[]string) {
+	if l == r && l == 0 {
+		*res = append(*res, s)
+		return
+	}
+	if l > 0 {
+		generateParenthesisBT(l-1, r, s+"(", res)
+	}
+	if r > 0 && r > l {
+		generateParenthesisBT(l, r-1, s+")", res)
+	}
+
 }
