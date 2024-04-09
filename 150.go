@@ -2168,5 +2168,20 @@ func generateParenthesisBT(l int, r int, s string, res *[]string) {
 	if r > 0 && r > l {
 		generateParenthesisBT(l, r-1, s+")", res)
 	}
+}
 
+/*
+*
+108. 将有序数组转换为二叉搜索树
+https://leetcode.cn/problems/convert-sorted-array-to-binary-search-tree/?envType=study-plan-v2&envId=top-interview-150
+*/
+func sortedArrayToBST(nums []int) *TreeNode {
+	if len(nums) == 0 {
+		return nil
+	}
+	mid := len(nums) / 2
+	left := nums[:mid]
+	right := nums[mid+1:]
+	head := &TreeNode{Val: nums[mid], Left: sortedArrayToBST(left), Right: sortedArrayToBST(right)}
+	return head
 }
