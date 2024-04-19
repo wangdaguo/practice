@@ -89,8 +89,47 @@ func main() {
 	//	{'S', 'F', 'C', 'S'},
 	//	{'A', 'D', 'E', 'E'},
 	//}, "ABCB")
-	r := generateParenthesis(3)
+	//r := generateParenthesis(3)
+
+	//p := Person{
+	//	Name:    "Alice",
+	//	Age:     30,
+	//	Friends: []string{"Bob", "Charlie"},
+	//}
+	//
+	//r1 := []int{30, 40}
+	//
+	//fmt.Println("Before:")
+	//fmt.Printf("person len: %d, cap: %d\n", len(p.Friends), cap(p.Friends))
+	//fmt.Printf("r1 len: %d, cap: %d\n", len(r1), cap(r1))
+	//
+	//p.AddFriend("David")
+	//T1(r1)
+	//
+	//fmt.Println("After:")
+	//fmt.Printf("person len: %d, cap: %d\n", len(p.Friends), cap(p.Friends))
+	//fmt.Printf("r1 len: %d, cap: %d\n", len(r1), cap(r1))
+	//r := sortedArrayToBST([]int{-10, -3, 0, 5, 9})
+	//r := maxSubArray([]int{-2, 1})
+	r := minSubArrayLen(7, []int{2, 3, 1, 2, 4, 3})
 	fmt.Println(r)
+}
+
+type Person struct {
+	Name    string
+	Age     int
+	Friends []string
+}
+
+func (p *Person) AddFriend(friend string) {
+	p.Friends = append(p.Friends, friend)
+}
+
+func T1(b []int) {
+	for i := 0; i < 5; i++ {
+		b = append(b, i)
+	}
+	return
 }
 
 /*
@@ -2184,4 +2223,169 @@ func sortedArrayToBST(nums []int) *TreeNode {
 	right := nums[mid+1:]
 	head := &TreeNode{Val: nums[mid], Left: sortedArrayToBST(left), Right: sortedArrayToBST(right)}
 	return head
+}
+
+/*
+*
+面试题 08.06. 汉诺塔问题
+https://leetcode.cn/problems/hanota-lcci/
+*/
+func hanota(A []int, B []int, C []int) []int {
+	/**
+	A[1:] -> C[1:] = B[1:]
+	A[0] -> C[0]
+	B[] -> A[] = B
+	结束标识：len(A) == len(B) == 0
+	*/
+	if A == nil {
+		return nil
+	}
+	var move func(n int, a, b, c *[]int)
+	move = func(n int, a, b, c *[]int) {
+		if n == 0 {
+			return
+		}
+		if n == 1 {
+			*c = append(*c, (*a)[len(*a)-1])
+			*a = (*a)[:len(*a)-1]
+			return
+		}
+		move(n-1, a, c, b)
+		(*c)[0] = (*a)[0]
+		move(n-1, b, a, c)
+	}
+	move(len(A), &A, &B, &C)
+	return C
+}
+
+/*
+148. 排序链表
+*https://leetcode.cn/problems/sort-list/?envType=study-plan-v2&envId=top-interview-150
+*/
+func sortList(head *ListNode) *ListNode {
+	if head == nil || head.Next == nil {
+		return head
+	}
+	pre, slow, fast := head, head, head
+	for fast != nil && fast.Next != nil {
+		pre = slow
+		slow = slow.Next
+		fast = fast.Next.Next
+	}
+	pre.Next = nil
+	return mergeList(sortList(head), sortList(slow))
+}
+
+func mergeList(l1, l2 *ListNode) *ListNode {
+	h := &ListNode{}
+	r := h
+	for l1 != nil && l2 != nil {
+		if l1.Val > l2.Val {
+			h.Next = &ListNode{Val: l2.Val}
+			l2 = l2.Next
+		} else {
+			h.Next = &ListNode{Val: l1.Val}
+			l1 = l1.Next
+		}
+		h = h.Next
+	}
+	if l1 != nil {
+		h.Next = l1
+	}
+	if l2 != nil {
+		h.Next = l2
+	}
+	return r.Next
+}
+
+/*
+*
+23. 合并 K 个升序链表
+https://leetcode.cn/problems/merge-k-sorted-lists/?envType=study-plan-v2&envId=top-interview-150
+*/
+func mergeKLists(lists []*ListNode) *ListNode {
+	if len(lists) < 1 {
+		return nil
+	}
+	if len(lists) == 1 {
+		return lists[0]
+	}
+	return mergeListImpl(0, len(lists)-1, lists)
+}
+
+func mergeListImpl(start int, end int, lists []*ListNode) *ListNode {
+	if start > end {
+		return nil
+	}
+	if start == end {
+		return lists[start]
+	}
+	//mid := start + (end-start)/2
+	mid := (start + end) / 2
+	return mergeList(mergeListImpl(start, mid, lists), mergeListImpl(mid+1, end, lists))
+}
+
+/*
+*
+53. 最大子数组和
+https://leetcode.cn/problems/maximum-subarray/?envType=study-plan-v2&envId=top-interview-150
+*/
+func maxSubArray(nums []int) int {
+	if len(nums) == 1 {
+		return nums[0]
+	}
+	maxSum, sum := nums[0], nums[0]
+	for i := 1; i < len(nums); i++ {
+		if sum < 0 && nums[i] > sum {
+			sum = nums[i]
+		} else {
+			sum += nums[i]
+		}
+		if sum > maxSum {
+			maxSum = sum
+		}
+	}
+	return maxSum
+}
+
+func maxSubArray11(nums []int) int {
+	if len(nums) == 1 {
+		return nums[0]
+	}
+	maxSum, sum := nums[0], nums[0]
+	for i := 1; i < len(nums); i++ {
+		sum += nums[i]
+		if sum < nums[i] {
+			sum = nums[i]
+		}
+		if sum > maxSum {
+			maxSum = sum
+		}
+	}
+	return maxSum
+}
+
+/*
+918. 环形子数组的最大和
+*https://leetcode.cn/problems/maximum-sum-circular-subarray/?envType=study-plan-v2&envId=top-interview-150
+*/
+func maxSubarraySumCircular(nums []int) int {
+	n := len(nums)
+	leftMax := make([]int, n)
+	// 对坐标为 0 处的元素单独处理，避免考虑子数组为空的情况
+	leftMax[0] = nums[0]
+	leftSum, pre, res := nums[0], nums[0], nums[0]
+	for i := 1; i < n; i++ {
+		pre = max(pre+nums[i], nums[i])
+		res = max(res, pre) // 1：线性数组的最大和
+		leftSum += nums[i]
+		leftMax[i] = max(leftMax[i-1], leftSum) // 2.1：[0:i] 最大和
+	}
+	// 从右到左枚举后缀，固定后缀，选择最大前缀
+	rightSum := 0
+	for i := n - 1; i > 0; i-- {
+		rightSum += nums[i]                   // 2.2: [i:n] 最大和
+		res = max(res, rightSum+leftMax[i-1]) // 比较  1、2 ，取大值
+	}
+	return res
 }
