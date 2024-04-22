@@ -111,7 +111,10 @@ func main() {
 	//fmt.Printf("r1 len: %d, cap: %d\n", len(r1), cap(r1))
 	//r := sortedArrayToBST([]int{-10, -3, 0, 5, 9})
 	//r := maxSubArray([]int{-2, 1})
-	r := minSubArrayLen(7, []int{2, 3, 1, 2, 4, 3})
+	//r := minSubArrayLen(7, []int{2, 3, 1, 2, 4, 3})
+	//r := searchInsert([]int{1, 3, 5, 6}, 2)
+	//r := searchMatrix([][]int{{1, 3}}, 3)
+	r := search([]int{3, 1}, 1)
 	fmt.Println(r)
 }
 
@@ -2388,4 +2391,170 @@ func maxSubarraySumCircular(nums []int) int {
 		res = max(res, rightSum+leftMax[i-1]) // 比较  1、2 ，取大值
 	}
 	return res
+}
+
+/*
+*
+35. 搜索插入位置
+https://leetcode.cn/problems/search-insert-position/?envType=study-plan-v2&envId=top-interview-150
+*/
+func searchInsert(nums []int, target int) int {
+	if len(nums) < 1 {
+		return 0
+	}
+	start, end := 0, len(nums)-1
+	for start < end {
+		mid := start + (end-start)/2
+		if nums[mid] == target {
+			return mid
+		} else if nums[mid] < target {
+			start = mid + 1
+		} else {
+			end = mid - 1
+		}
+	}
+	if nums[start] >= target {
+		return start
+	}
+	return start + 1
+}
+
+/*
+*
+74. 搜索二维矩阵
+https://leetcode.cn/problems/search-a-2d-matrix/?envType=study-plan-v2&envId=top-interview-150
+*/
+func searchMatrix(matrix [][]int, target int) bool {
+	if len(matrix) < 0 {
+		return false
+	}
+	start, end, innerLen := 0, len(matrix)-1, len(matrix[0])-1
+	for start < end {
+		mid := start + (end-start)/2
+		if matrix[mid][0] == target {
+			return true
+		} else if matrix[mid][0] < target {
+			start = mid
+			if matrix[start][innerLen] >= target {
+				break
+			} else {
+				start++
+			}
+		} else {
+			end = mid
+			if end == start+1 {
+				break
+			}
+		}
+	}
+	arr := matrix[start]
+	start, end = 0, len(arr)-1
+	for start < end {
+		mid := start + (end-start)/2
+		if arr[mid] == target {
+			return true
+		} else if arr[mid] < target {
+			start = mid + 1
+		} else {
+			end = mid - 1
+		}
+	}
+	if start >= len(arr) || arr[start] != target {
+		return false
+	}
+	return true
+}
+
+func searchMatrix1(matrix [][]int, target int) bool {
+	row := sort.Search(len(matrix), func(i int) bool { return matrix[i][0] > target }) - 1
+	if row < 0 {
+		return false
+	}
+	col := sort.SearchInts(matrix[row], target)
+	return col < len(matrix[row]) && matrix[row][col] == target
+}
+
+/*
+*
+162. 寻找峰值
+https://leetcode.cn/problems/find-peak-element/?envType=study-plan-v2&envId=top-interview-150
+*/
+func findPeakElement(nums []int) int {
+	get := func(index int) int {
+		if index < 0 || index > len(nums)-1 {
+			return math.MinInt32
+		}
+		return nums[index]
+	}
+	start, end := 0, len(nums)-1
+	for start < end {
+		mid := start + (end-start)/2
+		if get(mid-1) < get(mid) && get(mid) > get(mid+1) {
+			return mid
+		} else if get(mid) < get(mid+1) {
+			start = mid + 1
+		} else {
+			end = mid - 1
+		}
+	}
+	return start
+}
+
+/*
+33. 搜索旋转排序数组
+*https://leetcode.cn/problems/search-in-rotated-sorted-array/?envType=study-plan-v2&envId=top-interview-150
+*/
+func search(nums []int, target int) int {
+	start, end := 0, len(nums)-1
+	for start <= end {
+		mid := start + (end-start)/2
+		if nums[mid] == target {
+			return mid
+		} else if nums[mid] >= nums[start] {
+			if target < nums[mid] && target >= nums[start] {
+				end = mid - 1
+			} else {
+				start = mid + 1
+			}
+		} else {
+			if target > nums[mid] && target <= nums[end] {
+				start = mid + 1
+			} else {
+				end = mid - 1
+			}
+		}
+	}
+	return -1
+}
+
+/*
+*
+34. 在排序数组中查找元素的第一个和最后一个位置
+https://leetcode.cn/problems/find-first-and-last-position-of-element-in-sorted-array/?envType=study-plan-v2&envId=top-interview-150
+*/
+func searchRange(nums []int, target int) []int {
+	if len(nums) < 1 {
+		return []int{-1, -1}
+	}
+	return []int{binarySearch12(nums, target, true), binarySearch12(nums, target, false)}
+}
+
+func binarySearch12(nums []int, target int, isFindLeft bool) int {
+	start, end, r := 0, len(nums)-1, -1
+	for start <= end {
+		mid := start + (end-start)/2
+		if nums[mid] == target {
+			r = mid
+			if isFindLeft {
+				end = mid - 1
+			} else {
+				start = mid + 1
+			}
+		} else if nums[mid] > target {
+			end = mid - 1
+		} else {
+			start = mid + 1
+		}
+	}
+	return r
 }
