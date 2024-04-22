@@ -2558,3 +2558,20 @@ func binarySearch12(nums []int, target int, isFindLeft bool) int {
 	}
 	return r
 }
+
+/*
+153. 寻找旋转排序数组中的最小值
+*https://leetcode.cn/problems/find-minimum-in-rotated-sorted-array/?envType=study-plan-v2&envId=top-interview-150
+*/
+func findMin(nums []int) int {
+	start, end := 0, len(nums)-1
+	for start <= end {
+		mid := start + (end-start)/2
+		if nums[mid] < nums[end] {
+			end = mid
+		} else {
+			start = mid + 1
+		}
+	}
+	return nums[start]
+}
