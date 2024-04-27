@@ -2575,3 +2575,52 @@ func findMin(nums []int) int {
 	}
 	return nums[start]
 }
+
+/*
+4. 寻找两个正序数组的中位数
+*https://leetcode.cn/problems/median-of-two-sorted-arrays/?envType=study-plan-v2&envId=top-interview-150
+*/
+func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
+	tLen := len(nums1) + len(nums2)
+	if tLen%2 == 0 {
+		return float64(getKthElement1(nums1, nums2, tLen/2)+getKthElement1(nums1, nums2, tLen/2+1)) / 2.0
+	}
+	return float64(getKthElement1(nums1, nums2, tLen/2+1))
+}
+
+func findMedianSortedArrays1(nums1 []int, nums2 []int) float64 {
+	totalLength := len(nums1) + len(nums2)
+	if totalLength%2 == 1 {
+		midIndex := totalLength / 2
+		return float64(getKthElement(nums1, nums2, midIndex+1))
+	} else {
+		midIndex1, midIndex2 := totalLength/2-1, totalLength/2
+		return float64(getKthElement(nums1, nums2, midIndex1+1)+getKthElement(nums1, nums2, midIndex2+1)) / 2.0
+	}
+	return 0
+}
+
+func getKthElement1(nums1 []int, nums2 []int, k int) int {
+	index1, index2 := 0, 0
+	for {
+		if index1 == len(nums1) {
+			return nums2[index2+k-1]
+		}
+		if index2 == len(nums2) {
+			return nums1[index1+k-1]
+		}
+		if k == 1 {
+			return min(nums1[index1], nums2[index2])
+		}
+		half := k / 2
+		newIndex1, newIndex2 := min(index1+half, len(nums1))-1, min(index2+half, len(nums2))-1
+		if nums1[newIndex1] <= nums2[newIndex2] {
+			k -= (newIndex1 - index1 + 1)
+			index1 = newIndex1 + 1
+		} else {
+			k -= (newIndex2 - index2 + 1)
+			index2 = newIndex2 + 1
+		}
+	}
+	return 0
+}
