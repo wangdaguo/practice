@@ -117,8 +117,14 @@ func main() {
 	//r := searchMatrix([][]int{{1, 3}}, 3)
 	//r := search([]int{3, 1}, 1)
 	//r := findKthLargest2([]int{3, 2, 1, 5, 6, 4}, 2)
-	r := findMaximizedCapital1(2, 0, []int{1, 2, 3}, []int{0, 9, 10})
-	fmt.Println(r)
+	//r := findMaximizedCapital1(2, 0, []int{1, 2, 3}, []int{0, 9, 10})
+	obj := ConstructorM()
+	obj.AddNum(1)
+	obj.AddNum(2)
+	fmt.Println(obj.FindMedian())
+	obj.AddNum(3)
+	fmt.Println(obj.FindMedian())
+	//fmt.Println(r)
 }
 
 type Person struct {
@@ -2981,4 +2987,51 @@ func (h hp) Less(i, j int) bool {
 
 func (h hp) Swap(i, j int) {
 	h.data[i], h.data[j] = h.data[j], h.data[i]
+}
+
+/*
+295. 数据流的中位数
+*https://leetcode.cn/problems/find-median-from-data-stream/?envType=study-plan-v2&envId=top-interview-150
+*/
+type MedianFinder struct {
+	queMin, queMax hp1
+}
+
+type hp1 struct {
+	sort.IntSlice
+}
+
+func (h *hp1) Push(x interface{}) {
+	h.IntSlice = append(h.IntSlice, x.(int))
+}
+
+func (h *hp1) Pop() interface{} {
+	v := h.IntSlice[len(h.IntSlice)-1]
+	h.IntSlice = h.IntSlice[:len(h.IntSlice)-1]
+	return v
+}
+
+func ConstructorM() MedianFinder {
+	return MedianFinder{}
+}
+
+func (m *MedianFinder) AddNum(num int) {
+	if m.queMin.Len() == 0 || num <= -m.queMin.IntSlice[0] {
+		heap.Push(&m.queMin, -num)
+		if m.queMax.Len()+1 < m.queMin.Len() {
+			heap.Push(&m.queMax, -heap.Pop(&m.queMin).(int))
+		}
+	} else {
+		heap.Push(&m.queMax, num)
+		if m.queMax.Len() > m.queMin.Len() {
+			heap.Push(&m.queMin, -heap.Pop(&m.queMax).(int))
+		}
+	}
+}
+
+func (m *MedianFinder) FindMedian() float64 {
+	if m.queMin.Len() > m.queMax.Len() {
+		return float64(-m.queMin.IntSlice[0])
+	}
+	return float64(m.queMax.IntSlice[0]-m.queMin.IntSlice[0]) / 2
 }
