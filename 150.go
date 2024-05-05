@@ -1,6 +1,7 @@
 package main
 
 import (
+	"container/heap"
 	"fmt"
 	"math"
 	"sort"
@@ -114,7 +115,9 @@ func main() {
 	//r := minSubArrayLen(7, []int{2, 3, 1, 2, 4, 3})
 	//r := searchInsert([]int{1, 3, 5, 6}, 2)
 	//r := searchMatrix([][]int{{1, 3}}, 3)
-	r := search([]int{3, 1}, 1)
+	//r := search([]int{3, 1}, 1)
+	//r := findKthLargest2([]int{3, 2, 1, 5, 6, 4}, 2)
+	r := findMaximizedCapital1(2, 0, []int{1, 2, 3}, []int{0, 9, 10})
 	fmt.Println(r)
 }
 
@@ -2592,10 +2595,10 @@ func findMedianSortedArrays1(nums1 []int, nums2 []int) float64 {
 	totalLength := len(nums1) + len(nums2)
 	if totalLength%2 == 1 {
 		midIndex := totalLength / 2
-		return float64(getKthElement(nums1, nums2, midIndex+1))
+		return float64(getKthElement1(nums1, nums2, midIndex+1))
 	} else {
 		midIndex1, midIndex2 := totalLength/2-1, totalLength/2
-		return float64(getKthElement(nums1, nums2, midIndex1+1)+getKthElement(nums1, nums2, midIndex2+1)) / 2.0
+		return float64(getKthElement1(nums1, nums2, midIndex1+1)+getKthElement1(nums1, nums2, midIndex2+1)) / 2.0
 	}
 	return 0
 }
@@ -2623,4 +2626,359 @@ func getKthElement1(nums1 []int, nums2 []int, k int) int {
 		}
 	}
 	return 0
+}
+
+/*
+*
+215. 数组中的第K个最大元素
+https://leetcode.cn/problems/kth-largest-element-in-an-array/description/?envType=study-plan-v2&envId=top-interview-150
+*/
+func findKthLargest(nums []int, target int) int {
+	l, r, k := 0, len(nums)-1, len(nums)-target
+	for {
+		p := GetPartition1(nums, l, r)
+		if p == k {
+			return nums[p]
+		} else if p < k {
+			l = p + 1
+		} else {
+			r = p - 1
+		}
+	}
+	return nums[l]
+}
+
+func GetPartition1(nums []int, l int, r int) int {
+	val := nums[l]
+	for l < r {
+		for l < r && val <= nums[r] {
+			r--
+		}
+		nums[l] = nums[r]
+		for l < r && val >= nums[l] {
+			l++
+		}
+		nums[r] = nums[l]
+	}
+	nums[l] = val
+	return l
+}
+
+type Heap struct {
+	Data []int
+}
+
+func NewHeap() *Heap {
+	return &Heap{
+		Data: []int{0},
+	}
+}
+
+func findKthLargest2(nums []int, target int) int {
+	h := NewHeap()
+	for _, v := range nums {
+		h.siftUp(v)
+	}
+	if target > len(nums) {
+		target = len(nums)
+	}
+	for target > 1 {
+		_ = h.extractMax()
+		target--
+	}
+	return h.Data[1]
+}
+
+/*
+*
+将val放入堆中
+*/
+func (h *Heap) siftUp(val int) {
+	if len(h.Data) < 1 {
+		h.Data = append(h.Data, []int{0, val}...)
+	}
+	h.Data = append(h.Data, val)
+	l := len(h.Data) - 1
+	for l > 1 {
+		p := l / 2
+		if h.Data[p] < h.Data[l] {
+			h.Data[p], h.Data[l] = h.Data[l], h.Data[p]
+			l = p
+			continue
+		}
+		break
+	}
+	return
+}
+
+/*
+*
+将val从堆末尾加入堆顶，重新组装堆
+*/
+func (h *Heap) siftDown(val int) {
+	if len(h.Data) < 1 {
+		h.Data = append(h.Data, []int{0, val}...)
+		return
+	}
+	i, l := 1, len(h.Data)
+	for i < l {
+		child := 2 * i
+		if child >= l {
+			break
+		}
+		if child+1 < l && h.Data[child+1] > h.Data[child] {
+			child++
+		}
+		if h.Data[child] > val {
+			h.Data[child], h.Data[i] = h.Data[i], h.Data[child]
+			i = child
+			continue
+		}
+		break
+	}
+	if i < l {
+		h.Data[i] = val
+	}
+	return
+}
+
+/*
+*
+提取堆中的最大值，并对堆中的剩余元素进行重新整理
+*/
+func (h *Heap) extractMax() int {
+	defer func() {
+		lastVal := h.Data[len(h.Data)-1]
+		h.Data = h.Data[:len(h.Data)-1]
+		h.siftDown(lastVal)
+	}()
+	return h.Data[1]
+}
+
+/*
+502. IPO
+*https://leetcode.cn/problems/ipo/?envType=study-plan-v2&envId=top-interview-150
+*/
+func findMaximizedCapital(k int, w int, profits []int, capital []int) int {
+	h := NewHeapIPO()
+	for i := 0; i < len(profits); i++ {
+		h.siftUp(profits[i], capital[i])
+	}
+	i, r, passVal := 0, w, make([]*ValIPO, 0)
+	for i < k && len(h.Data) > 1 {
+		v := h.extractMax()
+		if v.capital > r {
+			passVal = append(passVal, v)
+			continue
+		}
+		r += v.profit
+		i++
+		for _, vv := range passVal {
+			h.siftUp(vv.profit, vv.capital)
+		}
+		passVal = []*ValIPO{}
+	}
+	return r
+}
+
+type ValIPO struct {
+	profit  int
+	capital int
+}
+
+func NewValIPO(profit, capital int) *ValIPO {
+	return &ValIPO{
+		capital: capital,
+		profit:  profit,
+	}
+}
+
+type HeapIPO struct {
+	Data []*ValIPO
+}
+
+func NewHeapIPO() *HeapIPO {
+	return &HeapIPO{
+		Data: []*ValIPO{{capital: 0, profit: 0}},
+	}
+}
+
+func (h *HeapIPO) siftUp(profit, capital int) {
+	if len(h.Data) == 0 {
+		h.Data = []*ValIPO{{capital: 0, profit: 0}, {capital: capital, profit: profit}}
+		return
+	}
+	val := NewValIPO(profit, capital)
+	h.Data = append(h.Data, val)
+	i := len(h.Data) - 1
+	for i > 1 {
+		p := i / 2
+		if h.Data[p].profit < val.profit {
+			h.Data[p], h.Data[i] = h.Data[i], h.Data[p]
+			i = p
+			continue
+		}
+		break
+	}
+	return
+}
+
+func (h *HeapIPO) siftDown(profit, capital int) {
+	if len(h.Data) == 0 {
+		h.Data = []*ValIPO{{capital: 0, profit: 0}, {capital: capital, profit: profit}}
+		return
+	}
+	val := NewValIPO(profit, capital)
+	i := 1
+	for i < len(h.Data) {
+		child := 2 * i
+		if child >= len(h.Data) {
+			break
+		}
+		if child+1 < len(h.Data) && h.Data[child+1].profit > h.Data[child].profit {
+			child++
+		}
+		if val.profit < h.Data[child].profit {
+			h.Data[i], h.Data[child] = h.Data[child], h.Data[i]
+			i = child
+			continue
+		}
+		break
+	}
+	if i < len(h.Data) {
+		h.Data[i] = val
+	}
+	return
+}
+
+func (h *HeapIPO) extractMax() *ValIPO {
+	defer func() {
+		lastVal := h.Data[len(h.Data)-1]
+		h.Data = h.Data[:len(h.Data)-1]
+		h.siftDown(lastVal.profit, lastVal.capital)
+	}()
+	return h.Data[1]
+}
+
+type pcVal struct {
+	profit  int
+	capital int
+	isUsed  bool
+}
+
+func NewPcVal(profit, capital int) *pcVal {
+	return &pcVal{
+		profit:  profit,
+		capital: capital,
+		isUsed:  false,
+	}
+}
+
+type PcValList []*pcVal
+
+func (p PcValList) Len() int {
+	return len(p)
+}
+
+func (p PcValList) Less(i, j int) bool {
+	return p[i].profit >= p[j].profit
+}
+
+func (p PcValList) Swap(i, j int) {
+	p[i], p[j] = p[j], p[i]
+}
+
+func (p PcValList) Sort() {
+	sort.Sort(p)
+}
+
+func findMaximizedCapital1(k int, w int, profits []int, capital []int) int {
+	l := make([]*pcVal, 0)
+	list := PcValList(l)
+	for i := 0; i < len(profits); i++ {
+		v := NewPcVal(profits[i], capital[i])
+		list = append(list, v)
+	}
+	list.Sort()
+	if k > len(profits) {
+		k = len(profits)
+	}
+	i, start := 0, 0
+	for i < k {
+		flag := false
+		for j := start; j < len(list); j++ {
+			if w < list[j].capital || list[j].isUsed {
+				continue
+			}
+			w += list[j].profit
+			list[j].isUsed = true
+			flag = true
+			if j == start {
+				start++
+			}
+			i++
+			break
+		}
+		if !flag {
+			break
+		}
+	}
+	return w
+}
+
+/*
+373. 查找和最小的 K 对数字
+*https://leetcode.cn/problems/find-k-pairs-with-smallest-sums/?envType=study-plan-v2&envId=top-interview-150
+*/
+func kSmallestPairs(nums1 []int, nums2 []int, k int) [][]int {
+	hp := &hp{
+		num1: nums1,
+		num2: nums2,
+		data: make([]pair, 0),
+	}
+	for i := 0; i < len(nums1) && i < k; i++ {
+		hp.data = append(hp.data, pair{i: i, j: 0})
+	}
+	j, r := 0, make([][]int, 0)
+	for hp.Len() > 0 && j < k {
+		v := heap.Pop(hp).(pair)
+		r = append(r, []int{nums1[v.i], nums2[v.j]})
+		if v.j+1 < len(nums2) {
+			heap.Push(hp, pair{v.i, v.j + 1})
+		}
+		j++
+	}
+	return r
+}
+
+type pair struct {
+	i, j int
+}
+
+type hp struct {
+	data       []pair
+	num1, num2 []int
+}
+
+func (h *hp) Push(x interface{}) {
+	h.data = append(h.data, x.(pair))
+}
+
+func (h *hp) Pop() interface{} {
+	v := h.data[len(h.data)-1]
+	h.data = h.data[:len(h.data)-1]
+	return v
+}
+
+func (h hp) Len() int {
+	return len(h.data)
+}
+
+func (h hp) Less(i, j int) bool {
+	a, b := h.data[i], h.data[j]
+	return h.num1[a.i]+h.num2[a.j] < h.num1[b.i]+h.num2[b.j]
+}
+
+func (h hp) Swap(i, j int) {
+	h.data[i], h.data[j] = h.data[j], h.data[i]
 }
