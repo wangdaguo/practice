@@ -118,13 +118,14 @@ func main() {
 	//r := search([]int{3, 1}, 1)
 	//r := findKthLargest2([]int{3, 2, 1, 5, 6, 4}, 2)
 	//r := findMaximizedCapital1(2, 0, []int{1, 2, 3}, []int{0, 9, 10})
-	obj := ConstructorM()
-	obj.AddNum(1)
-	obj.AddNum(2)
-	fmt.Println(obj.FindMedian())
-	obj.AddNum(3)
-	fmt.Println(obj.FindMedian())
-	//fmt.Println(r)
+	//obj := ConstructorM()
+	//obj.AddNum(1)
+	//obj.AddNum(2)
+	//fmt.Println(obj.FindMedian())
+	//obj.AddNum(3)
+	//fmt.Println(obj.FindMedian())
+	r := addBinary("11", "1")
+	fmt.Println(r)
 }
 
 type Person struct {
@@ -3034,4 +3035,53 @@ func (m *MedianFinder) FindMedian() float64 {
 		return float64(-m.queMin.IntSlice[0])
 	}
 	return float64(m.queMax.IntSlice[0]-m.queMin.IntSlice[0]) / 2
+}
+
+/*
+67. 二进制求和
+https://leetcode.cn/problems/add-binary/?envType=study-plan-v2&envId=top-interview-150
+*/
+func addBinary(a string, b string) string {
+	if len(a) < 1 {
+		return b
+	}
+	if len(b) < 1 {
+		return a
+	}
+	maxLen, m, n, sum, jw, r := max(len(a), len(b)), 0, 0, 0, 0, ""
+	for i := 0; i < maxLen; i++ {
+		if i >= len(a) {
+			m = 0
+		} else {
+			m = int(a[len(a)-i-1] - '0')
+		}
+
+		if i >= len(b) {
+			n = 0
+		} else {
+			n = int(b[len(b)-i-1] - '0')
+		}
+		sum += (m + n + jw) % 2
+		r = fmt.Sprintf("%d%s", sum, r)
+		jw = (m + n + jw) / 2
+		sum = 0
+	}
+	if jw > 0 {
+		r = fmt.Sprintf("%d%s", jw, r)
+	}
+	return r
+}
+
+/*
+190. 颠倒二进制位
+*https://leetcode.cn/problems/reverse-bits/?envType=study-plan-v2&envId=top-interview-150
+*/
+func reverseBits(num uint32) uint32 {
+	var r uint32
+	for i := 0; i < 32; i++ {
+		r <<= 1
+		r += num & 1
+		num >>= 1
+	}
+	return r
 }
