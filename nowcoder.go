@@ -2,163 +2,123 @@ package main
 
 import (
 	"fmt"
-	"strconv"
+	"golang.org/x/sync/errgroup"
+	"runtime"
+	"sync"
 )
 
-func main()  {
-
-	//r := MaxZero([]int{25, 30, 125, 64})
-	//fmt.Println(r)
-	//return
-
-	/**
-	4
-	13
-	123
-	24
-	22
-	 */
-
-	//r := GetOtherEven("44")
-	//fmt.Println(r)
-	//return
-
-
+func main() {
+	runtime.GOMAXPROCS(runtime.NumCPU() - 1)
+	TestSyncMap()
+	//lb, receiveCh, sendCh := NewLogBuild(), make(chan struct{}), make(chan struct{})
+	//go readG(lb, receiveCh, sendCh)
+	//writeG(lb, receiveCh, sendCh)
 }
 
-func GetOtherEven(s string) string {
-	input := s
-	var firstPosVal, lastPosVal int64
-	var middleValArr []int64
-	lastPosVal, _ = strconv.ParseInt(string(input[len(input)-1]), 10, 64)
-	firstPosVal, _ = strconv.ParseInt(string(input[0]), 10, 64)
-	for i:=1;i<len(input)-1; i++ {
-		c, _ := strconv.ParseInt(string(input[i]), 10, 64)
-		middleValArr = append(middleValArr, c)
+func writeG(lb *extLog, receiveCh chan struct{}, sendCh chan struct{}) string {
+	res := "logBuild"
+	receiveCh <- struct{}{}
+	<-sendCh
+	for _, key := range lb.sortKeys {
+		if v, ok := lb.extInfo.Load(key); ok {
+			res += fmt.Sprintf("||%v=%+v", key, v)
+		}
 	}
-	if middleValArr == nil {
-		if firstPosVal == lastPosVal || lastPosVal == 0 || firstPosVal == 0 {
-			return "-1"
+	fmt.Println(res)
+	return res
+}
+
+func readG(lb *extLog, receiveCh <-chan struct{}, sendCh chan<- struct{}) {
+	<-receiveCh
+	eg := errgroup.Group{}
+	for i := 0; i < 100; i++ {
+		if i == 7 {
+			sendCh <- struct{}{}
 		}
-		if (lastPosVal*10 + firstPosVal) % 2 == 0 {
-			return genValByRev(lastPosVal, firstPosVal, middleValArr)
-		}
-		return "-1"
+		t := i
+		eg.Go(func() error {
+			defer RecoverPanic()
+			lb.Set(fmt.Sprintf("%s%d", "k_", t), fmt.Sprintf("%s%d", "v_", t)).
+				Set(fmt.Sprintf("%s%d", "kk_", t), fmt.Sprintf("%s%d", "vv_", t))
+			return nil
+		})
 	}
-	// 如果末尾不为偶数
-	if lastPosVal % 2 != 0 {
-		if firstPosVal % 2 == 0 {
-			return genValByRev(lastPosVal, firstPosVal, middleValArr)
-		}
-		if getEvenIndex(middleValArr, -1) >= 0 {
-			middleValArr[getEvenIndex(middleValArr, -1)], lastPosVal = lastPosVal, middleValArr[getEvenIndex(middleValArr, -1)]
-			return genValByRev(firstPosVal, lastPosVal, middleValArr)
-		}
-		return "-1"
-	} else {  // 尾号是偶数  22332
-		// 中间能换，则中间换
-		i, j := getMiddleValNotEqualTwoIndex(middleValArr)
-		if i >= 0 {
-			middleValArr[i], middleValArr[j] = middleValArr[j], middleValArr[i]
-			return genValBySeq(firstPosVal, lastPosVal, middleValArr)
-		} else {
-			// 中间跟首位换
-			if firstPosVal != middleValArr[0] && middleValArr[0] != 0 {
-				middleValArr[0], firstPosVal = firstPosVal, middleValArr[0]
-				return genValByRev(firstPosVal, lastPosVal, middleValArr)
+	_ = eg.Wait()
+}
+
+func RecoverPanic() {
+	if err := recover(); err != nil {
+		buf := make([]byte, 1<<16)
+		stackSize := runtime.Stack(buf, false)
+		fmt.Println(err, string(buf[0:stackSize]))
+	}
+	return
+}
+
+func TestSyncMap() {
+	eg := errgroup.Group{}
+	l := NewLogBuild()
+	l.Set("111", "111").Set("222", "222").GetTag("TestSyncMap_in")
+	defer func() {
+		l.Set("err", nil).GetTag("not have err")
+		fmt.Println("end")
+
+	}()
+	//for i := 0; i < runtime.NumCPU()/2; i++ {
+	//	eg.Go(func() error {
+	//		defer RecoverPanic()
+	//		for {
+	//			_ = l.GetTag("xxbb")
+	//		}
+	//		return nil
+	//	})
+	//}
+	for i := 0; i < runtime.NumCPU()-1; i++ {
+		eg.Go(func() error {
+			defer RecoverPanic()
+			for {
+				_ = l.Set("w", "w").Set("x", "x").GetTag("errgroup_do")
 			}
-			// 首位为偶数，首位与末尾换
-			if firstPosVal % 2 == 0 && firstPosVal != lastPosVal && lastPosVal != 0 {
-				return genValByRev(lastPosVal, firstPosVal, middleValArr)
-			}
-			if getEvenIndex(middleValArr, lastPosVal) >= 0 {
-				middleValArr[getEvenIndex(middleValArr, lastPosVal)], lastPosVal = lastPosVal, middleValArr[getEvenIndex(middleValArr, lastPosVal)]
-				return genValByRev(firstPosVal, lastPosVal, middleValArr)
-			}
-			return "-1"
-		}
+			return nil
+		})
+
 	}
+	_ = eg.Wait()
+	fmt.Println(1122)
+	return
 }
 
-func genValByRev(firstPos, lastPos int64, middleVal []int64) string {
-	var r string
-	r = fmt.Sprintf("%s%s", r, strconv.FormatInt(firstPos, 10))
-	if len(middleVal) > 0 {
-		for i:=len(middleVal)-1;i>=0;i-- {
-			r = fmt.Sprintf("%s%s", r, strconv.FormatInt(middleVal[i], 10))
-		}
-	}
-	r = fmt.Sprintf("%s%s", r, strconv.FormatInt(lastPos, 10))
-	return r
+type extLog struct {
+	extInfo  sync.Map
+	sortKeys []string
 }
 
-func genValBySeq(firstPos, lastPos int64, middleVal []int64) string {
-	var r string
-	r = fmt.Sprintf("%s%s", r, strconv.FormatInt(firstPos, 10))
-	if len(middleVal) > 0 {
-		for i:=0;i<=len(middleVal)-1;i++ {
-			r = fmt.Sprintf("%s%s", r, strconv.FormatInt(middleVal[i], 10))
-		}
-	}
-	r = fmt.Sprintf("%s%s", r, strconv.FormatInt(lastPos, 10))
-	return r
+func NewLogBuild() (res *extLog) {
+	res = &extLog{}
+	res.extInfo = sync.Map{}
+	return res
 }
 
-func getEvenIndex(middleVal []int64, exclude int64) int64 {
-	for k, v := range middleVal {
-		if v % 2 == 0 && v != exclude {
-			return int64(k)
+// 日志信息
+func (p *extLog) Get() (res string) {
+	res = "logBuild"
+	var a *string
+	for _, key := range p.sortKeys {
+		if v, ok := p.extInfo.Load(a); ok {
+			res += fmt.Sprintf("||%v=%+v", key, v)
 		}
 	}
-	return -1
+	//fmt.Println(res)
+	return
 }
 
-// 2 323 2
-func getMiddleValNotEqualTwoIndex(middleVal []int64) (int64, int64) {
-	if len(middleVal) < 2 {
-		return -1, -1
-	}
-	i, j := int64(0), int64(len(middleVal)-1)
-	for i < j {
-		if middleVal[i] != middleVal[j] {
-			return i, j
-		}
-		j --
-	}
-	return -1, -1
+func (p *extLog) GetTag(dTag string) string {
+	return p.Get()
 }
 
-func MaxZero(arr []int) int {
-	if len(arr) < 1 {
-		return 0
-	}
-	if len(arr) == 1 {
-		return getZeroCnt(arr[0])
-	}
-	if len(arr) == 2 {
-		return maxVal(getZeroCnt(arr[0]), getZeroCnt(arr[1]), getZeroCnt(arr[0]*arr[1]))
-	}
-	return maxVal(MaxZero(arr[0:len(arr)-2])*arr[len(arr)-1], MaxZero(arr[0:len(arr)-1]))
-}
-
-func getZeroCnt(r int) int {
-	cnt := 0
-	for r > 0 {
-		if r > 0 && r % 10 == 0 {
-			cnt ++
-		}
-		r = r/10
-
-	}
-	return cnt
-}
-
-func maxVal(args... int) int {
-	var max = -1
-	for _, arg := range args {
-		if arg > max {
-			max = arg
-		}
-	}
-	return max
+func (p *extLog) Set(key string, value interface{}) *extLog {
+	p.extInfo.Store(key, value)
+	p.sortKeys = append(p.sortKeys, key)
+	//fmt.Printf("sortKeys len is: %d, cap is: %d, addr is %p, val is %p\n", len(p.sortKeys), cap(p.sortKeys), &p.sortKeys, p.sortKeys)
+	return p
 }

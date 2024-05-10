@@ -110,6 +110,7 @@ func main() {
 	//fmt.Println("After:")
 	//fmt.Printf("person len: %d, cap: %d\n", len(p.Friends), cap(p.Friends))
 	//fmt.Printf("r1 len: %d, cap: %d\n", len(r1), cap(r1))
+
 	//r := sortedArrayToBST([]int{-10, -3, 0, 5, 9})
 	//r := maxSubArray([]int{-2, 1})
 	//r := minSubArrayLen(7, []int{2, 3, 1, 2, 4, 3})
@@ -3084,4 +3085,43 @@ func reverseBits(num uint32) uint32 {
 		num >>= 1
 	}
 	return r
+}
+
+/**
+191. 位1的个数
+https://leetcode.cn/problems/number-of-1-bits/?envType=study-plan-v2&envId=top-interview-150
+*/
+func hammingWeight(n int) int {
+	cnt := 0
+	for n > 0 {
+		i := n & 0x1
+		if i == 1 {
+			cnt++
+		}
+		n >>= 1
+	}
+	return cnt
+}
+
+/**
+136. 只出现一次的数字
+https://leetcode.cn/problems/single-number/?envType=study-plan-v2&envId=top-interview-150
+*/
+func singleNumber(nums []int) int {
+	if len(nums) < 1 {
+		return 0
+	}
+	var r int
+	for _, v := range nums {
+		r ^= v
+	}
+	return r
+}
+
+/**
+137. 只出现一次的数字 II
+https://leetcode.cn/problems/single-number-ii/?envType=study-plan-v2&envId=top-interview-150
+*/
+func singleNumber1(nums []int) int {
+
 }
