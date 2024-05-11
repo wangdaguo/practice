@@ -3135,3 +3135,23 @@ func singleNumber1(nums []int) int {
 	}
 	return int(ans)
 }
+
+/*
+201. 数字范围按位与
+https://leetcode.cn/problems/bitwise-and-of-numbers-range/description/?envType=study-plan-v2&envId=top-interview-150
+*/
+func rangeBitwiseAnd(left int, right int) int {
+	shift := 0
+	for left < right {
+		left, right = left>>1, right>>1
+		shift++
+	}
+	return left << shift
+}
+
+func rangeBitwiseAnd1(left int, right int) int {
+	for left < right {
+		right &= right - 1
+	}
+	return right
+}
