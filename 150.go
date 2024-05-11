@@ -3155,3 +3155,47 @@ func rangeBitwiseAnd1(left int, right int) int {
 	}
 	return right
 }
+
+/*
+9. 回文数
+https://leetcode.cn/problems/palindrome-number/?envType=study-plan-v2&envId=top-interview-150
+*/
+func isPalindrome(x int) bool {
+	if x < 0 {
+		return false
+	}
+	t, p := x, 0
+	for t > 0 {
+		p *= 10
+		p += t % 10
+		t /= 10
+	}
+	return p == x
+}
+
+/*
+66. 加一
+https://leetcode.cn/problems/plus-one/?envType=study-plan-v2&envId=top-interview-150
+*/
+func plusOne(digits []int) []int {
+	if len(digits) < 1 {
+		return []int{1}
+	}
+	jw, r := 0, make([]int, 0)
+	for i := len(digits) - 1; i >= 0; i-- {
+		var t int
+		if i == len(digits)-1 {
+			t = digits[i] + 1
+			jw = t / 10
+			r = append(r, t%10)
+			continue
+		}
+		t = digits[i] + jw
+		jw = t / 10
+		r = append([]int{t % 10}, r...)
+	}
+	if jw > 0 {
+		r = append([]int{jw}, r...)
+	}
+	return r
+}
