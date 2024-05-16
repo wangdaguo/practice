@@ -125,7 +125,8 @@ func main() {
 	//fmt.Println(obj.FindMedian())
 	//obj.AddNum(3)
 	//fmt.Println(obj.FindMedian())
-	r := addBinary("11", "1")
+	//r := addBinary("11", "1")
+	r := mySqrt(1)
 	fmt.Println(r)
 }
 
@@ -3087,7 +3088,8 @@ func reverseBits(num uint32) uint32 {
 	return r
 }
 
-/**
+/*
+*
 191. 位1的个数
 https://leetcode.cn/problems/number-of-1-bits/?envType=study-plan-v2&envId=top-interview-150
 */
@@ -3103,7 +3105,8 @@ func hammingWeight(n int) int {
 	return cnt
 }
 
-/**
+/*
+*
 136. 只出现一次的数字
 https://leetcode.cn/problems/single-number/?envType=study-plan-v2&envId=top-interview-150
 */
@@ -3118,7 +3121,8 @@ func singleNumber(nums []int) int {
 	return r
 }
 
-/**
+/*
+*
 137. 只出现一次的数字 II
 https://leetcode.cn/problems/single-number-ii/?envType=study-plan-v2&envId=top-interview-150
 */
@@ -3198,4 +3202,64 @@ func plusOne(digits []int) []int {
 		r = append([]int{jw}, r...)
 	}
 	return r
+}
+
+/*
+*
+172. 阶乘后的零
+https://leetcode.cn/problems/factorial-trailing-zeroes/?envType=study-plan-v2&envId=top-interview-150
+*/
+func trailingZeroes(n int) int {
+	r := 0
+	for i := 5; i <= n; i += 5 {
+		for x := i; x%5 == 0; x /= 5 {
+			r++
+		}
+	}
+	return r
+}
+
+/*
+69. x 的平方根
+https://leetcode.cn/problems/sqrtx/?envType=study-plan-v2&envId=top-interview-150
+*/
+func mySqrt(x int) int {
+	if x == 0 {
+		return 0
+	}
+	l, n := 1, x
+	for l <= n {
+		m := (l + n) / 2
+		if m*m < x {
+			l = m + 1
+		} else if m*m > x {
+			n = m - 1
+		} else {
+			return m
+		}
+	}
+	return n
+}
+
+/*
+*
+50. Pow(x, n)
+https://leetcode.cn/problems/powx-n/description/?envType=study-plan-v2&envId=top-interview-150
+*/
+func myPow(x float64, n int) float64 {
+	if n == 0 {
+		return 1
+	}
+	if x == 0 {
+		return 0
+	}
+	if n == 1 {
+		return x
+	}
+	if n == -1 {
+		return 1 / x
+	}
+	half := myPow(x, n/2)
+	res := myPow(x, n%2)
+	return half * half * res
 }

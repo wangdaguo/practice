@@ -5,14 +5,42 @@ import (
 	"golang.org/x/sync/errgroup"
 	"runtime"
 	"sync"
+	"unsafe"
 )
 
 func main() {
-	runtime.GOMAXPROCS(runtime.NumCPU() - 1)
-	TestSyncMap()
+	//runtime.GOMAXPROCS(runtime.NumCPU() - 1)
+	//TestSyncMap()
 	//lb, receiveCh, sendCh := NewLogBuild(), make(chan struct{}), make(chan struct{})
 	//go readG(lb, receiveCh, sendCh)
 	//writeG(lb, receiveCh, sendCh)
+
+	//bb := Load()
+	var aa interface{}
+
+	cc, err := aa.(readOnly)
+	fmt.Printf("cc=%v, err=%v\n", cc, err)
+
+	key := "kkkkkkk"
+	e, ok := cc.m[key]
+	fmt.Printf("e=%v, ok=%v\n", e, ok)
+
+	var m map[string]interface{} = nil
+	dd, oook := m["vvv"]
+	fmt.Printf("dd=%v, oook=%v\n", dd, oook)
+}
+
+type readOnly struct {
+	m       map[interface{}]*entry
+	amended bool // true if the dirty map contains some key not in m.
+}
+
+type entry struct {
+	p unsafe.Pointer // *interface{}
+}
+
+func Load() (val interface{}) {
+	return nil
 }
 
 func writeG(lb *extLog, receiveCh chan struct{}, sendCh chan struct{}) string {
@@ -64,15 +92,6 @@ func TestSyncMap() {
 		fmt.Println("end")
 
 	}()
-	//for i := 0; i < runtime.NumCPU()/2; i++ {
-	//	eg.Go(func() error {
-	//		defer RecoverPanic()
-	//		for {
-	//			_ = l.GetTag("xxbb")
-	//		}
-	//		return nil
-	//	})
-	//}
 	for i := 0; i < runtime.NumCPU()-1; i++ {
 		eg.Go(func() error {
 			defer RecoverPanic()
