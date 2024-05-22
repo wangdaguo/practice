@@ -126,7 +126,8 @@ func main() {
 	//obj.AddNum(3)
 	//fmt.Println(obj.FindMedian())
 	//r := addBinary("11", "1")
-	r := mySqrt(1)
+	//r := mySqrt(1)
+	r := rob([]int{1, 2, 3, 1})
 	fmt.Println(r)
 }
 
@@ -3280,4 +3281,24 @@ func climbStairs(n int) int {
 		dp[i] = dp[i-1] + dp[i-2]
 	}
 	return dp[n]
+}
+
+/*
+198. 打家劫舍
+https://leetcode.cn/problems/house-robber/?envType=study-plan-v2&envId=top-interview-150
+*/
+func rob(nums []int) int {
+	if len(nums) < 1 {
+		return 0
+	}
+	dp := make([]int, len(nums)+1)
+	/*
+		dp[i] = max(dp[i-1], nums[i] + dp[i-2])
+	*/
+	dp[0] = 0
+	dp[1] = nums[0]
+	for i := 1; i < len(nums); i++ {
+		dp[i+1] = max(dp[i], nums[i]+dp[i-1])
+	}
+	return dp[len(dp)-1]
 }
