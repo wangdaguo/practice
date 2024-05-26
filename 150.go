@@ -127,7 +127,8 @@ func main() {
 	//fmt.Println(obj.FindMedian())
 	//r := addBinary("11", "1")
 	//r := mySqrt(1)
-	r := rob([]int{1, 2, 3, 1})
+	//r := rob([]int{1, 2, 3, 1})
+	r := coinChange([]int{2}, 3)
 	fmt.Println(r)
 }
 
@@ -3301,4 +3302,78 @@ func rob(nums []int) int {
 		dp[i+1] = max(dp[i], nums[i]+dp[i-1])
 	}
 	return dp[len(dp)-1]
+}
+
+/*
+139. 单词拆分
+https://leetcode.cn/problems/word-break/description/?envType=study-plan-v2&envId=top-interview-150
+*/
+func wordBreak(s string, wordDict []string) bool {
+	mp := make(map[string]bool)
+	for _, w := range wordDict {
+		mp[w] = true
+	}
+	dp := make([]bool, len(s)+1)
+	dp[0] = true
+	for i := 0; i <= len(s); i++ {
+		for j := 0; j < i; j++ {
+			if dp[j] && mp[s[j:i]] {
+				dp[i] = true
+				break
+			}
+		}
+	}
+	return dp[len(s)]
+}
+
+/*
+322. 零钱兑换
+*https://leetcode.cn/problems/coin-change/?envType=study-plan-v2&envId=top-interview-150
+*/
+var res = math.MaxInt32
+
+// 简单递归 leetcode 超时
+func coinChange(coins []int, amount int) int {
+	if len(coins) == 0 {
+		return -1
+	}
+	findWay(coins, amount, 0)
+	if res == math.MaxInt32 {
+		return -1
+	}
+	return res
+}
+
+func findWay(coins []int, amount, cnt int) {
+	if amount < 0 {
+		return
+	}
+	if amount == 0 {
+		res = min(res, cnt)
+	}
+	for i := 0; i < len(coins); i++ {
+		findWay(coins, amount-coins[i], cnt+1)
+	}
+}
+
+func coinChange1(coins []int, amount int) int {
+	if len(coins) == 0 {
+		return -1
+	}
+	dp := make([]int, amount+1)
+	for k, _ := range dp {
+		dp[k] = amount + 1
+	}
+	dp[0] = 0
+	for i := 1; i <= amount; i++ {
+		for j := 0; j < len(coins); j++ {
+			if i >= coins[j] {
+				dp[i] = min(dp[i], dp[i-coins[j]]+1)
+			}
+		}
+	}
+	if dp[amount] > amount {
+		return -1
+	}
+	return dp[amount]
 }
