@@ -3390,7 +3390,7 @@ func lengthOfLIS(nums []int) int {
 	dp := make([]int, len(nums))
 	for i := 0; i < len(dp); i++ {
 		dp[i] = 1
-	}g
+	}
 	/**
 	10, 9, 2, 5, 3, 7, 101, 18
 	dp[i] = (x in 0...i-1 && nums[i] > nums[x]) max(dp[x]+1, dp[i])
@@ -3408,4 +3408,28 @@ func lengthOfLIS(nums []int) int {
 		r = max(r, v)
 	}
 	return r
+}
+
+/*
+120. 三角形最小路径和
+*https://leetcode.cn/problems/triangle/?envType=study-plan-v2&envId=top-interview-150
+*/
+func minimumTotal(triangle [][]int) int {
+	dp := make([][]int, len(triangle))
+	for i := 0; i < len(triangle); i++ {
+		dp[i] = make([]int, len(triangle))
+	}
+	dp[0][0] = triangle[0][0]
+	for i := 1; i < len(triangle); i++ {
+		dp[i][0] = dp[i-1][0] + triangle[i][0]
+		for j := 1; j < i; j++ {
+			dp[i][j] = min(dp[i-1][j], dp[i-1][j-1]) + triangle[i][j]
+		}
+		dp[i][i] = dp[i-1][i-1] + triangle[i][i]
+	}
+	ans := math.MaxInt32
+	for i := 0; i < len(triangle); i++ {
+		ans = min(ans, dp[len(triangle)-1][i])
+	}
+	return ans
 }
