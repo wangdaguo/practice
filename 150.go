@@ -129,7 +129,8 @@ func main() {
 	//r := mySqrt(1)
 	//r := rob([]int{1, 2, 3, 1})
 	//r := coinChange([]int{2}, 3)
-	r := lengthOfLIS([]int{1, 3, 6, 7, 9, 4, 10, 5, 6})
+	//r := lengthOfLIS([]int{1, 3, 6, 7, 9, 4, 10, 5, 6})
+	r := minPathSum([][]int{{9, 1, 4, 8}})
 	fmt.Println(r)
 }
 
@@ -3432,4 +3433,34 @@ func minimumTotal(triangle [][]int) int {
 		ans = min(ans, dp[len(triangle)-1][i])
 	}
 	return ans
+}
+
+/*
+*64. 最小路径和
+https://leetcode.cn/problems/minimum-path-sum/description/?envType=study-plan-v2&envId=top-interview-150
+*/
+func minPathSum(grid [][]int) int {
+	if len(grid) < 1 {
+		return 0
+	}
+	dp := make([][]int, len(grid))
+	for i := 0; i < len(grid); i++ {
+		dp[i] = make([]int, len(grid[i]))
+	}
+	dp[0][0] = grid[0][0]
+	for i := 0; i < len(grid); i++ {
+		for j := 0; j < len(grid[0]); j++ {
+			if i == 0 && j == 0 {
+				dp[i][j] = grid[0][0]
+			} else if i == 0 {
+				dp[i][j] = dp[i][j-1] + grid[i][j]
+			} else if j == 0 {
+				dp[i][j] = dp[i-1][j] + grid[i][j]
+			} else {
+				dp[i][j] = min(dp[i-1][j], dp[i][j-1]) + grid[i][j]
+			}
+		}
+	}
+	fmt.Println(dp)
+	return dp[len(dp)-1][len(dp[0])-1]
 }
