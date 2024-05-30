@@ -130,7 +130,8 @@ func main() {
 	//r := rob([]int{1, 2, 3, 1})
 	//r := coinChange([]int{2}, 3)
 	//r := lengthOfLIS([]int{1, 3, 6, 7, 9, 4, 10, 5, 6})
-	r := minPathSum([][]int{{9, 1, 4, 8}})
+	//r := minPathSum([][]int{{9, 1, 4, 8}})
+	r := uniquePathsWithObstacles1([][]int{{0, 0, 0}, {0, 1, 0}, {0, 0, 0}})
 	fmt.Println(r)
 }
 
@@ -3458,6 +3459,83 @@ func minPathSum(grid [][]int) int {
 				dp[i][j] = dp[i-1][j] + grid[i][j]
 			} else {
 				dp[i][j] = min(dp[i-1][j], dp[i][j-1]) + grid[i][j]
+			}
+		}
+	}
+	fmt.Println(dp)
+	return dp[len(dp)-1][len(dp[0])-1]
+}
+
+/*
+63. 不同路径 II
+*https://leetcode.cn/problems/unique-paths-ii/?envType=study-plan-v2&envId=top-interview-150
+记忆化递归
+*/
+func uniquePathsWithObstacles(obstacleGrid [][]int) int {
+	if len(obstacleGrid) < 1 {
+		return 0
+	}
+	mp := make(map[string]int)
+	return uniquePathsWithObstaclesBt(obstacleGrid, 0, 0, mp)
+}
+
+func uniquePathsWithObstaclesBt(grid [][]int, i int, j int, mp map[string]int) int {
+	if v, ok := mp[fmt.Sprintf("%d%d", i, j)]; ok {
+		return v
+	}
+	if i >= len(grid) || j >= len(grid[0]) || grid[i][j] == 1 || grid[i][j] == 2 {
+		return 0
+	}
+	if i == len(grid)-1 && j == len(grid[0])-1 {
+		return 1
+	}
+	r := uniquePathsWithObstaclesBt(grid, i+1, j, mp) + uniquePathsWithObstaclesBt(grid, i, j+1, mp)
+	mp[fmt.Sprintf("%d%d", i, j)] = r
+	return r
+}
+
+/*
+*
+动态规划
+dp[i][j] = dp[i-1][j] + dp[i][j-1]
+
+[
+
+	[0 1 2]
+	[1 0 2]
+	[2 2 4]
+
+]
+*/
+func uniquePathsWithObstacles1(obstacleGrid [][]int) int {
+	dp := make([][]int, len(obstacleGrid))
+	for i := 0; i < len(obstacleGrid); i++ {
+		dp[i] = make([]int, len(obstacleGrid[i]))
+	}
+	for i := 0; i < len(obstacleGrid); i++ {
+		for j := 0; j < len(obstacleGrid[i]); j++ {
+			if obstacleGrid[i][j] == 1 {
+				dp[i][j] = 0
+				continue
+			}
+			if i == 0 && j == 0 {
+				dp[i][j] = 1
+			} else if i == 0 {
+				if obstacleGrid[i][j-1] == 1 {
+					obstacleGrid[i][j] = 1
+					dp[i][j] = 0
+				} else {
+					dp[i][j] = dp[i][j-1]
+				}
+			} else if j == 0 {
+				if obstacleGrid[i-1][j] == 1 {
+					obstacleGrid[i][j] = 1
+					dp[i][j] = 0
+				} else {
+					dp[i][j] = dp[i-1][j]
+				}
+			} else {
+				dp[i][j] = dp[i][j-1] + dp[i-1][j]
 			}
 		}
 	}
