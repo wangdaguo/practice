@@ -131,7 +131,8 @@ func main() {
 	//r := coinChange([]int{2}, 3)
 	//r := lengthOfLIS([]int{1, 3, 6, 7, 9, 4, 10, 5, 6})
 	//r := minPathSum([][]int{{9, 1, 4, 8}})
-	r := uniquePathsWithObstacles1([][]int{{0, 0, 0}, {0, 1, 0}, {0, 0, 0}})
+	//r := uniquePathsWithObstacles1([][]int{{0, 0, 0}, {0, 1, 0}, {0, 0, 0}})
+	r := longestPalindrome("babad")
 	fmt.Println(r)
 }
 
@@ -3541,4 +3542,106 @@ func uniquePathsWithObstacles1(obstacleGrid [][]int) int {
 	}
 	fmt.Println(dp)
 	return dp[len(dp)-1][len(dp[0])-1]
+}
+
+/*
+5. 最长回文子串
+*https://leetcode.cn/problems/longest-palindromic-substring/?envType=study-plan-v2&envId=top-interview-150
+*/
+func longestPalindrome(s string) string {
+	if len(s) == 0 {
+		return ""
+	}
+	if len(s) == 1 {
+		return s
+	}
+	/**
+	dp[i] = max(dp[i-1], s[x:i] + s[i])
+	*/
+	dp, maxStr := make([]string, len(s)+1), ""
+	dp[0] = ""
+	for i := 0; i <= len(s); i++ {
+		for j := 0; j < i; j++ {
+			if isPalindrome11(s[j:i]) {
+				if len(dp[i]) < len(s[j:i]) {
+					dp[i] = s[j:i]
+				} else {
+					dp[i] = dp[i]
+				}
+			}
+		}
+		if len(dp[i]) > len(maxStr) {
+			maxStr = dp[i]
+		}
+	}
+	fmt.Println(dp)
+	return maxStr
+}
+
+func isPalindrome11(s string) bool {
+	fmt.Println(s)
+	if len(s) == 0 || len(s) == 1 {
+		return true
+	}
+	i, j := 0, len(s)-1
+	for i < j {
+		if s[i] != s[j] {
+			return false
+		}
+		i++
+		j--
+	}
+	return true
+}
+
+func longestPalindrome11(s string) string {
+	start, end := 0, 0
+	for i := 0; i < len(s); i++ {
+		s1, e1 := expandAroundCenter(s, i, i)
+		s2, e2 := expandAroundCenter(s, i, i+1)
+		if e1-s1 > end-start {
+			start, end = s1, e1
+		}
+		if e2-s2 > end-start {
+			start, end = s2, e2
+		}
+	}
+	return s[start : end+1]
+}
+
+func expandAroundCenter(s string, i int, j int) (l, r int) {
+	for i >= 0 && j < len(s) && s[i] == s[j] {
+		i, j = i-1, j+1
+	}
+	return i + 1, j - 1
+}
+
+/*
+97. 交错字符串
+*https://leetcode.cn/problems/interleaving-string/?envType=study-plan-v2&envId=top-interview-150
+*/
+func isInterleave(s1 string, s2 string, s3 string) bool {
+	/**
+	f[i][j] = (f[i-1][j] && s1[i-1] == s3[i+j-1]) || (f[i][j-1] && s2[j-1] == s3[i+j-1])
+	*/
+	f, n, m := make([][]bool, len(s1)+1), len(s1), len(s2)
+	if (n + m) != len(s3) {
+		return false
+	}
+	for i := 0; i < len(f); i++ {
+		f[i] = make([]bool, m+1)
+	}
+	f[0][0] = true
+	for i := 0; i <= n; i++ {
+		for j := 0; j <= m; j++ {
+			p := i + j - 1
+			if i > 0 {
+				f[i][j] = f[i][j] || (f[i-1][j] && s1[i-1] == s3[p])
+			}
+			if j > 0 {
+				f[i][j] = f[i][j] || (f[i][j-1] && s2[j-1] == s3[p])
+			}
+		}
+	}
+	return f[n][m]
 }
