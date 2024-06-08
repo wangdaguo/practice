@@ -132,7 +132,12 @@ func main() {
 	//r := lengthOfLIS([]int{1, 3, 6, 7, 9, 4, 10, 5, 6})
 	//r := minPathSum([][]int{{9, 1, 4, 8}})
 	//r := uniquePathsWithObstacles1([][]int{{0, 0, 0}, {0, 1, 0}, {0, 0, 0}})
-	r := longestPalindrome("babad")
+	//r := longestPalindrome("babad")
+	r := maximalSquare([][]byte{
+		{'1', '0', '1', '0', '0'},
+		{'1', '0', '1', '1', '1'},
+		{'1', '1', '1', '1', '1'},
+		{'1', '0', '0', '1', '0'}})
 	fmt.Println(r)
 }
 
@@ -3670,4 +3675,59 @@ func minDistance(word1 string, word2 string) int {
 		}
 	}
 	return dp[len(dp)-1][len(dp[0])-1]
+}
+
+func minM(x ...int) int {
+	min := x[0]
+	for i := 1; i < len(x); i++ {
+		if x[i] < min {
+			min = x[i]
+		}
+	}
+	return min
+}
+
+/*
+221. 最大正方形
+https://leetcode.cn/problems/maximal-square/?envType=study-plan-v2&envId=top-interview-150
+*/
+func maximalSquare(matrix [][]byte) int {
+	/*
+		dp[i][j] = minVal(dp[i-1][j], dp[i][j-1], dp[i][j]) + 1
+	*/
+	dp, maxSide := make([][]int, len(matrix)), 0
+	for i := 0; i < len(matrix); i++ {
+		dp[i] = make([]int, len(matrix[i]))
+		for j := 0; j < len(matrix[i]); j++ {
+			dp[i][j] = int(matrix[i][j] - '0')
+			if dp[i][j] == 1 {
+				maxSide = 1
+			}
+		}
+	}
+	for i := 1; i < len(matrix); i++ {
+		for j := 1; j < len(matrix[i]); j++ {
+			if dp[i][j] == 1 {
+				dp[i][j] = minVal(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1
+				if dp[i][j] > maxSide {
+					maxSide = dp[i][j]
+				}
+			}
+		}
+	}
+	fmt.Println(dp)
+	return maxSide * maxSide
+}
+
+func minVal(list ...int) int {
+	if len(list) == 0 {
+		return 0
+	}
+	minV := list[0]
+	for i := 1; i < len(list); i++ {
+		if list[i] < minV {
+			minV = list[i]
+		}
+	}
+	return minV
 }
