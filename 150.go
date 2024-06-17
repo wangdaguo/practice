@@ -133,12 +133,12 @@ func main() {
 	//r := minPathSum([][]int{{9, 1, 4, 8}})
 	//r := uniquePathsWithObstacles1([][]int{{0, 0, 0}, {0, 1, 0}, {0, 0, 0}})
 	//r := longestPalindrome("babad")
-	r := maximalSquare([][]byte{
-		{'1', '0', '1', '0', '0'},
-		{'1', '0', '1', '1', '1'},
-		{'1', '1', '1', '1', '1'},
-		{'1', '0', '0', '1', '0'}})
-	fmt.Println(r)
+	//r := maximalSquare([][]byte{
+	//	{'1', '0', '1', '0', '0'},
+	//	{'1', '0', '1', '1', '1'},
+	//	{'1', '1', '1', '1', '1'},
+	//	{'1', '0', '0', '1', '0'}})
+	//fmt.Println(r)
 }
 
 type Person struct {
@@ -156,6 +156,82 @@ func T1(b []int) {
 		b = append(b, i)
 	}
 	return
+}
+
+/*
+88. 合并两个有序数组
+*https://leetcode.cn/problems/merge-sorted-array/?envType=study-plan-v2&envId=top-interview-150
+*/
+func merge(nums1 []int, m int, nums2 []int, n int) {
+	if n == 0 {
+		return
+	}
+	for i := m + n - 1; i >= 0; i-- {
+		if m == 0 {
+			nums1[i] = nums2[n-1]
+			n--
+			continue
+		}
+		if n == 0 {
+			return
+		}
+		if nums1[m-1] >= nums2[n-1] {
+			nums1[i] = nums1[m-1]
+			m--
+		} else {
+			nums1[i] = nums2[n-1]
+			n--
+		}
+	}
+	return
+}
+
+/*
+*
+27. 移除元素
+https://leetcode.cn/problems/remove-element/?envType=study-plan-v2&envId=top-interview-150
+*/
+func removeElement(nums []int, val int) int {
+	if len(nums) < 1 {
+		return 0
+	}
+	left, right, r := 0, 0, len(nums)
+	for right < len(nums) {
+		if nums[right] != val {
+			if left != right {
+				nums[left] = nums[right]
+			}
+			left++
+			right++
+			continue
+		}
+		right++
+		r--
+	}
+	return r
+}
+
+/*
+*
+26. 删除有序数组中的重复项
+https://leetcode.cn/problems/remove-duplicates-from-sorted-array/?envType=study-plan-v2&envId=top-interview-150
+*/
+func removeDuplicates(nums []int) int {
+	if len(nums) <= 1 {
+		return len(nums)
+	}
+	left, right, r := 0, 1, len(nums)
+	for right < len(nums) {
+		if nums[right] != nums[left] {
+			nums[left+1] = nums[right]
+			left++
+			right++
+			continue
+		}
+		right++
+		r--
+	}
+	return r
 }
 
 /*
