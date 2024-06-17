@@ -138,7 +138,8 @@ func main() {
 	//	{'1', '0', '1', '1', '1'},
 	//	{'1', '1', '1', '1', '1'},
 	//	{'1', '0', '0', '1', '0'}})
-	//fmt.Println(r)
+	r := removeDuplicates12([]int{1, 2, 2})
+	fmt.Println(r)
 }
 
 type Person struct {
@@ -162,7 +163,7 @@ func T1(b []int) {
 88. 合并两个有序数组
 *https://leetcode.cn/problems/merge-sorted-array/?envType=study-plan-v2&envId=top-interview-150
 */
-func merge(nums1 []int, m int, nums2 []int, n int) {
+func merge123(nums1 []int, m int, nums2 []int, n int) {
 	if n == 0 {
 		return
 	}
@@ -231,6 +232,42 @@ func removeDuplicates(nums []int) int {
 		right++
 		r--
 	}
+	return r
+}
+
+/*
+*
+80. 删除有序数组中的重复项 II
+https://leetcode.cn/problems/remove-duplicates-from-sorted-array-ii/?envType=study-plan-v2&envId=top-interview-150
+*/
+func removeDuplicates12(nums []int) int {
+	if len(nums) <= 2 {
+		return len(nums)
+	}
+	/**
+	1 2 2
+	*/
+	left, right, val, r := 0, 1, nums[0], len(nums)
+	for right < len(nums) {
+		if nums[right] == val {
+			if left > 0 && nums[left-1] == nums[left] && nums[left] == val {
+				right++
+				if right > left+1 {
+					r--
+				}
+			} else {
+				nums[left+1] = nums[right]
+				left++
+				right++
+			}
+			continue
+		}
+		nums[left+1] = nums[right]
+		val = nums[right]
+		left++
+		right++
+	}
+	fmt.Println(nums)
 	return r
 }
 
