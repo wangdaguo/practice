@@ -271,6 +271,69 @@ func removeDuplicates12(nums []int) int {
 	return r
 }
 
+func removeDuplicates123(nums []int) int {
+	if len(nums) <= 2 {
+		return len(nums)
+	}
+	left, right := 2, 2
+	for right < len(nums) {
+		if nums[right] != nums[left-2] {
+			nums[left] = nums[right]
+			left++
+		}
+		right++
+	}
+	return left
+}
+
+/*
+买卖股票的最佳时机 II
+https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-ii/?envType=study-plan-v2&envId=top-interview-150
+*/
+func maxProfit(prices []int) int {
+	if len(prices) < 1 {
+		return 0
+	}
+	dp := make([][2]int, len(prices))
+	dp[0][1] = -prices[0]
+	for i := 1; i < len(prices); i++ {
+		dp[i][0] = max(dp[i-1][0], dp[i-1][1]+prices[i])
+		dp[i][1] = max(dp[i-1][1], dp[i-1][0]-prices[i])
+	}
+	return dp[len(prices)-1][0]
+}
+
+func maxProfit1(prices []int) int {
+	r := 0
+	for i := 1; i < len(prices); i++ {
+		r += max(0, prices[i]-prices[i-1])
+	}
+	return r
+}
+
+/*
+55. 跳跃游戏
+*https://leetcode.cn/problems/jump-game/?envType=study-plan-v2&envId=top-interview-150
+*/
+func canJump(nums []int) bool {
+	if len(nums) < 1 {
+		return true
+	}
+	i, dis, maxDis := 0, nums[0], nums[0]
+	for i <= dis {
+		for ; i <= dis; i++ {
+			if nums[i]+i > maxDis {
+				maxDis = nums[i] + i
+			}
+			if maxDis >= len(nums)-1 {
+				return true
+			}
+		}
+		dis = maxDis
+	}
+	return false
+}
+
 /*
 *
 36. 有效的数独
