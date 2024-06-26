@@ -4,6 +4,7 @@ import (
 	"container/heap"
 	"fmt"
 	"math"
+	"math/rand"
 	"sort"
 	"strconv"
 	"strings"
@@ -332,6 +333,76 @@ func canJump(nums []int) bool {
 		dis = maxDis
 	}
 	return false
+}
+
+func jump(nums []int) int {
+	if len(nums) < 1 {
+		return 0
+	}
+	start, end, cnt := 0, 1, 0
+	for end < len(nums) {
+		maxPos := 0
+		for i := start; i < end; i++ {
+			maxPos = max(maxPos, i+nums[i])
+		}
+		start = end
+		end = maxPos + 1
+		cnt++
+	}
+	return cnt
+}
+
+func hIndex(citations []int) int {
+	sort.Ints(citations)
+	cnt := 0
+	for i := len(citations) - 1; i >= 0; i-- {
+		if citations[i] > cnt {
+			cnt++
+		}
+	}
+	return cnt
+}
+
+/*
+*
+380. O(1) 时间插入、删除和获取随机元素
+https://leetcode.cn/problems/insert-delete-getrandom-o1/?envType=study-plan-v2&envId=top-interview-150
+*/
+type RandomizedSet struct {
+	mp   map[int]int
+	nums []int
+}
+
+func ConstructorRs() RandomizedSet {
+	return RandomizedSet{
+		nums: make([]int, 0),
+		mp:   make(map[int]int),
+	}
+}
+
+func (r *RandomizedSet) Insert(val int) bool {
+	if _, ok := r.mp[val]; ok {
+		return false
+	}
+	r.nums = append(r.nums, val)
+	r.mp[val] = len(r.nums) - 1
+	return true
+}
+
+func (r *RandomizedSet) Remove(val int) bool {
+	idx, ok := r.mp[val]
+	if !ok {
+		return false
+	}
+	r.nums[idx] = r.nums[len(r.nums)-1]
+	r.mp[r.nums[idx]] = idx
+	delete(r.mp, val)
+	r.nums = r.nums[:len(r.nums)-1]
+	return true
+}
+
+func (r *RandomizedSet) GetRandom() int {
+	return r.nums[rand.Intn(len(r.nums))]
 }
 
 /*
