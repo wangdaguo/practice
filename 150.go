@@ -463,6 +463,64 @@ func romanToInt(s string) int {
 
 /*
 *
+14. 最长公共前缀
+https://leetcode.cn/problems/longest-common-prefix/?envType=study-plan-v2&envId=top-interview-150
+*/
+func longestCommonPrefix(strs []string) string {
+	if len(strs) < 1 {
+		return ""
+	}
+	for i := 0; i < len(strs[0]); i++ {
+		c := strs[0][i : i+1]
+		for j := 1; j < len(strs); j++ {
+			if i == len(strs[j]) || c != strs[j][i:i+1] {
+				return strs[0][0:i]
+			}
+		}
+	}
+	return strs[0]
+}
+
+/*
+151. 反转字符串中的单词
+*https://leetcode.cn/problems/reverse-words-in-a-string/?envType=study-plan-v2&envId=top-interview-150
+*/
+func reverseWords(s string) string {
+	if len(s) <= 1 {
+		return s
+	}
+	s1 := reverseStr(s)
+	list, r := strings.Split(s1, " "), ""
+	for i := 0; i < len(list); i++ {
+		if list[i] == "" {
+			continue
+		}
+		subStr := reverseStr(list[i])
+		if i == 0 {
+			r = fmt.Sprintf("%s%s", r, subStr)
+		} else {
+			r = fmt.Sprintf("%s %s", r, subStr)
+		}
+	}
+	return r
+}
+
+func reverseStr(s string) string {
+	s = strings.Trim(s, " ")
+	if len(s) < 1 {
+		return s
+	}
+	r, i, j := []byte(s), 0, len(s)-1
+	for i < j {
+		r[i], r[j] = r[j], r[i]
+		i++
+		j--
+	}
+	return string(r)
+}
+
+/*
+*
 36. 有效的数独
 https://leetcode.cn/problems/valid-sudoku/solutions/1001859/you-xiao-de-shu-du-by-leetcode-solution-50m6/
 */
