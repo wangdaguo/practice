@@ -139,7 +139,8 @@ func main() {
 	//	{'1', '0', '1', '1', '1'},
 	//	{'1', '1', '1', '1', '1'},
 	//	{'1', '0', '0', '1', '0'}})
-	r := removeDuplicates12([]int{1, 2, 2})
+	//r := removeDuplicates12([]int{1, 2, 2})
+	r := romanToInt("MCMXCIV")
 	fmt.Println(r)
 }
 
@@ -403,6 +404,61 @@ func (r *RandomizedSet) Remove(val int) bool {
 
 func (r *RandomizedSet) GetRandom() int {
 	return r.nums[rand.Intn(len(r.nums))]
+}
+
+/*
+238. 除自身以外数组的乘积
+*https://leetcode.cn/problems/product-of-array-except-self/?envType=study-plan-v2&envId=top-interview-150
+*/
+func productExceptSelf(nums []int) []int {
+	prefixAns, answer := make([]int, len(nums)), make([]int, len(nums))
+	for k, _ := range nums {
+		if k == 0 {
+			prefixAns[k] = 1
+		} else {
+			prefixAns[k] = prefixAns[k-1] * nums[k-1]
+		}
+	}
+	suffix := 1
+	for i := len(nums) - 1; i >= 0; i-- {
+		if i == len(nums)-1 {
+			answer[i] = prefixAns[i]
+		} else {
+			suffix *= nums[i+1]
+			answer[i] = prefixAns[i] * suffix
+		}
+	}
+	return answer
+}
+
+/*
+*
+13. 罗马数字转整数
+https://leetcode.cn/problems/roman-to-integer/?envType=study-plan-v2&envId=top-interview-150
+*/
+func romanToInt(s string) int {
+	if len(s) < 1 {
+		return 0
+	}
+	mp := map[byte]int{
+		'I': 1,
+		'V': 5,
+		'X': 10,
+		'L': 50,
+		'C': 100,
+		'D': 500,
+		'M': 1000,
+	}
+	var r int
+	for k, _ := range s {
+		t := mp[s[k]]
+		if k == len(s)-1 || mp[s[k+1]] <= t {
+			r += t
+		} else {
+			r -= t
+		}
+	}
+	return r
 }
 
 /*
