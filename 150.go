@@ -140,7 +140,8 @@ func main() {
 	//	{'1', '1', '1', '1', '1'},
 	//	{'1', '0', '0', '1', '0'}})
 	//r := removeDuplicates12([]int{1, 2, 2})
-	r := romanToInt("MCMXCIV")
+	//r := romanToInt("MCMXCIV")
+	r := convert("AB", 1)
 	fmt.Println(r)
 }
 
@@ -517,6 +518,31 @@ func reverseStr(s string) string {
 		j--
 	}
 	return string(r)
+}
+
+/*
+*
+6. Z 字形变换
+https://leetcode.cn/problems/zigzag-conversion/?envType=study-plan-v2&envId=top-interview-150
+*/
+func convert(s string, numRows int) string {
+	if numRows == 1 {
+		return s
+	}
+	res, flag, cnt, i := make([]string, numRows), 1, 0, 0
+	for cnt < len(s) {
+		if i == numRows-1 || (cnt != 0 && i == 0) {
+			flag = -flag
+		}
+		res[i] += string(s[cnt])
+		i += flag
+		cnt++
+	}
+	var r string
+	for _, v := range res {
+		r += v
+	}
+	return r
 }
 
 /*
