@@ -546,6 +546,33 @@ func convert(s string, numRows int) string {
 }
 
 /*
+125. 验证回文串
+*https://leetcode.cn/problems/valid-palindrome/?envType=study-plan-v2&envId=top-interview-150
+*/
+func isPalindromeStr(s string) bool {
+	if len(s) <= 1 {
+		return true
+	}
+	s = strings.ToLower(s)
+	i, j := 0, len(s)-1
+	for i < j {
+		if (s[i] >= '0' && s[i] <= '9' || s[i] >= 'a' && s[i] <= 'z') &&
+			(s[j] >= '0' && s[j] <= '9' || s[j] >= 'a' && s[j] <= 'z') {
+			if s[i] != s[j] {
+				return false
+			}
+			i++
+			j--
+		} else if s[i] >= '0' && s[i] <= '9' || s[i] >= 'a' && s[i] <= 'z' {
+			j--
+		} else {
+			i++
+		}
+	}
+	return true
+}
+
+/*
 *
 36. 有效的数独
 https://leetcode.cn/problems/valid-sudoku/solutions/1001859/you-xiao-de-shu-du-by-leetcode-solution-50m6/
