@@ -627,6 +627,7 @@ func minSubArrayLen(s int, nums []int) int {
 https://leetcode.cn/problems/spiral-matrix/solutions/7155/cxiang-xi-ti-jie-by-youlookdeliciousc-3/
 */
 func spiralOrder(matrix [][]int) []int {
+	// u:上边界、d:下边界、l:左边界、r:右边界
 	u, d, l, r, ans := 0, len(matrix)-1, 0, len(matrix[0])-1, make([]int, 0)
 	for {
 		for i := l; i <= r; i++ { // 向右
