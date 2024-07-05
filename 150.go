@@ -687,6 +687,32 @@ func lengthOfLongestSubstring(s string) int {
 	return r
 }
 
+func rotate(matrix [][]int) {
+	n := len(matrix)
+	for i := 0; i < n/2; i++ {
+		for j := 0; j < (n+1)/2; j++ {
+			/**
+			i = 1, j = 0, n = 4
+			1,0 => 0,2 | 0,2 => 2,3  | 2,3 => 3,1  | 3,1 => 1,0
+
+			公式：
+				matrix[j][n-i-1] = a[i][j]
+			通过推导，matrix[j][n-i-1] 、matrix[n-i-1][n-j-1]、matrix[n-j-1][i] 带入 公式，得到下面的等式
+				matrix[n-i-1][n-j-1] = matrix[j][n-i-1]
+				matrix[n-j-1][i] = matrix[n-i-1][n-j-1]
+				matrix[i][j] = matrix[n-j-1][i]
+
+			*/
+			//matrix[j][len(matrix)-i-1] = matrix[i][j]  // 0,2 = 1,0
+			//matrix[len(matrix)-i-1][len(matrix)-j-1] = matrix[j][len(matrix)-i-1] // 2,3 = 0,2
+			//matrix[len(matrix)-j-1][i] = matrix[len(matrix)-i-1][len(matrix)-j-1] // 3,1 = 2,3
+			//matrix[i][j] = matrix[len(matrix)-j-1][i] // 1,0 = 3,1
+			matrix[i][j], matrix[j][len(matrix)-i-1], matrix[len(matrix)-i-1][len(matrix)-j-1], matrix[len(matrix)-j-1][i] =
+				matrix[len(matrix)-j-1][i], matrix[i][j], matrix[j][len(matrix)-i-1], matrix[len(matrix)-i-1][len(matrix)-j-1]
+		}
+	}
+}
+
 /*
 *
 73. 矩阵置零
