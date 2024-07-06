@@ -14,7 +14,9 @@ func main() {
 	//r := isIsomorphic("paper", "title")
 	//r := wordPattern("abc", "b c a")
 	//r := isAnagram("anagram", "nagaram")
-	//r := longestConsecutive([]int{100, 4, 200, 1, 3, 2})\
+	//r := longestConsecutive1([]int{100, 4, 200, 1, 3, 2})
+	r := longestConsecutive1([]int{0})
+
 	//r := summaryRanges([]int{0, 1, 2, 4, 5, 7})
 	//r := merge([][]int{
 	//	{2, 3},
@@ -141,7 +143,7 @@ func main() {
 	//	{'1', '0', '0', '1', '0'}})
 	//r := removeDuplicates12([]int{1, 2, 2})
 	//r := romanToInt("MCMXCIV")
-	r := convert("AB", 1)
+	//r := convert("AB", 1)
 	fmt.Println(r)
 }
 
@@ -1004,6 +1006,45 @@ func containsNearbyDuplicate(nums []int, k int) bool {
 *
 128. 最长连续序列
 https://leetcode.cn/problems/longest-consecutive-sequence/?envType=study-plan-v2&envId=top-interview-150
+*/
+// 数量多时候超时，用下一个
+func longestConsecutive1(nums []int) int {
+	if len(nums) < 1 {
+		return 0
+	}
+	mp, maxLen, r := make(map[int]int), 0, 1
+	for _, n := range nums {
+		mp[n] = 1
+	}
+	/**
+	100, 4, 200, 1, 3, 2
+	*/
+	for _, n := range nums {
+		if preV, ok := mp[n-1]; ok {
+			mp[n] = preV + 1
+			maxLen = preV + 1
+		}
+		if _, ok := mp[n+1]; ok {
+			cnt := n + 1
+			for {
+				if _, ok := mp[cnt]; !ok {
+					break
+				}
+				mp[cnt] = mp[cnt-1] + 1
+				cnt++
+			}
+			maxLen = mp[cnt-1]
+		}
+		if maxLen > r {
+			r = maxLen
+		}
+	}
+	return r
+}
+
+/*
+*
+找到每一个连续队列的头节点开始遍历，效率高
 */
 func longestConsecutive(nums []int) int {
 	r, subLen, mp := 0, 0, make(map[int]bool)
