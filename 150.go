@@ -814,6 +814,28 @@ func canConstruct(ransomNote string, magazine string) bool {
 205. 同构字符串
 https://leetcode.cn/problems/isomorphic-strings/?envType=study-plan-v2&envId=top-interview-150
 */
+func isIsomorphic1(s string, t string) bool {
+	if len(s) != len(t) {
+		return false
+	}
+	m1, m2 := make(map[byte]byte), make(map[byte]byte)
+	for i := 0; i < len(s); i++ {
+		b1, ok1 := m1[s[i]]
+		b2, ok2 := m2[t[i]]
+		if ok1 && ok2 { // true true
+			if b1 != t[i] || b2 != s[i] {
+				return false
+			}
+		} else if !ok1 && !ok2 {
+			m1[s[i]] = t[i]
+			m2[t[i]] = s[i]
+		} else {
+			return false
+		}
+	}
+	return true
+}
+
 func isIsomorphic(s string, t string) bool {
 	mp, set := make(map[rune]rune), make(map[rune]struct{})
 	for i := range s {
