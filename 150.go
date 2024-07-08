@@ -1506,6 +1506,29 @@ func reverseBetween(head *ListNode, left int, right int) *ListNode {
 	return dummyHead.Next
 }
 
+func reverseBetween123(head *ListNode, left int, right int) *ListNode {
+	/**
+	1 c2 n3 4 5  left=2, right = 4
+	1 3 c2 4 5 => 1 4 3 2 5
+	*/
+	if head == nil {
+		return nil
+	}
+	dummyHead := &ListNode{Next: head}
+	pre := dummyHead
+	for i := 0; i < left-1; i++ {
+		pre = pre.Next
+	}
+	cur := pre.Next
+	for i := 0; i < right-left; i++ {
+		next := cur.Next
+		cur.Next = next.Next
+		next.Next = pre.Next
+		pre.Next = next
+	}
+	return dummyHead.Next
+}
+
 /*
 *
 82. 删除排序链表中的重复元素 II
