@@ -144,6 +144,7 @@ func main() {
 	//r := removeDuplicates12([]int{1, 2, 2})
 	//r := romanToInt("MCMXCIV")
 	//r := convert("AB", 1)
+	//r := isSubsequence("abc", "ahbgdc")
 	fmt.Println(r)
 }
 
@@ -524,10 +525,72 @@ func reverseStr(s string) string {
 
 /*
 *
+https://leetcode.cn/problems/is-subsequence/?envType=study-plan-v2&envId=top-interview-150
+*/
+func isSubsequence(s string, t string) bool {
+	if len(s) == 0 {
+		return true
+	}
+	i, j := 0, 0
+	for i < len(s) && j < len(t) {
+		if s[i] == t[j] {
+			i++
+			j++
+		} else {
+			j++
+		}
+	}
+	if i != len(s) {
+		return false
+	}
+	return true
+}
+
+/*
+15. 三数之和
+https://leetcode.cn/problems/3sum/?envType=study-plan-v2&envId=top-interview-150
+*/
+func threeSum1(nums []int) [][]int {
+	r := make([][]int, 0)
+	if len(nums) < 3 {
+		return r
+	}
+	sort.Ints(nums)
+	for i := 0; i < len(nums); i++ {
+		if nums[i] > 0 {
+			return r
+		}
+		if i > 0 && nums[i] == nums[i-1] {
+			continue
+		}
+		start, end := i+1, len(nums)-1
+		for start < end {
+			if nums[i]+nums[start]+nums[end] > 0 {
+				end--
+			} else if nums[i]+nums[start]+nums[end] < 0 {
+				start++
+			} else {
+				r = append(r, []int{nums[i], nums[start], nums[end]})
+				for start < end && nums[start] == nums[start+1] {
+					start++
+				}
+				for start < end && nums[end] == nums[end-1] {
+					end--
+				}
+				start++
+				end--
+			}
+		}
+	}
+	return r
+}
+
+/*
+*
 6. Z 字形变换
 https://leetcode.cn/problems/zigzag-conversion/?envType=study-plan-v2&envId=top-interview-150
 */
-func convert(s string, numRows int) string {
+func convert1(s string, numRows int) string {
 	if numRows == 1 {
 		return s
 	}
