@@ -1647,6 +1647,33 @@ func rotateRight(head *ListNode, k int) *ListNode {
 }
 
 /*
+*
+首尾相连，然后找到要断开的位置进行切断
+*/
+func rotateRight12(head *ListNode, k int) *ListNode {
+	if head == nil {
+		return nil
+	}
+	h, n := head, 1
+	for h.Next != nil {
+		h = h.Next
+		n++
+	}
+	add := n - k%n
+	if add == n {
+		return head
+	}
+	h.Next = head
+	for add > 0 {
+		h = h.Next
+		add--
+	}
+	r := h.Next
+	h.Next = nil
+	return r
+}
+
+/*
 86. 分隔链表
 *https://leetcode.cn/problems/partition-list/description/?envType=study-plan-v2&envId=top-interview-150
 */
@@ -1763,6 +1790,16 @@ func (l *LRUCache) moveToHead(node *DLinkedNode) {
 *104. 二叉树的最大深度
 https://leetcode.cn/problems/maximum-depth-of-binary-tree/description/?envType=study-plan-v2&envId=top-interview-150
 */
+func maxDepth1(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+	if root.Left == nil && root.Right == nil {
+		return 1
+	}
+	return max(maxDepth(root.Left)+1, maxDepth(root.Right)+1)
+}
+
 type TreeNode struct {
 	Val   int
 	Left  *TreeNode
@@ -1835,6 +1872,71 @@ func isSymmetricImpl(l, r *TreeNode) bool {
 		return false
 	}
 	return isSymmetricImpl(l.Left, r.Right) && isSymmetricImpl(l.Right, r.Left)
+}
+
+/*
+*
+105. 从前序与中序遍历序列构造二叉树
+https://leetcode.cn/problems/construct-binary-tree-from-preorder-and-inorder-traversal/?envType=study-plan-v2&envId=top-interview-150
+*/
+func buildTree(preorder []int, inorder []int) *TreeNode {
+	if len(preorder) == 0 || len(inorder) == 0 {
+		return nil
+	}
+	var build func(preorder, inorder []int) *TreeNode
+	build = func(preorder, inorder []int) *TreeNode {
+		if len(preorder) == 0 || len(inorder) == 0 {
+			return nil
+		}
+		rootIndex := 0
+		for idx, val := range inorder {
+			if val == preorder[0] {
+				rootIndex = idx
+				break
+			}
+		}
+		preLeft, preRight := preorder[1:rootIndex+1], preorder[rootIndex+1:]
+		inLeft, inRight := inorder[:rootIndex], inorder[rootIndex+1:]
+		root := &TreeNode{
+			Val:   preorder[0],
+			Left:  build(preLeft, inLeft),
+			Right: build(preRight, inRight),
+		}
+		return root
+	}
+	return build(preorder, inorder)
+}
+
+/*
+106. 从中序与后序遍历序列构造二叉树
+*https://leetcode.cn/problems/construct-binary-tree-from-inorder-and-postorder-traversal/?envType=study-plan-v2&envId=top-interview-150
+*/
+func buildTree1(inorder []int, postorder []int) *TreeNode {
+	if len(postorder) == 0 || len(inorder) == 0 {
+		return nil
+	}
+	var build func(inorder, postorder []int) *TreeNode
+	build = func(inorder, postorder []int) *TreeNode {
+		if len(postorder) == 0 || len(inorder) == 0 {
+			return nil
+		}
+		rootIndex := 0
+		for idx, val := range inorder {
+			if val == postorder[len(postorder)-1] {
+				rootIndex = idx
+				break
+			}
+		}
+		postLeft, postRight := postorder[:rootIndex], postorder[rootIndex:len(postorder)-1]
+		inLeft, inRight := inorder[:rootIndex], inorder[rootIndex+1:]
+		root := &TreeNode{
+			Val:   postorder[len(postorder)-1],
+			Left:  build(inLeft, postLeft),
+			Right: build(inRight, postRight),
+		}
+		return root
+	}
+	return build(inorder, postorder)
 }
 
 /*
