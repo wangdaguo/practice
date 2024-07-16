@@ -1963,7 +1963,7 @@ func connect(root *NodeN) *NodeN {
 		for i := 0; i < cnt; i++ {
 			var nextNode *NodeN
 			if i+1 < cnt {
-				nextNode = queue[i+1]
+				nextNode = queue[1]
 			}
 			curNode := queue[0]
 			queue = queue[1:]
