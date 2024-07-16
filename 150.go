@@ -1940,6 +1940,46 @@ func buildTree1(inorder []int, postorder []int) *TreeNode {
 }
 
 /*
+*
+117. 填充每个节点的下一个右侧节点指针 II
+https://leetcode.cn/problems/populating-next-right-pointers-in-each-node-ii/?envType=study-plan-v2&envId=top-interview-150
+*/
+
+type NodeN struct {
+	Val   int
+	Left  *NodeN
+	Right *NodeN
+	Next  *NodeN
+}
+
+func connect(root *NodeN) *NodeN {
+	if root == nil {
+		return root
+	}
+	queue := make([]*NodeN, 0)
+	queue = append(queue, root)
+	for len(queue) > 0 {
+		cnt := len(queue)
+		for i := 0; i < cnt; i++ {
+			var nextNode *NodeN
+			if i+1 < cnt {
+				nextNode = queue[i+1]
+			}
+			curNode := queue[0]
+			queue = queue[1:]
+			curNode.Next = nextNode
+			if curNode.Left != nil {
+				queue = append(queue, curNode.Left)
+			}
+			if curNode.Right != nil {
+				queue = append(queue, curNode.Right)
+			}
+		}
+	}
+	return root
+}
+
+/*
 102. 二叉树的层序遍历
 *https://leetcode.cn/problems/binary-tree-level-order-traversal/?envType=study-plan-v2&envId=top-interview-150
 */
