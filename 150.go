@@ -1979,6 +1979,27 @@ func connect(root *NodeN) *NodeN {
 	return root
 }
 
+func flatten(root *TreeNode) {
+	if root == nil {
+		return
+	}
+	for root != nil {
+		if root.Left == nil {
+			root = root.Right
+		} else {
+			l := root.Left
+			for l.Right != nil {
+				l = l.Right
+			}
+			l.Right = root.Right
+			root.Right = root.Left
+			root.Left = nil
+			root = root.Right
+		}
+	}
+	return
+}
+
 /*
 102. 二叉树的层序遍历
 *https://leetcode.cn/problems/binary-tree-level-order-traversal/?envType=study-plan-v2&envId=top-interview-150
