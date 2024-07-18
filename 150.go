@@ -2028,27 +2028,88 @@ func flatten1(root *TreeNode) {
 	}
 }
 
+/*
+*
+112. 路径总和
+https://leetcode.cn/problems/path-sum/description/?envType=study-plan-v2&envId=top-interview-150
+*/
 func hasPathSum(root *TreeNode, targetSum int) bool {
 	if root == nil {
 		return false
 	}
-	stack, sum := make([]*TreeNode, 0), 0
+	stack, valStack := make([]*TreeNode, 0), make([]int, 0)
 	stack = append(stack, root)
+	valStack = append(valStack, root.Val)
 	for len(stack) > 0 {
 		node := stack[len(stack)-1]
 		stack = stack[:len(stack)-1]
-		sum += node.Val
+		sum := valStack[len(valStack)-1]
+		valStack = valStack[:len(valStack)-1]
 		if node.Left == nil && node.Right == nil && sum == targetSum {
 			return true
 		}
 		if node.Right != nil {
 			stack = append(stack, node.Right)
+			valStack = append(valStack, sum+node.Right.Val)
 		}
 		if node.Left != nil {
 			stack = append(stack, node.Left)
+			valStack = append(valStack, sum+node.Left.Val)
 		}
 	}
 	return false
+}
+
+func hasPathSum1(root *TreeNode, targetSum int) bool {
+	if root == nil {
+		return false
+	}
+	if root.Left == nil && root.Right == nil && targetSum == root.Val {
+		return true
+	}
+	return hasPathSum1(root.Left, targetSum-root.Val) || hasPathSum1(root.Right, targetSum-root.Val)
+}
+
+func hasPathSum2(root *TreeNode, targetSum int) bool {
+	if root == nil {
+		return false
+	}
+	path, list := make([]int, 0), make([][]int, 0)
+	hasPathSum2Impl(root, &path, &list)
+	for _, l := range list {
+		if sumInt(l) == targetSum {
+			return true
+		}
+	}
+	return false
+}
+
+func sumInt(path []int) int {
+	var sum int
+	for _, val := range path {
+		sum += val
+	}
+	return sum
+}
+
+func hasPathSum2Impl(root *TreeNode, path *[]int, list *[][]int) {
+	if root == nil {
+		return
+	}
+	*path = append(*path, root.Val)
+	if root.Left == nil && root.Right == nil {
+		tmp := make([]int, 0)
+		tmp = append(tmp, *path...)
+		*list = append(*list, tmp)
+	}
+	if root.Left != nil {
+		hasPathSum2Impl(root.Left, path, list)
+	}
+	if root.Right != nil {
+		hasPathSum2Impl(root.Right, path, list)
+	}
+	*path = (*path)[:len(*path)-1]
+	return
 }
 
 /*
