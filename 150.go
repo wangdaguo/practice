@@ -1979,6 +1979,10 @@ func connect(root *NodeN) *NodeN {
 	return root
 }
 
+/*
+114. 二叉树展开为链表
+https://leetcode.cn/problems/flatten-binary-tree-to-linked-list/description/?envType=study-plan-v2&envId=top-interview-150
+*/
 func flatten(root *TreeNode) {
 	if root == nil {
 		return
@@ -1998,6 +2002,53 @@ func flatten(root *TreeNode) {
 		}
 	}
 	return
+}
+
+func flatten1(root *TreeNode) {
+	if root == nil {
+		return
+	}
+	stack := make([]*TreeNode, 0)
+	stack = append(stack, root)
+	var pre *TreeNode
+	for len(stack) > 0 {
+		node := stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+		if pre != nil {
+			pre.Right = node
+			pre.Left = nil
+		}
+		if node.Right != nil {
+			stack = append(stack, node.Right)
+		}
+		if node.Left != nil {
+			stack = append(stack, node.Left)
+		}
+		pre = node
+	}
+}
+
+func hasPathSum(root *TreeNode, targetSum int) bool {
+	if root == nil {
+		return false
+	}
+	stack, sum := make([]*TreeNode, 0), 0
+	stack = append(stack, root)
+	for len(stack) > 0 {
+		node := stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+		sum += node.Val
+		if node.Left == nil && node.Right == nil && sum == targetSum {
+			return true
+		}
+		if node.Right != nil {
+			stack = append(stack, node.Right)
+		}
+		if node.Left != nil {
+			stack = append(stack, node.Left)
+		}
+	}
+	return false
 }
 
 /*
