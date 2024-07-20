@@ -2547,6 +2547,73 @@ func rightSideView(root *TreeNode) []int {
 }
 
 /*
+637. 二叉树的层平均值
+https://leetcode.cn/problems/average-of-levels-in-binary-tree/description/?envType=study-plan-v2&envId=top-interview-150
+*/
+func averageOfLevels(root *TreeNode) []float64 {
+	r := make([]float64, 0)
+	if root == nil {
+		return r
+	}
+	queue := make([]*TreeNode, 0)
+	queue = append(queue, root)
+	for len(queue) > 0 {
+		i, cnt, sum := len(queue), len(queue), 0
+		for cnt > 0 {
+			node := queue[0]
+			sum += node.Val
+			queue = queue[1:]
+			if node.Left != nil {
+				queue = append(queue, node.Left)
+			}
+			if node.Right != nil {
+				queue = append(queue, node.Right)
+			}
+			cnt--
+			if cnt == 0 {
+				average := float64(sum) / float64(i)
+				r = append(r, average)
+			}
+		}
+	}
+	return r
+}
+
+type data struct {
+	sum, count int
+}
+
+func averageOfLevels1(root *TreeNode) []float64 {
+	r := make([]float64, 0)
+	if root == nil {
+		return r
+	}
+	levelData, dfs := make([]data, 0), func(root g*TreeNode, level int) {}
+	dfs = func(root *TreeNode, level int) {
+		if root == nil {
+			return
+		}
+		if level < len(levelData) {
+			levelData[level].sum += root.Val
+			levelData[level].count++
+		} else {
+			levelData = append(levelData, data{sum: root.Val, count: 1})
+		}
+		if root.Left != nil {
+			dfs(root.Left, level+1)
+		}
+		if root.Right != nil {
+			dfs(root.Right, level+1)
+		}
+	}
+	dfs(root, 0)
+	for _, val := range levelData {
+		r = append(r, float64(val.sum)/float64(val.count))
+	}
+	return r
+}
+
+/*
 *
 103. 二叉树的锯齿形层序遍历
 https://leetcode.cn/problems/binary-tree-zigzag-level-order-traversal/description/?envType=study-plan-v2&envId=top-interview-150
