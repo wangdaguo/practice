@@ -2113,6 +2113,359 @@ func hasPathSum2Impl(root *TreeNode, path *[]int, list *[][]int) {
 }
 
 /*
+129. 求根节点到叶节点数字之和
+https://leetcode.cn/problems/sum-root-to-leaf-numbers/description/?envType=study-plan-v2&envId=top-interview-150
+*/
+func sumNumbers(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+	var pathSlice []int
+	treePath(root, 0, &pathSlice)
+	return sumPath(pathSlice)
+}
+func treePath(root *TreeNode, pathVal int, pathSlice *[]int) {
+	if root.Left == nil && root.Right == nil {
+		pathVal = pathVal*10 + root.Val
+		*pathSlice = append(*pathSlice, pathVal)
+		return
+	}
+	pathVal = pathVal*10 + root.Val
+	if root.Left != nil {
+		treePath(root.Left, pathVal, pathSlice)
+	}
+	if root.Right != nil {
+		treePath(root.Right, pathVal, pathSlice)
+	}
+}
+
+func sumPath(path []int) int {
+	if len(path) < 1 {
+		return 0
+	}
+	var r int
+	for _, v := range path {
+		r += v
+	}
+	return r
+}
+
+type pv struct {
+	node *TreeNode
+	num  int
+}
+
+func sumNumbers(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+	queue, sum := make([]pv, 0), 0
+	queue = append(queue, pv{root, root.Val})
+	for len(queue) > 0 {
+		val := queue[0]
+		queue = queue[1:]
+		left, right, num := val.node.Left, val.node.Right, val.num
+		if left == nil && right == nil {
+			sum += num
+		} else {
+			if left != nil {
+				queue = append(queue, pv{left, num*10 + left.Val})
+			}
+			if right != nil {
+				queue = append(queue, pv{right, num*10 + right.Val})
+			}
+		}
+	}
+	return sum
+}
+
+/*
+*
+124. 二叉树中的最大路径和
+https://leetcode.cn/problems/binary-tree-maximum-path-sum/?envType=study-plan-v2&envId=top-interview-150
+*/
+func maxPathSum(root *TreeNode) int {
+	maxSum := math.MinInt32
+	var maxGain func(root *TreeNode) int
+	maxGain = func(root *TreeNode) int {
+		if root == nil {
+			return 0
+		}
+		leftGain, rightGain := max(maxGain(root.Left), 0), max(maxGain(root.Right), 0)
+		sum := root.Val + leftGain + rightGain
+		maxSum = max(maxSum, sum)
+		return root.Val + max(leftGain, rightGain)
+	}
+	maxGain(root)
+	return maxSum
+}
+
+func maxPathSum(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+	r, nodeList := math.MinInt32, make([]*TreeNode, 0)
+	preTravel(root, &nodeList)
+	for _, n := range nodeList {
+		s := getMaxSumByNode(n)
+		if r < s {
+			r = s
+		}
+	}
+	return r
+}
+
+func preTravel(root *TreeNode, nodeList *[]*TreeNode) {
+	if root == nil {
+		return
+	}
+	*nodeList = append(*nodeList, root)
+	preTravel(root.Left, nodeList)
+	preTravel(root.Right, nodeList)
+}
+
+func getMaxSumByNode(root *TreeNode) int {
+	path, leftList, rightList := make([]int, 0), make([][]int, 0), make([][]int, 0)
+	maxPathSumImpl(root.Left, path, &leftList)
+	maxPathSumImpl(root.Right, path, &rightList)
+	var maxLeft, maxRight int
+	for _, l := range leftList {
+		s := maxSum(l)
+		if maxLeft < s {
+			maxLeft = s
+		}
+	}
+	for _, l := range rightList {
+		s := maxSum(l)
+		if maxRight < s {
+			maxRight = s
+		}
+	}
+	return maxLeft + maxRight + root.Val
+}
+
+func maxSum(list []int) int {
+	sum, maxSum := 0, 0
+	for i := 0; i < len(list); i++ {
+		sum += list[i]
+		if sum < 0 {
+			sum = 0
+		}
+		if sum > maxSum {
+			maxSum = sum
+		}
+	}
+	return maxSum
+}
+
+func maxPathSumImpl(root *TreeNode, path []int, list *[][]int) {
+	if root == nil {
+		return
+	}
+	path = append(path, root.Val)
+	if root.Left == nil && root.Right == nil {
+		tmp := make([]int, 0)
+		tmp = append(tmp, path...)
+		*list = append(*list, tmp)
+		return
+	}
+	if root.Left != nil {
+		maxPathSumImpl(root.Left, path, list)
+	}
+	if root.Right != nil {
+		maxPathSumImpl(root.Right, path, list)
+	}
+}
+
+/*
+*
+173. 二叉搜索树迭代器
+https://leetcode.cn/problems/binary-search-tree-iterator/?envType=study-plan-v2&envId=top-interview-150
+*/
+type BSTIterator struct {
+	root     *TreeNode
+	nodeList []*TreeNode
+	cur      int
+}
+
+func ConstructorBSTIterator(root *TreeNode) BSTIterator {
+	nodeList := make([]*TreeNode, 0)
+	inOrderT(root, &nodeList)
+	bst := BSTIterator{
+		root:     root,
+		nodeList: nodeList,
+		cur:      -1,
+	}
+	return bst
+}
+
+func inOrderT(root *TreeNode, nodeList *[]*TreeNode) {
+	if root == nil {
+		return
+	}
+	inOrderT(root.Left, nodeList)
+	*nodeList = append(*nodeList, root)
+	inOrderT(root.Right, nodeList)
+}
+
+func (bst *BSTIterator) Next() int {
+	if !bst.HasNext() {
+		return -1
+	}
+	bst.cur++
+	return bst.nodeList[bst.cur].Val
+}
+
+func (bst *BSTIterator) HasNext() bool {
+	return bst.cur+1 >= len(bst.nodeList)
+}
+
+/*
+*
+236. 二叉树的最近公共祖先
+https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-tree/description/?envType=study-plan-v2&envId=top-interview-150
+*/
+func lowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
+	parent, visited := make(map[int]*TreeNode), make(map[int]bool)
+	var dfs func(root *TreeNode)
+	dfs = func(root *TreeNode) {
+		if root == nil {
+			return
+		}
+		if root.Left != nil {
+			parent[root.Left.Val] = root
+			dfs(root.Left)
+		}
+		if root.Right != nil {
+			parent[root.Right.Val] = root
+			dfs(root.Right)
+		}
+	}
+	dfs(root)
+	for p != nil {
+		visited[p.Val] = true
+		p = parent[p.Val]
+	}
+	for q != nil {
+		if _, ok := visited[q.Val]; ok {
+			return q
+		}
+		q = parent[q.Val]
+	}
+	return nil
+}
+
+func lowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
+	if root == nil {
+		return nil
+	}
+	pPath, qPath, path := make([]*TreeNode, 0), make([]*TreeNode, 0), make([]*TreeNode, 0)
+	findPath(root, p, q, path, &pPath, &qPath)
+	fmt.Println(pPath, qPath)
+	return findCommonRoot(pPath, qPath)
+}
+
+func findCommonRoot(path1 []*TreeNode, path2 []*TreeNode) *TreeNode {
+	mp := make(map[*TreeNode]struct{})
+	var r *TreeNode
+	for _, n := range path1 {
+		mp[n] = struct{}{}
+	}
+	for _, n := range path2 {
+		if _, ok := mp[n]; ok {
+			r = n
+		}
+	}
+	return r
+}
+
+func findPath(root, p, q *TreeNode, path []*TreeNode, path1, path2 *[]*TreeNode) {
+	if root == nil {
+		return
+	}
+	path = append(path, root)
+	if root == p {
+		*path1 = append(*path1, path...)
+	}
+	if root == q {
+		*path2 = append(*path2, path...)
+	}
+	if root.Left != nil {
+		findPath(root.Left, p, q, path, path1, path2)
+	}
+	if root.Right != nil {
+		findPath(root.Right, p, q, path, path1, path2)
+	}
+}
+
+/*
+*
+144. 二叉树的前序遍历
+https://leetcode.cn/problems/binary-tree-preorder-traversal/description/
+*/
+func preorderTraversal(root *TreeNode) []int {
+	r, stack := make([]int, 0), make([]*TreeNode, 0)
+	stack = append(stack, root)
+	for len(stack) > 0 {
+		node := stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+		r = append(r, node.Val)
+		if node.Right != nil {
+			stack = append(stack, node.Right)
+		}
+		if node.Left != nil {
+			stack = append(stack, node.Left)
+		}
+	}
+	return r
+}
+
+/*
+94. 二叉树的中序遍历
+https://leetcode.cn/problems/binary-tree-inorder-traversal/
+*/
+func inorderTraversal(root *TreeNode) []int {
+	r, stack := make([]int, 0), make([]*TreeNode, 0)
+	stack, node := append(stack, root), root
+	for len(stack) > 0 || node != nil {
+		for node != nil {
+			stack = append(stack, node)
+			node = node.Left
+		}
+		node = stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+		r = append(r, node.Val)
+		node = node.Right
+	}
+	return r
+}
+
+/*
+145. 二叉树的后序遍历
+https://leetcode.cn/problems/binary-tree-postorder-traversal/description/
+*/
+func postorderTraversal(root *TreeNode) []int {
+	r, stack := make([]int, 0), make([]*TreeNode, 0)
+	stack, node := append(stack, root), root
+	var pre *TreeNode
+	for len(stack) > 0 || node != nil {
+		for node != nil {
+			stack = append(stack, node)
+			node = node.Left
+		}
+		peekNode := stack[len(stack)-1]
+		if peekNode.Right == nil || peekNode.Right == pre {
+			r = append(r, peekNode.Val)
+			pre = peekNode
+			stack = stack[:len(stack)-1]
+		} else {
+			node = peekNode.Right
+		}
+	}
+	return r
+}
+
+/*
 102. 二叉树的层序遍历
 *https://leetcode.cn/problems/binary-tree-level-order-traversal/?envType=study-plan-v2&envId=top-interview-150
 */
