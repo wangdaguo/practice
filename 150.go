@@ -2116,6 +2116,24 @@ func hasPathSum2Impl(root *TreeNode, path *[]int, list *[][]int) {
 129. 求根节点到叶节点数字之和
 https://leetcode.cn/problems/sum-root-to-leaf-numbers/description/?envType=study-plan-v2&envId=top-interview-150
 */
+func sumNumbers1(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+	return sumNumbersDfs(root, 0)
+}
+
+func sumNumbersDfs(root *TreeNode, preSum int) int {
+	if root == nil {
+		return 0
+	}
+	sum := preSum*10 + root.Val
+	if root.Left == nil && root.Right == nil {
+		return sum
+	}
+	return sumNumbersDfs(root.Left, sum) + sumNumbersDfs(root.Right, sum)
+}
+
 func sumNumbers(root *TreeNode) int {
 	if root == nil {
 		return 0
