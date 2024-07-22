@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
+	"os"
 	"sort"
 	"strconv"
 	"strings"
@@ -2696,31 +2697,70 @@ func kthSmallest(root *TreeNode, k int) int {
 	}
 }
 
+func kthSmallest1(root *TreeNode, k int) int {
+	if root == nil {
+		return -1
+	}
+	var dfs func(node *TreeNode)
+	var r, i int
+	dfs = func(node *TreeNode) {
+		if node == nil {
+			return
+		}
+		dfs(node.Left)
+		i ++
+		if i == k {
+			r = node.Val
+			return
+		}
+		dfs(node.Right)
+	}
+	dfs(root)
+	return r
+}
+
 /*
 *
 98. 验证二叉搜索树
 https://leetcode.cn/problems/validate-binary-search-tree/?envType=study-plan-v2&envId=top-interview-150
 */
 func isValidBST(root *TreeNode) bool {
-	pre, r := -1, true
+	var preNode *TreeNode
+	r := true
 	var dfs func(*TreeNode)
 	dfs = func(node *TreeNode) {
 		if node == nil {
 			return
 		}
 		dfs(node.Left)
-		if pre != -1 && pre < node.Val {
+		if preNode != nil && preNode.Val >= node.Val {
 			r = false
 			return
 		}
-		pre = node.Val
+		preNode = node
 		dfs(node.Right)
-		if pre > node.Val {
-			r = false
-			return
-		}
 	}
+	dfs(root)
 	return r
+}
+
+func isValidBST123(root *TreeNode) bool {
+	if root == nil {
+		return true
+	}
+	var pre *TreeNode
+	var isValidBSTImpl func(node *TreeNode) bool
+	isValidBSTImpl = func(node *TreeNode) bool {
+		if node == nil {
+			return true
+		}
+		if !isValidBSTImpl(node.Left) || (pre != nil && pre.Val >= node.Val) {
+			return false
+		}
+		pre = node
+		return isValidBSTImpl(node.Right)
+	}
+	return isValidBSTImpl(root)
 }
 
 /*
@@ -2745,7 +2785,6 @@ func numIslands(grid [][]byte) int {
 
 // 左、上、右、下
 var direction = []int{-1, 0, 1, 0, -1}
-
 func bfsSearchIslands(grid [][]byte, i int, j int) {
 	if i < 0 || i >= len(grid) || j < 0 || j >= len(grid[0]) || grid[i][j] == '0' || grid[i][j] == '2' {
 		return
@@ -2892,7 +2931,7 @@ func canFinishDFS(numCourses int, prerequisites [][]int) bool {
 			dfs(i)
 		}
 	}
-	return len(result) == numCourses && valid
+	return valid
 }
 
 /*
@@ -3165,6 +3204,30 @@ func letterCombinationsImpl(digits string, j int, s string) {
 	for i := 0; i < len(letters); i++ {
 		letterCombinationsImpl(digits, j+1, fmt.Sprintf("%s%s", s, string(letters[i])))
 	}
+}
+
+func letterCombinations32(digits string) []string {
+	r := make([]string, 0)
+	if len(digits) < 1 {
+		return r
+	}
+	letterCombinations32Impl(digits, 0, []string{}, &r)
+	return r
+}
+
+func letterCombinations32Impl(digits string, idx int, path []string, r *[]string) {
+	if len(path) == len(digits) {
+		s := strings.Join(path, "")
+		*r = append(*r, s)
+		return
+	}
+	str := table[digits[idx]-'0']
+	for i:=0; i<len(str); i++ {
+		path = append(path, string(str[i]))
+		letterCombinations32Impl(digits, idx+1, path, r)
+		path = path[:len(path)-1]
+	}
+	return
 }
 
 /*
