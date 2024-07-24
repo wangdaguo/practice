@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
-	"os"
 	"sort"
 	"strconv"
 	"strings"
@@ -16,7 +15,7 @@ func main() {
 	//r := wordPattern("abc", "b c a")
 	//r := isAnagram("anagram", "nagaram")
 	//r := longestConsecutive1([]int{100, 4, 200, 1, 3, 2})
-	r := longestConsecutive1([]int{0})
+	//r := longestConsecutive1([]int{0})
 
 	//r := summaryRanges([]int{0, 1, 2, 4, 5, 7})
 	//r := merge([][]int{
@@ -146,7 +145,7 @@ func main() {
 	//r := romanToInt("MCMXCIV")
 	//r := convert("AB", 1)
 	//r := isSubsequence("abc", "ahbgdc")
-	fmt.Println(r)
+	//fmt.Println(r)
 }
 
 type Person struct {
@@ -2174,7 +2173,7 @@ type pv struct {
 	num  int
 }
 
-func sumNumbers(root *TreeNode) int {
+func sumNumbers2(root *TreeNode) int {
 	if root == nil {
 		return 0
 	}
@@ -2219,7 +2218,7 @@ func maxPathSum(root *TreeNode) int {
 	return maxSum
 }
 
-func maxPathSum(root *TreeNode) int {
+func maxPathSum1(root *TreeNode) int {
 	if root == nil {
 		return 0
 	}
@@ -2374,7 +2373,7 @@ func lowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
 	return nil
 }
 
-func lowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
+func lowestCommonAncestor1(root, p, q *TreeNode) *TreeNode {
 	if root == nil {
 		return nil
 	}
@@ -2589,7 +2588,7 @@ func averageOfLevels1(root *TreeNode) []float64 {
 	if root == nil {
 		return r
 	}
-	levelData, dfs := make([]data, 0), func(root g*TreeNode, level int) {}
+	levelData, dfs := make([]data, 0), func(root *TreeNode, level int) {}
 	dfs = func(root *TreeNode, level int) {
 		if root == nil {
 			return
@@ -2708,7 +2707,7 @@ func kthSmallest1(root *TreeNode, k int) int {
 			return
 		}
 		dfs(node.Left)
-		i ++
+		i++
 		if i == k {
 			r = node.Val
 			return
@@ -2785,6 +2784,7 @@ func numIslands(grid [][]byte) int {
 
 // 左、上、右、下
 var direction = []int{-1, 0, 1, 0, -1}
+
 func bfsSearchIslands(grid [][]byte, i int, j int) {
 	if i < 0 || i >= len(grid) || j < 0 || j >= len(grid[0]) || grid[i][j] == '0' || grid[i][j] == '2' {
 		return
@@ -3222,10 +3222,41 @@ func letterCombinations32Impl(digits string, idx int, path []string, r *[]string
 		return
 	}
 	str := table[digits[idx]-'0']
-	for i:=0; i<len(str); i++ {
+	for i := 0; i < len(str); i++ {
 		path = append(path, string(str[i]))
 		letterCombinations32Impl(digits, idx+1, path, r)
 		path = path[:len(path)-1]
+	}
+	return
+}
+
+func combinationSum123(candidates []int, target int) [][]int {
+	r, data := make([][]int, 0), make([]int, 0)
+	combinationSum123Impl(candidates, target, 0, data, &r)
+	return r
+}
+
+func sumList(list []int) int {
+	var r int
+	for _, v := range list {
+		r += v
+	}
+	return r
+}
+
+func combinationSum123Impl(candidates []int, target, idx int, data []int, r *[][]int) {
+	if sumList(data) == target {
+		tmp := make([]int, 0)
+		tmp = append(tmp, data...)
+		*r = append(*r, tmp)
+		return
+	} else if sumList(data) > target {
+		return
+	}
+	for i := idx; i < len(candidates); i++ {
+		data = append(data, candidates[i])
+		combinationSum123Impl(candidates, target, i, data, r)
+		data = data[:len(data)-1]
 	}
 	return
 }
@@ -3792,7 +3823,7 @@ func searchInsert(nums []int, target int) int {
 		return 0
 	}
 	start, end := 0, len(nums)-1
-	for start < end {
+	for start <= end {
 		mid := start + (end-start)/2
 		if nums[mid] == target {
 			return mid
@@ -3802,10 +3833,7 @@ func searchInsert(nums []int, target int) int {
 			end = mid - 1
 		}
 	}
-	if nums[start] >= target {
-		return start
-	}
-	return start + 1
+	return start
 }
 
 /*
@@ -3838,7 +3866,7 @@ func searchMatrix(matrix [][]int, target int) bool {
 	}
 	arr := matrix[start]
 	start, end = 0, len(arr)-1
-	for start < end {
+	for start <= end {
 		mid := start + (end-start)/2
 		if arr[mid] == target {
 			return true
@@ -3963,6 +3991,55 @@ func findMin(nums []int) int {
 		}
 	}
 	return nums[start]
+}
+
+/*
+394. 字符串解码
+https://leetcode.cn/problems/decode-string/description/
+*/
+func decodeString(s string) string {
+	stack, idx := make([]string, 0), 0
+	for idx < len(s) {
+		if s[idx] >= '0' && s[idx] <= '9' {
+			num := getNum(s, &idx)
+			stack = append(stack, num)
+		} else if s[idx] >= 'a' && s[idx] <= 'z' || s[idx] >= 'A' && s[idx] <= 'Z' || s[idx] == '[' {
+			stack = append(stack, string(s[idx]))
+			idx++
+		} else {
+			idx++
+			strList := []string{}
+			for stack[len(stack)-1] != "[" {
+				strList = append(strList, stack[len(stack)-1])
+				stack = stack[:len(stack)-1]
+			}
+			for i := 0; i < len(strList)/2; i++ {
+				strList[i], strList[len(strList)-i-1] = strList[len(strList)-i-1], strList[i]
+			}
+			stack = stack[:len(stack)-1]
+			repeat, _ := strconv.Atoi(stack[len(stack)-1])
+			stack = stack[:len(stack)-1]
+			t := strings.Repeat(getString(strList), repeat)
+			stack = append(stack, t)
+		}
+	}
+	return getString(stack)
+}
+
+func getNum(s string, ptr *int) string {
+	ret := ""
+	for ; s[*ptr] >= '0' && s[*ptr] <= '9'; *ptr++ {
+		ret += string(s[*ptr])
+	}
+	return ret
+}
+
+func getString(v []string) string {
+	ret := ""
+	for _, s := range v {
+		ret += s
+	}
+	return ret
 }
 
 /*
