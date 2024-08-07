@@ -145,7 +145,42 @@ func main() {
 	//r := romanToInt("MCMXCIV")
 	//r := convert("AB", 1)
 	//r := isSubsequence("abc", "ahbgdc")
+	//r := Add[int](100, 200)
 	//fmt.Println(r)
+}
+
+type Wow[T int | string] int
+
+type NewType[T interface{ *int }] []T
+
+func Add[T int | string | float64](a T, b T) T {
+	return a + b
+}
+
+/*
+*
+42. 接雨水
+https://leetcode.cn/problems/trapping-rain-water/
+*/
+func trap(height []int) int {
+	res := 0
+	for i := 1; i < len(height)-1; i++ {
+		l, maxL, r, maxR := i-1, height[i-1], i+1, height[i+1]
+		for l >= 0 {
+			if height[l] > height[i] {
+				maxL = max(height[l], maxL)
+			}
+			l--
+		}
+		for r < len(height) {
+			if height[r] > height[i] {
+				maxR = max(height[r], maxR)
+			}
+			r++
+		}
+		res += max((min(maxL, maxR) - height[i]), 0)
+	}
+	return res
 }
 
 type Person struct {
@@ -2513,6 +2548,45 @@ func levelOrder(root *TreeNode) [][]int {
 		}
 	}
 	return r
+}
+
+func reverseKGroup(head *ListNode, k int) *ListNode {
+	dummyHead := &ListNode{}
+	dummyHead.Next = head
+	pre, tail, next := dummyHead, dummyHead, head
+	for next != nil {
+		tail = head
+		for i := 1; i < k && tail != nil; i++ {
+			tail = tail.Next
+		}
+		if tail == nil {
+			break
+		}
+		next = tail.Next
+		tail.Next = nil
+
+		pre.Next = reverseListk1(head)
+
+		pre = head
+		head.Next = next
+		head = head.Next
+	}
+	return dummyHead.Next
+}
+
+func reverseListk1(head *ListNode) *ListNode {
+	if head == nil {
+		return head
+	}
+	var pre *ListNode
+	cur := head
+	for cur != nil {
+		next := cur.Next
+		cur.Next = pre
+		pre = cur
+		cur = next
+	}
+	return pre
 }
 
 /*
