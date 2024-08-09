@@ -146,7 +146,21 @@ func main() {
 	//r := convert("AB", 1)
 	//r := isSubsequence("abc", "ahbgdc")
 	//r := Add[int](100, 200)
-	//fmt.Println(r)
+	r := findMax([]int{4, 5, 6, 7, 0, 1, 2})
+	fmt.Println(r)
+}
+
+func findMax(nums []int) int {
+	start, end := 0, len(nums)-1
+	for start < end {
+		mid := start + (end-start)/2
+		if nums[mid] > nums[start] {
+			start = mid
+		} else {
+			end = mid
+		}
+	}
+	return start
 }
 
 type Wow[T int | string] int
@@ -4016,6 +4030,15 @@ func search(nums []int, target int) int {
 		}
 	}
 	return -1
+}
+
+func searchRange1(nums []int, target int) []int {
+	left := sort.SearchInts(nums, target)
+	if left == len(nums) || nums[left] != target {
+		return []int{-1, -1}
+	}
+	right := sort.SearchInts(nums, target+1)
+	return []int{left, right - 1}
 }
 
 /*
