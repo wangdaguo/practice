@@ -148,8 +148,19 @@ func main() {
 	//r := Add[int](100, 200)
 	//r := isSubsequence("abc", "ahbgdc")
 	//fmt.Println(r)
-	r := findMaxNum([]int{4, 5, 6, 7, 0, 1, 2})
+	//r := findMaxNum([]int{4, 5, 6, 7, 0, 1, 2})
+	//fmt.Println(r)
+	//
+	//apply := func(exeFunction[any, any]) any {
+	//	return exeFunction[any, any]()
+	//}
+	//apply(Addwx(1))
+	r := findKthLargest3([]int{2, 1, 0}, 3)
 	fmt.Println(r)
+}
+
+func Addwx(a int) int {
+	return a + 1
 }
 
 func findMaxNum(nums []int) int {
@@ -164,6 +175,8 @@ func findMaxNum(nums []int) int {
 	}
 	return start
 }
+
+type exeFunction[T any, R any] func(T) R
 
 type Wow[T int | string] int
 
@@ -4188,83 +4201,6 @@ func getKthElement1(nums1 []int, nums2 []int, k int) int {
 		}
 	}
 	return 0
-}
-
-type dui struct {
-	data []int
-}
-
-func NewHp1() *dui {
-	return &dui{
-		data: []int{0},
-	}
-}
-
-func (d *dui) add(val int) {
-	if len(d.data) == 0 {
-		d.data = []int{0}
-	}
-	d.data = append(d.data, val)
-	idx := len(d.data) - 1
-	for idx > 1 {
-		parent := idx / 2
-		if d.data[parent] < d.data[idx] {
-			d.data[parent], d.data[idx] = d.data[idx], d.data[parent]
-			idx = parent
-			continue
-		} else {
-			break
-		}
-	}
-	return
-}
-
-func (d *dui) remove() {
-	if len(d.data) == 0 {
-		d.data = []int{0}
-	}
-	val := d.data[len(d.data)-1]
-	d.data = d.data[:len(d.data)-1]
-	parent := 1
-	for parent < len(d.data) {
-		child := 2 * parent
-		if child > len(d.data) {
-			break
-		}
-		if child < len(d.data)-1 && d.data[child+1] > d.data[child] {
-			child++
-		}
-		if val < d.data[child] {
-			d.data[parent], d.data[child] = d.data[child], d.data[parent]
-			parent = child
-		} else {
-			d.data[parent] = val
-			break
-		}
-	}
-	return
-}
-
-func (d *dui) extractMax() int {
-	defer func() {
-		d.remove()
-	}()
-	return d.data[1]
-}
-
-func findKthLargest3(nums []int, target int) int {
-	h := NewHp1()
-	for _, v := range nums {
-		h.add(v)
-	}
-	if target > len(nums) {
-		target = len(nums)
-	}
-	for target > 1 {
-		_ = h.extractMax()
-		target--
-	}
-	return h.data[1]
 }
 
 /*
