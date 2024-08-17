@@ -4970,6 +4970,7 @@ func lengthOfLIS(nums []int) int {
 	for _, v := range dp {
 		r = max(r, v)
 	}
+	math.MaxInt32
 	return r
 }
 
@@ -5125,8 +5126,6 @@ func longestPalindrome(s string) string {
 			if isPalindrome11(s[j:i]) {
 				if len(dp[i]) < len(s[j:i]) {
 					dp[i] = s[j:i]
-				} else {
-					dp[i] = dp[i]
 				}
 			}
 		}
@@ -5152,6 +5151,46 @@ func isPalindrome11(s string) bool {
 		j--
 	}
 	return true
+}
+
+func longestPalindrome22(s string) string {
+	if len(s) < 2 {
+		return s
+	}
+	// dp[i][j] 表示 s[i..j] 是否是回文串
+	dp := make([][]bool, len(s))
+	// 初始化：所有长度为 1 的子串都是回文串
+	for i := 0; i < len(s); i++ {
+		dp[i] = make([]bool, len(s))
+		dp[i][i] = true
+	}
+	maxLen, begin := 1, 0
+	// 先枚举子串长度
+	for l := 2; l <= len(s); l++ {
+		// 枚举左边界，左边界的上限设置可以宽松一些
+		for i := 0; i < len(s); i++ {
+			// 由 L 和 i 可以确定右边界，即 j - i + 1 = L 得
+			j := l + i - 1
+			if j >= len(s) {
+				break
+			}
+			if s[i] != s[j] {
+				dp[i][j] = false
+			} else {
+				if j-i < 3 {
+					dp[i][j] = true
+				} else {
+					dp[i][j] = dp[i+1][j-1]
+				}
+			}
+			// 只要 dp[i][L] == true 成立，就表示子串 s[i..L] 是回文，此时记录回文长度和起始位置
+			if dp[i][j] && j-i+1 > maxLen {
+				maxLen = j - i + 1
+				begin = i
+			}
+		}
+	}
+	return s[begin : begin+maxLen]
 }
 
 func longestPalindrome11(s string) string {
