@@ -10,7 +10,8 @@ func main() {
 	//nums := []int{0, 1, 0, 3, 12}
 	//moveZeroes(nums)
 	//r := maxArea([]int{1, 8, 6, 2, 5, 4, 8, 3, 7})
-	r := findAnagrams("cbaebabacd", "abc")
+	//r := findAnagrams("cbaebabacd", "abc")
+	r := subarraySum([]int{-1, -1, 1}, 0)
 	fmt.Println(r)
 	//list := []int{1, 2, 3, 4, 5, 6}
 	//fmt.Println(list[0:2])
@@ -153,6 +154,11 @@ func lengthOfLongestSubstring(s string) int {
 	return cnt
 }
 
+/*
+*
+438. 找到字符串中所有字母异位词
+https://leetcode.cn/problems/find-all-anagrams-in-a-string/?envType=study-plan-v2&envId=top-100-liked
+*/
 func findAnagrams(s string, p string) []int {
 	var sCount, pCount [26]int
 	r := make([]int, 0)
@@ -169,6 +175,18 @@ func findAnagrams(s string, p string) []int {
 		if pCount == sCount {
 			r = append(r, k)
 		}
+	}
+	return r
+}
+
+func subarraySum(nums []int, k int) int {
+	pre, mp, r := 0, make(map[int]int), 0
+	for i := 0; i < len(nums); i++ {
+		pre += nums[i]
+		if v, ok := mp[pre-k]; ok {
+			r += v
+		}
+		mp[pre]++
 	}
 	return r
 }
