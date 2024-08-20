@@ -1,6 +1,7 @@
 package main
 
 import (
+	"container/heap"
 	"fmt"
 	"math"
 	"sort"
@@ -179,6 +180,11 @@ func findAnagrams(s string, p string) []int {
 	return r
 }
 
+/*
+*
+560. 和为 K 的子数组
+https://leetcode.cn/problems/subarray-sum-equals-k/?envType=study-plan-v2&envId=top-100-liked
+*/
 func subarraySum(nums []int, k int) int {
 	pre, mp, r := 0, make(map[int]int), 0
 	for i := 0; i < len(nums); i++ {
@@ -187,6 +193,45 @@ func subarraySum(nums []int, k int) int {
 			r += v
 		}
 		mp[pre]++
+	}
+	return r
+}
+
+var list []int
+
+type heap12 struct {
+	sort.IntSlice
+}
+
+func (h heap12) Less(i, j int) bool {
+	return list[h.IntSlice[i]] > list[h.IntSlice[j]]
+}
+
+func (h heap12) Push(x any) {
+	h.IntSlice = append(h.IntSlice, x.(int))
+}
+
+func (h heap12) Pop() any {
+	val := h.IntSlice[len(h.IntSlice)-1]
+	h.IntSlice = h.IntSlice[:len(h.IntSlice)-1]
+	return val
+}
+
+func maxSlidingWindow1(nums []int, k int) []int {
+	list = nums
+	hp := &heap12{make(sort.IntSlice, k)}
+	for i := 0; i < k; i++ {
+		hp.IntSlice[i] = i
+	}
+	heap.Init(hp)
+	r := make([]int, 1)
+	r[0] = nums[hp.IntSlice[0]]
+	for i := k; i < len(nums); i++ {
+		heap.Push(hp, i)
+		for i-k >= hp.IntSlice[0] {
+			heap.Pop(hp)
+		}
+		r = append(r, nums[hp.IntSlice[0]])
 	}
 	return r
 }
