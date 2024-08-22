@@ -236,6 +236,11 @@ func maxSlidingWindow1(nums []int, k int) []int {
 	return r
 }
 
+/*
+*
+76. 最小覆盖子串
+https://leetcode.cn/problems/minimum-window-substring/description/?envType=study-plan-v2&envId=top-100-liked
+*/
 func minWindow(s string, t string) string {
 	cnt, left, mp, char, minStart, minSize := 0, 0, make(map[byte]bool), make(map[byte]int), 0, len(s)+1
 	for i := 0; i < len(t); i++ {
@@ -266,4 +271,33 @@ func minWindow(s string, t string) string {
 		return ""
 	}
 	return s[minStart : minStart+minSize]
+}
+
+/*
+*
+56. 合并区间
+https://leetcode.cn/problems/merge-intervals/?envType=study-plan-v2&envId=top-100-liked
+*/
+func merge(intervals [][]int) [][]int {
+	if len(intervals) <= 1 {
+		return intervals
+	}
+	sort.Slice(intervals, func(i, j int) bool {
+		return intervals[i][0] < intervals[j][0] || intervals[i][0] == intervals[j][0] && intervals[i][1] < intervals[j][1]
+	})
+	start, end, r := intervals[0][0], intervals[0][1], make([][]int, 0)
+	for i := 1; i < len(intervals); i++ {
+		if end < intervals[i][0] { // [1,2] [3,4]
+			r = append(r, []int{start, end})
+			start, end = intervals[i][0], intervals[i][1]
+		} else if end >= intervals[i][0] && end <= intervals[i][1] { // [1,3] [2,4]
+			end = intervals[i][1]
+		} else if start <= intervals[i][0] && end >= intervals[i][1] { // [1,4] [2,3]
+			continue
+		} else {
+			end = intervals[i][1]
+		}
+	}
+	r = append(r, []int{start, end})
+	return r
 }
