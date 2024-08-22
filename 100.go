@@ -301,3 +301,22 @@ func merge(intervals [][]int) [][]int {
 	r = append(r, []int{start, end})
 	return r
 }
+
+/*
+189. 轮转数组
+https://leetcode.cn/problems/rotate-array/?envType=study-plan-v2&envId=top-100-liked
+*/
+func rotate(nums []int, k int) {
+	k = k % (len(nums))
+	rev(nums, 0, len(nums)-1)
+	rev(nums, 0, k-1)
+	rev(nums, k, len(nums)-1)
+	return
+}
+
+func rev(nums []int, i, j int) {
+	for i < j {
+		nums[i], nums[j] = nums[j], nums[i]
+	}
+	return
+}
