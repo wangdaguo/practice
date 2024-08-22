@@ -7,7 +7,7 @@ import (
 	"sort"
 )
 
-func main() {
+func maing() {
 	//nums := []int{0, 1, 0, 3, 12}
 	//moveZeroes(nums)
 	//r := maxArea([]int{1, 8, 6, 2, 5, 4, 8, 3, 7})
@@ -234,4 +234,36 @@ func maxSlidingWindow1(nums []int, k int) []int {
 		r = append(r, nums[hp.IntSlice[0]])
 	}
 	return r
+}
+
+func minWindow(s string, t string) string {
+	cnt, left, mp, char, minStart, minSize := 0, 0, make(map[byte]bool), make(map[byte]int), 0, len(s)+1
+	for i := 0; i < len(t); i++ {
+		char[t[i]]++
+		mp[t[i]] = true
+	}
+	for i := 0; i < len(s); i++ {
+		if _, ok := mp[s[i]]; ok {
+			char[s[i]]--
+			if char[s[i]] >= 0 {
+				cnt++
+			}
+
+		}
+		for cnt == len(t) {
+			if minSize > i-left+1 {
+				minSize = i - left + 1
+				minStart = left
+			}
+			char[s[left]]++
+			if _, ok := mp[s[left]]; ok && char[s[left]] > 0 {
+				cnt--
+			}
+			left++
+		}
+	}
+	if minSize > len(s) {
+		return ""
+	}
+	return s[minStart : minStart+minSize]
 }
