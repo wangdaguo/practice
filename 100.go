@@ -453,6 +453,28 @@ func rotate(matrix [][]int) {
 }
 
 /*
+*240. 搜索二维矩阵 II
+https://leetcode.cn/problems/search-a-2d-matrix-ii/?envType=study-plan-v2&envId=top-100-liked
+*/
+func searchMatrix(matrix [][]int, target int) bool {
+	firstRow := sort.Search(len(matrix), func(i int) bool { return matrix[i][len(matrix[i])-1] >= target })
+	if firstRow == len(matrix) {
+		return false
+	}
+	lastRow := sort.Search(len(matrix), func(i int) bool { return matrix[i][0] > target }) - 1
+	if lastRow < 0 {
+		return false
+	}
+	for row := firstRow; row <= lastRow; row++ {
+		col := sort.SearchInts(matrix[row], target)
+		if col < len(matrix[row]) && matrix[row][col] == target {
+			return true
+		}
+	}
+	return false
+}
+
+/*
 *
 322. 零钱兑换
 https://leetcode.cn/problems/coin-change/?envType=study-plan-v2&envId=top-100-liked
