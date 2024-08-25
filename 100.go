@@ -7,15 +7,19 @@ import (
 	"sort"
 )
 
-func maing() {
+func main() {
 	//nums := []int{0, 1, 0, 3, 12}
 	//moveZeroes(nums)
 	//r := maxArea([]int{1, 8, 6, 2, 5, 4, 8, 3, 7})
 	//r := findAnagrams("cbaebabacd", "abc")
-	r := subarraySum([]int{-1, -1, 1}, 0)
+	//r := subarraySum([]int{-1, -1, 1}, 0)
+	//r := coinChange([]int{1, 2, 5}, 11)
+	//nums := [][]int{{0, 0, 0, 5}, {4, 3, 1, 4}, {0, 1, 1, 4}, {1, 2, 1, 3}, {0, 0, 1, 1}}
+	//setZeroes(nums)
+	//fmt.Println(nums)
+	nums := [][]int{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}
+	r := spiralOrder(nums)
 	fmt.Println(r)
-	//list := []int{1, 2, 3, 4, 5, 6}
-	//fmt.Println(list[0:2])
 }
 
 /*
@@ -317,6 +321,162 @@ func rotate(nums []int, k int) {
 func rev(nums []int, i, j int) {
 	for i < j {
 		nums[i], nums[j] = nums[j], nums[i]
+		i++
+		j--
 	}
 	return
+}
+
+/*
+*238. 除自身以外数组的乘积
+https://leetcode.cn/problems/product-of-array-except-self/?envType=study-plan-v2&envId=top-100-liked
+*/
+func productExceptSelf(nums []int) []int {
+	pre := make([]int, len(nums)-1)
+	pre[0] = 1
+	for i := 1; i < len(nums)-1; i++ {
+		pre[i] = pre[i-1] * nums[i-1]
+	}
+	suffix, r := 1, make([]int, len(nums))
+	for i := len(nums) - 1; i >= 0; i-- {
+		r[i] = suffix * pre[i]
+		suffix *= nums[i]
+	}
+	return r
+}
+
+/*
+*73. 矩阵置零
+https://leetcode.cn/problems/set-matrix-zeroes/?envType=study-plan-v2&envId=top-100-liked
+*/
+func setZeroes(matrix [][]int) {
+	col, row := make([]int, 0), make([]int, 0)
+	for i := 0; i < len(matrix); i++ {
+		for j := 0; j < len(matrix[i]); j++ {
+			if matrix[i][j] == 0 {
+				col = append(col, j)
+				row = append(row, i)
+			}
+		}
+	}
+	for i := 0; i < len(row); i++ {
+		for j := 0; j < len(matrix[row[i]]); j++ {
+			matrix[row[i]][j] = 0
+		}
+	}
+	for i := 0; i < len(col); i++ {
+		for j := 0; j < len(matrix); j++ {
+			matrix[j][col[i]] = 0
+		}
+	}
+}
+
+/*
+*41. 缺失的第一个正数
+https://leetcode.cn/problems/first-missing-positive/?envType=study-plan-v2&envId=top-100-liked
+*/
+func firstMissingPositive(nums []int) int {
+	/**
+	nums = [2, 1]
+	*/
+	for i := 0; i < len(nums); i++ {
+		for nums[i] > 0 && nums[i] <= len(nums) && nums[nums[i]-1] != nums[i] {
+			nums[nums[i]-1], nums[i] = nums[i], nums[nums[i]-1]
+		}
+	}
+	for i := 0; i < len(nums); i++ {
+		if nums[i] != i+1 {
+			return i + 1
+		}
+	}
+	return len(nums) + 1
+}
+
+/*
+54. 螺旋矩阵
+*https://leetcode.cn/problems/spiral-matrix/?envType=study-plan-v2&envId=top-100-liked
+*/
+func spiralOrder(matrix [][]int) []int {
+	up, down, left, right, r := 0, len(matrix)-1, 0, len(matrix[0])-1, make([]int, 0)
+	for {
+		for i := left; i <= right; i++ {
+			r = append(r, matrix[up][i])
+		}
+		up++
+		if up > down {
+			break
+		}
+		for i := up; i <= down; i++ {
+			r = append(r, matrix[i][right])
+		}
+		right--
+		if left > right {
+			break
+		}
+		for i := right; i >= left; i-- {
+			r = append(r, matrix[down][i])
+		}
+		down--
+		if up > down {
+			break
+		}
+		for i := down; i >= up; i-- {
+			r = append(r, matrix[i][left])
+		}
+		left++
+		if left > right {
+			break
+		}
+	}
+	return r
+}
+
+/*
+48. 旋转图像
+https://leetcode.cn/problems/rotate-image/?envType=study-plan-v2&envId=top-100-liked
+*/
+func rotate(matrix [][]int) {
+	for i := 0; i < len(matrix)/2; i++ {
+		for j := 0; j < (len(matrix)+1)/2; j++ {
+			/**
+			base : i, j => j, len(matrix)-i-1
+			matrix[j][len(matrix)-i-1] = matrix[i][j]
+			matrix[len(matrix)-i-1][len(matrix)-j-1] = matrix[j][len(matrix)-i-1]
+			matrix[len(matrix)-j-1][i] = matrix[len(matrix)-i-1][len(matrix)-j-1]
+			matrix[i][j] = matrix[len(matrix)-j-1][i]
+			*/
+			matrix[i][j], matrix[j][len(matrix)-i-1], matrix[len(matrix)-i-1][len(matrix)-j-1], matrix[len(matrix)-j-1][i] =
+				matrix[len(matrix)-j-1][i], matrix[i][j], matrix[j][len(matrix)-i-1], matrix[len(matrix)-i-1][len(matrix)-j-1]
+		}
+	}
+	return
+}
+
+/*
+*
+322. 零钱兑换
+https://leetcode.cn/problems/coin-change/?envType=study-plan-v2&envId=top-100-liked
+*/
+func coinChange(coins []int, amount int) int {
+	dp := make([]int, amount+1)
+	dp[0] = 0
+	for i := 1; i <= amount; i++ {
+		dp[i] = amount + 1
+	}
+	/**
+	i元钱需要的coin数量   [1, 2, 5]  11
+	dp[i] = min(dp[i], dp[i-coins[i]]+1)
+	*/
+	for i := 1; i <= amount; i++ {
+		for j := 0; j < len(coins); j++ {
+			if i < coins[j] {
+				continue
+			}
+			dp[i] = min(dp[i], dp[i-coins[j]]+1)
+		}
+	}
+	if dp[len(dp)-1] > amount {
+		return -1
+	}
+	return dp[len(dp)-1]
 }
