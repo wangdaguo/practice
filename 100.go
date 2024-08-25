@@ -475,6 +475,103 @@ func searchMatrix(matrix [][]int, target int) bool {
 }
 
 /*
+*160. 相交链表
+https://leetcode.cn/problems/intersection-of-two-linked-lists/description/?envType=study-plan-v2&envId=top-100-liked
+*/
+func getIntersectionNode(headA, headB *ListNode) *ListNode {
+	pa, pb := headA, headB
+	for pa != pb {
+		if pa == nil {
+			pa = headB
+		} else {
+			pa = pa.Next
+		}
+
+		if pb == nil {
+			pb = headA
+		} else {
+			pb = pb.Next
+		}
+	}
+	return pa
+}
+
+/*
+206. 反转链表
+*https://leetcode.cn/problems/reverse-linked-list/?envType=study-plan-v2&envId=top-100-liked
+*/
+func reverseList1(head *ListNode) *ListNode {
+	if head == nil || head.Next == nil {
+		return head
+	}
+	var pre *ListNode
+	cur := head
+	for cur != nil {
+		next := cur.Next
+		cur.Next = pre
+		pre = cur
+		cur = next
+	}
+	return pre
+}
+
+func reverseList(head *ListNode) *ListNode {
+	if head == nil || head.Next == nil {
+		return head
+	}
+	newHead := reverseList(head.Next)
+	head.Next.Next = head
+	head.Next = nil
+	return newHead
+}
+
+/*
+*234. 回文链表
+https://leetcode.cn/problems/palindrome-linked-list/?envType=study-plan-v2&envId=top-100-liked
+*/
+func isPalindrome(head *ListNode) bool {
+	if head == nil || head.Next == nil {
+		return true
+	}
+	slow, fast := head, head
+	for fast != nil && fast.Next != nil {
+		fast = fast.Next.Next
+		slow = slow.Next
+	}
+	if fast != nil {
+		slow = slow.Next
+	}
+	nh, hh := reverseList(slow), head
+	for nh != nil {
+		if nh.Val != hh.Val {
+			return false
+		}
+		nh = nh.Next
+		hh = hh.Next
+	}
+	return true
+}
+
+/*
+*141. 环形链表
+https://leetcode.cn/problems/linked-list-cycle/?envType=study-plan-v2&envId=top-100-liked
+*/
+func hasCycle(head *ListNode) bool {
+	if head == nil || head.Next == nil {
+		return false
+	}
+	slow, fast := head, head.Next
+	for slow != fast {
+		if fast == nil || fast.Next == nil {
+			return false
+		}
+		fast = fast.Next.Next
+		slow = slow.Next
+	}
+	return true
+}
+
+/*
 *
 322. 零钱兑换
 https://leetcode.cn/problems/coin-change/?envType=study-plan-v2&envId=top-100-liked
