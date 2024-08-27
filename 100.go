@@ -599,7 +599,56 @@ func detectCycle(head *ListNode) *ListNode {
 }
 
 /*
-*
+24. 两两交换链表中的节点
+https://leetcode.cn/problems/swap-nodes-in-pairs/?envType=study-plan-v2&envId=top-100-liked
+*/
+func swapPairs(head *ListNode) *ListNode {
+	if head == nil || head.Next == nil {
+		return head
+	}
+	dummyHead := &ListNode{Next: head}
+	tmp := dummyHead
+	for tmp.Next != nil && tmp.Next.Next != nil {
+		n1 := tmp.Next
+		n2 := tmp.Next.Next
+		tmp.Next = n2
+		n1.Next = n2.Next
+		n2.Next = n1
+		tmp = n1
+	}
+	return dummyHead.Next
+}
+
+/*
+25. K 个一组翻转链表
+https://leetcode.cn/problems/reverse-nodes-in-k-group/description/?envType=study-plan-v2&envId=top-100-liked
+*/
+func reverseKGroup(head *ListNode, k int) *ListNode {
+	dummyHead := &ListNode{Next: head}
+	pre, cur, next, cnt := dummyHead, dummyHead.Next, dummyHead.Next, 0
+	for cur != nil {
+		for cnt > k && next != nil {
+			next = next.Next
+		}
+		if next == nil {
+			break
+		}
+		n := next.Next
+		next.Next = nil
+		tmpH := reverseList(cur)
+		cur.Next = n
+		pre.Next = tmpH
+		if n == nil {
+			break
+		}
+		pre = cur
+		cur = n
+		next = cur.Next
+	}
+	return dummyHead.Next
+}
+
+/*
 322. 零钱兑换
 https://leetcode.cn/problems/coin-change/?envType=study-plan-v2&envId=top-100-liked
 */
