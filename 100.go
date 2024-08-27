@@ -572,6 +572,33 @@ func hasCycle(head *ListNode) bool {
 }
 
 /*
+*142. 环形链表 II
+https://leetcode.cn/problems/linked-list-cycle-ii/submissions/?envType=study-plan-v2&envId=top-100-liked
+*/
+func detectCycle(head *ListNode) *ListNode {
+	if head == nil || head.Next == nil {
+		return nil
+	}
+	slow, fast := head, head
+	for fast != nil {
+		slow = slow.Next
+		if fast.Next == nil {
+			return nil
+		}
+		fast = fast.Next.Next
+		if slow == fast {
+			p := head
+			for p != slow {
+				p = p.Next
+				slow = slow.Next
+			}
+			return p
+		}
+	}
+	return nil
+}
+
+/*
 *
 322. 零钱兑换
 https://leetcode.cn/problems/coin-change/?envType=study-plan-v2&envId=top-100-liked
