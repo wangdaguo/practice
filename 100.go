@@ -625,25 +625,27 @@ https://leetcode.cn/problems/reverse-nodes-in-k-group/description/?envType=study
 */
 func reverseKGroup(head *ListNode, k int) *ListNode {
 	dummyHead := &ListNode{Next: head}
-	pre, cur, next, cnt := dummyHead, dummyHead.Next, dummyHead.Next, 0
+	pre, cur, next, cnt := dummyHead, dummyHead.Next, dummyHead.Next, 1
 	for cur != nil {
-		for cnt > k && next != nil {
+		for cnt < k && next != nil {
 			next = next.Next
+			cnt++
 		}
 		if next == nil {
 			break
 		}
+		cnt = 1
 		n := next.Next
 		next.Next = nil
 		tmpH := reverseList(cur)
-		cur.Next = n
 		pre.Next = tmpH
+		cur.Next = n
 		if n == nil {
 			break
 		}
 		pre = cur
 		cur = n
-		next = cur.Next
+		next = cur
 	}
 	return dummyHead.Next
 }
