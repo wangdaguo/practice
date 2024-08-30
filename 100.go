@@ -739,6 +739,87 @@ func mergeKLists(lists []*ListNode) *ListNode {
 }
 
 /*
+146. LRU 缓存
+https://leetcode.cn/problems/lru-cache/description/?envType=study-plan-v2&envId=top-100-liked
+*/
+type LRUCache struct {
+	capacity, size int
+	mp             map[int]*DLinkedNode
+	head, tail     *DLinkedNode
+}
+
+func Constructor(capacity int) LRUCache {
+	l := LRUCache{
+		capacity: capacity,
+		mp:       make(map[int]*DLinkedNode),
+		head:     &DLinkedNode{},
+		tail:     &DLinkedNode{},
+	}
+	l.head.next = l.tail
+	l.tail.prev = l.head
+	return l
+}
+
+func (l *LRUCache) Get(key int) int {
+	if _, ok := l.mp[key]; !ok {
+		return -1
+	}
+	node := l.mp[key]
+	l.moveToHead(node)
+	return node.value
+}
+
+func (l *LRUCache) Put(key int, value int) {
+	if node, ok := l.mp[key]; ok {
+		node.value = value
+		l.moveToHead(node)
+		return
+	}
+	node := &DLinkedNode{
+		key:   key,
+		value: value,
+	}
+	l.mp[key] = node
+	l.size++
+	l.addToHead(node)
+	if l.size > l.capacity {
+		tail := l.removeTail()
+		delete(l.mp, tail.key)
+		l.size--
+	}
+}
+
+func (l *LRUCache) remove(node *DLinkedNode) {
+	node.prev.next = node.next
+	node.next.prev = node.prev
+}
+
+func (l *LRUCache) addToHead(node *DLinkedNode) {
+	next := l.head.next
+	l.head.next = node
+	node.prev = l.head
+	node.next = next
+	next.prev = node
+}
+
+func (l *LRUCache) moveToHead(node *DLinkedNode) {
+	l.remove(node)
+	l.addToHead(node)
+}
+
+func (l *LRUCache) removeTail() *DLinkedNode {
+	node := l.tail.prev
+	l.remove(node)
+	return node
+}
+
+/**
+ * Your LRUCache object will be instantiated and called as such:
+ * obj := Constructor(capacity);
+ * param_1 := obj.Get(key);
+ * obj.Put(key,value);
+ */
+/*
 322. 零钱兑换
 https://leetcode.cn/problems/coin-change/?envType=study-plan-v2&envId=top-100-liked
 */
