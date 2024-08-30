@@ -651,6 +651,94 @@ func reverseKGroup(head *ListNode, k int) *ListNode {
 }
 
 /*
+*
+138. 随机链表的复制
+https://leetcode.cn/problems/copy-list-with-random-pointer?envType=study-plan-v2&envId=top-100-liked
+*/
+func copyRandomList(head *Node) *Node {
+	if head == nil {
+		return head
+	}
+	mp := make(map[*Node]*Node)
+	var dcp func(head *Node) *Node
+	dcp = func(head *Node) *Node {
+		if head == nil {
+			return head
+		}
+		if node, ok := mp[head]; ok {
+			return node
+		}
+		node := &Node{
+			Val: head.Val,
+		}
+		mp[head] = node
+		node.Next = dcp(head.Next)
+		node.Random = dcp(head.Random)
+		return node
+	}
+	return dcp(head)
+}
+
+/*
+*
+148. 排序链表
+https://leetcode.cn/problems/sort-list/description/?envType=study-plan-v2&envId=top-100-liked
+*/
+func sortList(head *ListNode) *ListNode {
+	if head == nil || head.Next == nil {
+		return head
+	}
+	pre, slow, fast := head, head, head
+	for fast != nil && fast.Next != nil {
+		pre = slow
+		slow = slow.Next
+		fast = fast.Next.Next
+	}
+	pre.Next = nil
+	return mergeList3(sortList(head), sortList(slow))
+}
+
+func mergeList3(node1 *ListNode, node2 *ListNode) *ListNode {
+	head := &ListNode{}
+	h := head
+	for node1 != nil && node2 != nil {
+		if node1.Val < node2.Val {
+			n := &ListNode{Val: node1.Val}
+			h.Next = n
+			node1 = node1.Next
+		} else {
+			n := &ListNode{Val: node2.Val}
+			h.Next = n
+			node2 = node2.Next
+		}
+		h = h.Next
+	}
+	if node1 != nil {
+		h.Next = node1
+	}
+	if node2 != nil {
+		h.Next = node2
+	}
+	return head.Next
+}
+
+/*
+*23. 合并 K 个升序链表
+https://leetcode.cn/problems/merge-k-sorted-lists/?envType=study-plan-v2&envId=top-100-liked
+*/
+func mergeKLists(lists []*ListNode) *ListNode {
+	if len(lists) < 1 {
+		return nil
+	}
+	if len(lists) == 1 {
+		return lists[0]
+	}
+	start, end := 0, len(lists)
+	mid := start + (end-start)/2
+	return mergeList3(mergeKLists(lists[start:mid]), mergeKLists(lists[mid:end]))
+}
+
+/*
 322. 零钱兑换
 https://leetcode.cn/problems/coin-change/?envType=study-plan-v2&envId=top-100-liked
 */
