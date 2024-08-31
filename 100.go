@@ -813,12 +813,84 @@ func (l *LRUCache) removeTail() *DLinkedNode {
 	return node
 }
 
-/**
- * Your LRUCache object will be instantiated and called as such:
- * obj := Constructor(capacity);
- * param_1 := obj.Get(key);
- * obj.Put(key,value);
- */
+/*
+*94. 二叉树的中序遍历
+https://leetcode.cn/problems/binary-tree-inorder-traversal/?envType=study-plan-v2&envId=top-100-liked
+*/
+func inorderTraversal(root *TreeNode) []int {
+	if root == nil {
+		return []int{}
+	}
+	r, stack := make([]int, 0), make([]*TreeNode, 0)
+	for root != nil || len(stack) > 0 {
+		for root != nil {
+			stack = append(stack, root)
+			root = root.Left
+		}
+		node := stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+		r = append(r, node.Val)
+		root = node.Right
+	}
+	return r
+}
+
+/*
+*104. 二叉树的最大深度
+https://leetcode.cn/problems/maximum-depth-of-binary-tree/description/?envType=study-plan-v2&envId=top-100-liked
+*/
+func maxDepth(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+	if root.Left == nil && root.Right == nil {
+		return 1
+	}
+	return max(maxDepth(root.Left), maxDepth(root.Right)) + 1
+}
+
+/*
+*
+226. 翻转二叉树
+https://leetcode.cn/problems/invert-binary-tree/?envType=study-plan-v2&envId=top-100-liked
+*/
+func invertTree(root *TreeNode) *TreeNode {
+	if root == nil || root.Left == nil && root.Right == nil {
+		return root
+	}
+	root.Left, root.Right = invertTree(root.Right), invertTree(root.Left)
+	return root
+}
+
+/*
+*
+101. 对称二叉树
+https://leetcode.cn/problems/symmetric-tree/?envType=study-plan-v2&envId=top-100-liked
+*/
+func isSymmetric(root *TreeNode) bool {
+	isSymmetricImpl := func(left, right *TreeNode) bool {
+		if left == nil && right == nil {
+			return true
+		}
+		if left == nil && right != nil || (left != nil && right == nil) || (left.Val != right.Val) {
+			return false
+		}
+		return isSymmetricImpl(left.Left, right.Right) && isSymmetricImpl(left.Right, right.Left)
+	}
+	if root == nil {
+		return true
+	}
+	return isSymmetricImpl(root.Left, root.Right)
+}
+
+/*
+543. 二叉树的直径
+https://leetcode.cn/problems/diameter-of-binary-tree/?envType=study-plan-v2&envId=top-100-liked
+*/
+func diameterOfBinaryTree(root *TreeNode) int {
+
+}
+
 /*
 322. 零钱兑换
 https://leetcode.cn/problems/coin-change/?envType=study-plan-v2&envId=top-100-liked
