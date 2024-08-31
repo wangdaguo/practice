@@ -888,7 +888,22 @@ func isSymmetric(root *TreeNode) bool {
 https://leetcode.cn/problems/diameter-of-binary-tree/?envType=study-plan-v2&envId=top-100-liked
 */
 func diameterOfBinaryTree(root *TreeNode) int {
-
+	var deep func(root *TreeNode) int
+	r, mp := 1, make(map[*TreeNode]int)
+	deep = func(root *TreeNode) int {
+		if root == nil {
+			return 0
+		}
+		if d, ok := mp[root]; ok {
+			return d
+		}
+		lDeep, rDeep := deep(root.Left), deep(root.Right)
+		r = max(r, lDeep+rDeep+1)
+		mp[root] = max(deep(root.Left), deep(root.Right)) + 1
+		return mp[root]
+	}
+	deep(root)
+	return r - 1
 }
 
 /*
