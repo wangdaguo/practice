@@ -912,7 +912,30 @@ func diameterOfBinaryTree(root *TreeNode) int {
 https://leetcode.cn/problems/binary-tree-level-order-traversal/?envType=study-plan-v2&envId=top-100-liked
 */
 func levelOrder(root *TreeNode) [][]int {
-
+	if root == nil {
+		return [][]int{}
+	}
+	queue, r := make([]*TreeNode, 0), make([][]int, 0)
+	queue = append(queue, root)
+	for len(queue) > 0 {
+		cnt, tmp := len(queue), make([]int, 0)
+		for cnt > 0 {
+			cnt--
+			node := queue[0]
+			queue = queue[1:]
+			tmp = append(tmp, node.Val)
+			if node.Left != nil {
+				queue = append(queue, node.Left)
+			}
+			if node.Right != nil {
+				queue = append(queue, node.Right)
+			}
+		}
+		if len(tmp) > 0 {
+			r = append(r, tmp)
+		}
+	}
+	return r
 }
 
 /*
