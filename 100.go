@@ -939,6 +939,100 @@ func levelOrder(root *TreeNode) [][]int {
 }
 
 /*
+108. 将有序数组转换为二叉搜索树
+*https://leetcode.cn/problems/convert-sorted-array-to-binary-search-tree/?envType=study-plan-v2&envId=top-100-liked
+*/
+func sortedArrayToBST(nums []int) *TreeNode {
+	if len(nums) < 1 {
+		return nil
+	}
+	mid := len(nums) / 2
+	left := nums[:mid]
+	right := nums[mid+1:]
+	head := &TreeNode{Val: nums[mid], Left: sortedArrayToBST(left), Right: sortedArrayToBST(right)}
+	return head
+}
+
+func isValidBST(root *TreeNode) bool {
+	if root == nil || root.Left == nil && root.Right == nil {
+		return true
+	}
+	var preNode *TreeNode
+	var r bool
+	var isValidBSTImpl func(root *TreeNode)
+	isValidBSTImpl = func(root *TreeNode) {
+		if root == nil {
+			return
+		}
+		isValidBSTImpl(root.Left)
+		if preNode != nil && preNode.Val >= root.Val {
+			r = false
+			return
+		}
+		preNode = root
+		isValidBSTImpl(root.Right)
+	}
+	isValidBSTImpl(root)
+	return r
+}
+
+/*
+230. 二叉搜索树中第 K 小的元素
+https://leetcode.cn/problems/kth-smallest-element-in-a-bst/?envType=study-plan-v2&envId=top-100-liked
+*/
+func kthSmallest(root *TreeNode, k int) int {
+	r, i := 0, 0
+	var dfs func(root *TreeNode)
+	dfs = func(root *TreeNode) {
+		if root == nil {
+			return
+		}
+		dfs(root.Left)
+		i++
+		if k == i {
+			r = root.Val
+			return
+		}
+		dfs(root.Right)
+		return
+	}
+	dfs(root)
+	return r
+}
+
+/*
+199. 二叉树的右视图
+https://leetcode.cn/problems/binary-tree-right-side-view/?envType=study-plan-v2&envId=top-100-liked
+*/
+func rightSideView(root *TreeNode) []int {
+	rightView, maxDepth, nodeStack, depthStack := make(map[int]int), 0, make([]*TreeNode, 0), make([]int, 0)
+	nodeStack = append(nodeStack, root)
+	depthStack = append(depthStack, 0)
+	for len(nodeStack) > 0 {
+		node := nodeStack[len(nodeStack)-1]
+		nodeStack = nodeStack[:len(nodeStack)-1]
+
+		depth := depthStack[len(depthStack)-1]
+		depthStack = depthStack[:len(depthStack)-1]
+
+		maxDepth = max(maxDepth, depth)
+		if _, ok := rightView[depth]; !ok {
+			rightView[depth] = node.Val
+		}
+		nodeStack = append(nodeStack, node.Left)
+		nodeStack = append(nodeStack, node.Right)
+
+		depthStack = append(depthStack, depth+1)
+		depthStack = append(depthStack, depth+1)
+	}
+	r := []int{}
+	for i := 0; i < maxDepth; i++ {
+		r = append(r, rightView[i])
+	}
+	return r
+}
+
+/*
 322. 零钱兑换
 https://leetcode.cn/problems/coin-change/?envType=study-plan-v2&envId=top-100-liked
 */
