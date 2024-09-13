@@ -1005,6 +1005,9 @@ func kthSmallest(root *TreeNode, k int) int {
 https://leetcode.cn/problems/binary-tree-right-side-view/?envType=study-plan-v2&envId=top-100-liked
 */
 func rightSideView(root *TreeNode) []int {
+	if root == nil {
+		return []int{}
+	}
 	rightView, maxDepth, nodeStack, depthStack := make(map[int]int), 0, make([]*TreeNode, 0), make([]int, 0)
 	nodeStack = append(nodeStack, root)
 	depthStack = append(depthStack, 0)
@@ -1014,6 +1017,10 @@ func rightSideView(root *TreeNode) []int {
 
 		depth := depthStack[len(depthStack)-1]
 		depthStack = depthStack[:len(depthStack)-1]
+
+		if node == nil {
+			continue
+		}
 
 		maxDepth = max(maxDepth, depth)
 		if _, ok := rightView[depth]; !ok {
@@ -1026,7 +1033,7 @@ func rightSideView(root *TreeNode) []int {
 		depthStack = append(depthStack, depth+1)
 	}
 	r := []int{}
-	for i := 0; i < maxDepth; i++ {
+	for i := 0; i <= maxDepth; i++ {
 		r = append(r, rightView[i])
 	}
 	return r
