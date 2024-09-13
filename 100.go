@@ -1040,6 +1040,54 @@ func rightSideView(root *TreeNode) []int {
 }
 
 /*
+114. 二叉树展开为链表
+*https://leetcode.cn/problems/flatten-binary-tree-to-linked-list/?envType=study-plan-v2&envId=top-100-liked
+*/
+func flatten(root *TreeNode) {
+	if root == nil {
+		return
+	}
+	stack := make([]*TreeNode, 0)
+	stack = append(stack, root)
+	var pre *TreeNode
+	for len(stack) > 0 {
+		node := stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+		if pre != nil {
+			pre.Right = node
+			pre.Left = nil
+		}
+		if node.Right != nil {
+			stack = append(stack, node.Right)
+		}
+		if node.Left != nil {
+			stack = append(stack, node.Left)
+		}
+		pre = node
+	}
+}
+
+func flatten12(root *TreeNode) {
+	if root == nil {
+		return
+	}
+	for root != nil {
+		if root.Left == nil {
+			root = root.Right
+		} else {
+			l := root.Left
+			for l.Right != nil {
+				l = l.Right
+			}
+			l.Right = root.Right
+			root.Right = root.Left
+			root.Left = nil
+			root = root.Right
+		}
+	}
+}
+
+/*
 322. 零钱兑换
 https://leetcode.cn/problems/coin-change/?envType=study-plan-v2&envId=top-100-liked
 */
