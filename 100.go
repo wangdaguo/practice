@@ -310,7 +310,7 @@ func merge(intervals [][]int) [][]int {
 189. 轮转数组
 https://leetcode.cn/problems/rotate-array/?envType=study-plan-v2&envId=top-100-liked
 */
-func rotate(nums []int, k int) {
+func rotate1(nums []int, k int) {
 	k = k % (len(nums))
 	rev(nums, 0, len(nums)-1)
 	rev(nums, 0, k-1)
@@ -478,6 +478,11 @@ func searchMatrix(matrix [][]int, target int) bool {
 *160. 相交链表
 https://leetcode.cn/problems/intersection-of-two-linked-lists/description/?envType=study-plan-v2&envId=top-100-liked
 */
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
 func getIntersectionNode(headA, headB *ListNode) *ListNode {
 	pa, pb := headA, headB
 	for pa != pb {
@@ -655,6 +660,12 @@ func reverseKGroup(head *ListNode, k int) *ListNode {
 138. 随机链表的复制
 https://leetcode.cn/problems/copy-list-with-random-pointer?envType=study-plan-v2&envId=top-100-liked
 */
+type Node struct {
+	Val    int
+	Next   *Node
+	Random *Node
+}
+
 func copyRandomList(head *Node) *Node {
 	if head == nil {
 		return head
@@ -748,6 +759,11 @@ type LRUCache struct {
 	head, tail     *DLinkedNode
 }
 
+type DLinkedNode struct {
+	key, value int
+	prev, next *DLinkedNode
+}
+
 func Constructor(capacity int) LRUCache {
 	l := LRUCache{
 		capacity: capacity,
@@ -817,6 +833,12 @@ func (l *LRUCache) removeTail() *DLinkedNode {
 *94. 二叉树的中序遍历
 https://leetcode.cn/problems/binary-tree-inorder-traversal/?envType=study-plan-v2&envId=top-100-liked
 */
+type TreeNode struct {
+	Val   int
+	Left  *TreeNode
+	Right *TreeNode
+}
+
 func inorderTraversal(root *TreeNode) []int {
 	if root == nil {
 		return []int{}
@@ -848,6 +870,12 @@ func maxDepth(root *TreeNode) int {
 	}
 	return max(maxDepth(root.Left), maxDepth(root.Right)) + 1
 }
+func max(i, j int) int {
+	if i > j {
+		return i
+	}
+	return j
+}
 
 /*
 *
@@ -868,7 +896,8 @@ func invertTree(root *TreeNode) *TreeNode {
 https://leetcode.cn/problems/symmetric-tree/?envType=study-plan-v2&envId=top-100-liked
 */
 func isSymmetric(root *TreeNode) bool {
-	isSymmetricImpl := func(left, right *TreeNode) bool {
+	var isSymmetricImpl func(left, right *TreeNode) bool
+	isSymmetricImpl = func(left, right *TreeNode) bool {
 		if left == nil && right == nil {
 			return true
 		}
@@ -1087,6 +1116,10 @@ func flatten12(root *TreeNode) {
 	}
 }
 
+/*
+105. 从前序与中序遍历序列构造二叉树
+https://leetcode.cn/problems/construct-binary-tree-from-preorder-and-inorder-traversal/description/?envType=study-plan-v2&envId=top-100-liked
+*/
 func buildTree(preorder []int, inorder []int) *TreeNode {
 	if len(preorder) == 0 || len(inorder) == 0 {
 		return nil
@@ -1113,6 +1146,50 @@ func buildTree(preorder []int, inorder []int) *TreeNode {
 		return root
 	}
 	return build(preorder, inorder)
+}
+
+/*
+https://leetcode.cn/problems/path-sum-iii/?envType=study-plan-v2&envId=top-100-liked
+*/
+func pathSum(root *TreeNode, targetSum int) int {
+	if root == nil {
+		return 0
+	}
+	res := rootSum(root, targetSum)
+	res += pathSum(root.Left, targetSum)
+	res += pathSum(root.Right, targetSum)
+	return res
+}
+
+func rootSum(root *TreeNode, sum int) int {
+	var r int
+	if root == nil || sum < 0 {
+		return r
+	}
+	if root.Val == sum {
+		r++
+	}
+	r += rootSum(root.Left, sum-root.Val)
+	r += rootSum(root.Right, sum-root.Val)
+	return r
+}
+
+func pathSum1(root *TreeNode, targetSum int) (ans int) {
+	preSum := make(map[int]int)
+	var dfs func(root *TreeNode, curr int)
+	dfs = func(root *TreeNode, curr int) {
+		if root == nil {
+			return
+		}
+		curr += root.Val
+		ans += preSum[curr-targetSum]
+		preSum[curr]++
+		dfs(root.Left, curr)
+		dfs(root.Right, curr)
+		preSum[curr]--
+	}
+	dfs(root, 0)
+	return
 }
 
 /*
