@@ -1087,6 +1087,34 @@ func flatten12(root *TreeNode) {
 	}
 }
 
+func buildTree(preorder []int, inorder []int) *TreeNode {
+	if len(preorder) == 0 || len(inorder) == 0 {
+		return nil
+	}
+	var build func(preorder []int, inorder []int) *TreeNode
+	build = func(preorder []int, inorder []int) *TreeNode {
+		if len(preorder) == 0 || len(inorder) == 0 {
+			return nil
+		}
+		rootIdx := 0
+		for k, v := range inorder {
+			if v == preorder[rootIdx] {
+				rootIdx = k
+				break
+			}
+		}
+		preLeft, preRight := preorder[1:rootIdx+1], preorder[rootIdx+1:]
+		inLeft, inRight := inorder[:rootIdx], inorder[rootIdx+1:]
+		root := &TreeNode{
+			Val:   inorder[rootIdx],
+			Left:  build(preLeft, inLeft),
+			Right: build(preRight, inRight),
+		}
+		return root
+	}
+	return build(preorder, inorder)
+}
+
 /*
 322. 零钱兑换
 https://leetcode.cn/problems/coin-change/?envType=study-plan-v2&envId=top-100-liked
