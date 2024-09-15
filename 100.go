@@ -1192,6 +1192,46 @@ func pathSum1(root *TreeNode, targetSum int) (ans int) {
 	return
 }
 
+func lowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
+	if root == nil {
+		return nil
+	}
+	mp, queue := make(map[*TreeNode]*TreeNode), make([]*TreeNode, 0)
+	queue = append(queue, root)
+	for len(queue) > 0 {
+		node := queue[0]
+		queue = queue[1:]
+		if node.Left != nil {
+			queue = append(queue, node.Left)
+			mp[node.Left] = node
+		}
+		if node.Right != nil {
+			queue = append(queue, node.Right)
+			mp[node.Right] = node
+		}
+	}
+	path := make(map[*TreeNode]struct{})
+	for p != nil {
+		path[p] = struct{}{}
+		parent, ok := mp[p]
+		if !ok {
+			break
+		}
+		p = parent
+	}
+	for q != nil {
+		if _, ok := path[q]; ok {
+			return q
+		}
+		parent, ok := mp[q]
+		if !ok {
+			break
+		}
+		q = parent
+	}
+	return root
+}
+
 /*
 322. 零钱兑换
 https://leetcode.cn/problems/coin-change/?envType=study-plan-v2&envId=top-100-liked
