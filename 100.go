@@ -1233,6 +1233,25 @@ func lowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
 }
 
 /*
+124. 二叉树中的最大路径和
+https://leetcode.cn/problems/binary-tree-maximum-path-sum/?envType=study-plan-v2&envId=top-100-liked
+*/
+func maxPathSum(root *TreeNode) int {
+	maxSum := math.MinInt32
+	var maxGain func(root *TreeNode) int
+	maxGain = func(root *TreeNode) int {
+		if root == nil {
+			return 0
+		}
+		leftSum, rightSum := max(0, maxGain(root.Left)), max(0, maxGain(root.Right))
+		maxSum = max(root.Val+leftSum+rightSum, maxSum)
+		return root.Val + max(leftSum, rightSum)
+	}
+	maxGain(root)
+	return maxSum
+}
+
+/*
 322. 零钱兑换
 https://leetcode.cn/problems/coin-change/?envType=study-plan-v2&envId=top-100-liked
 */
