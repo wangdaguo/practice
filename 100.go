@@ -17,8 +17,10 @@ func main() {
 	//nums := [][]int{{0, 0, 0, 5}, {4, 3, 1, 4}, {0, 1, 1, 4}, {1, 2, 1, 3}, {0, 0, 1, 1}}
 	//setZeroes(nums)
 	//fmt.Println(nums)
-	nums := [][]int{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}
-	r := spiralOrder(nums)
+	//nums := [][]int{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}
+	//r := spiralOrder(nums)
+	grid := [][]int{{2, 1, 1}, {1, 1, 0}, {0, 1, 1}}
+	r := orangesRotting(grid)
 	fmt.Println(r)
 }
 
@@ -1230,6 +1232,85 @@ func lowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
 		q = parent
 	}
 	return root
+}
+
+/*
+200. 岛屿数量
+https://leetcode.cn/problems/number-of-islands/?envType=study-plan-v2&envId=top-100-liked
+*/
+func numIslands(grid [][]byte) int {
+	if len(grid) < 1 {
+		return 0
+	}
+	cnt := 0
+	for i := 0; i < len(grid); i++ {
+		for j := 0; j < len(grid[i]); j++ {
+			if grid[i][j] == '1' {
+				numIslandsBfs(grid, i, j)
+				cnt++
+			}
+		}
+	}
+	return cnt
+}
+
+var direction = []int{-1, 0, 1, 0, -1}
+
+func numIslandsBfs(grid [][]byte, i int, j int) {
+	if i < 0 || i >= len(grid) || j < 0 || j >= len(grid[i]) || grid[i][j] == '0' || grid[i][j] == '2' {
+		return
+	}
+	grid[i][j] = '2'
+	for k := 0; k < 4; k++ {
+		numIslandsBfs(grid, i+direction[k], j+direction[k+1])
+	}
+	return
+}
+
+type pair struct {
+	i, j int
+}
+
+func orangesRotting(grid [][]int) int {
+	if len(grid) < 1 {
+		return 0
+	}
+	queue, goodOrangeCnt, depth := make([]pair, 0), 0, 0
+	for i := 0; i < len(grid); i++ {
+		for j := 0; j < len(grid[i]); j++ {
+			if grid[i][j] == 1 {
+				goodOrangeCnt++
+			} else if grid[i][j] == 2 {
+				queue = append(queue, pair{i, j})
+			}
+		}
+	}
+	if len(queue) < 1 || goodOrangeCnt == 0 {
+		return depth
+	}
+	for len(queue) > 0 {
+		n := len(queue)
+		for n > 0 {
+			n--
+			i, j := queue[0].i, queue[0].j
+			queue = queue[1:]
+			for k := 0; k < 4; k++ {
+				x := i + direction[k]
+				y := j + direction[k+1]
+				if x < 0 || x >= len(grid) || y < 0 || y >= len(grid[x]) || grid[x][y] == 0 || grid[x][y] == 2 {
+					continue
+				}
+				grid[x][y] = 2
+				goodOrangeCnt--
+				queue = append(queue, pair{x, y})
+			}
+		}
+		depth++
+	}
+	if goodOrangeCnt > 0 {
+		return -1
+	}
+	return depth
 }
 
 /*
