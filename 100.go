@@ -1267,6 +1267,10 @@ func numIslandsBfs(grid [][]byte, i int, j int) {
 	return
 }
 
+/*
+994. 腐烂的橘子
+https://leetcode.cn/problems/rotting-oranges/?envType=study-plan-v2&envId=top-100-liked
+*/
 type pair struct {
 	i, j int
 }
@@ -1285,8 +1289,11 @@ func orangesRotting(grid [][]int) int {
 			}
 		}
 	}
-	if len(queue) < 1 || goodOrangeCnt == 0 {
+	if goodOrangeCnt == 0 {
 		return depth
+	}
+	if len(queue) < 1 {
+		return -1
 	}
 	for len(queue) > 0 {
 		n := len(queue)
@@ -1305,12 +1312,22 @@ func orangesRotting(grid [][]int) int {
 				queue = append(queue, pair{x, y})
 			}
 		}
-		depth++
+		if len(queue) > 0 {
+			depth++
+		}
 	}
 	if goodOrangeCnt > 0 {
 		return -1
 	}
 	return depth
+}
+
+/*
+207. 课程表
+https://leetcode.cn/problems/course-schedule/?envType=study-plan-v2&envId=top-100-liked
+*/
+func canFinish(numCourses int, prerequisites [][]int) bool {
+
 }
 
 /*
