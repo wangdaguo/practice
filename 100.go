@@ -1361,6 +1361,82 @@ func canFinish(numCourses int, prerequisites [][]int) bool {
 	return valid
 }
 
+func canFinishBfs(numCourses int, prerequisites [][]int) bool {
+	var (
+		edges  = make([][]int, numCourses)
+		indeg  = make([]int, numCourses)
+		result []int
+	)
+	for _, info := range prerequisites {
+		edges[info[1]] = append(edges[info[1]], info[0])
+		indeg[info[0]]++
+	}
+	queue := make([]int, 0)
+	for k, _ := range edges {
+		if indeg[k] == 0 {
+			queue = append(queue, k)
+		}
+	}
+	for len(queue) > 0 {
+		u := queue[0]
+		queue = queue[1:]
+		result = append(result, u)
+		for _, v := range edges[u] {
+			indeg[v]--
+			if indeg[v] == 0 {
+				queue = append(queue, v)
+			}
+		}
+	}
+	return len(result) == numCourses
+}
+
+/*
+208. 实现 Trie (前缀树)
+https://leetcode.cn/problems/implement-trie-prefix-tree/description/?envType=study-plan-v2&envId=top-100-liked
+*/
+type Trie struct {
+	data  [26]*Trie
+	isEnd bool
+}
+
+func Constructor1() Trie {
+	return Trie{}
+}
+
+func (t *Trie) Insert(word string) {
+	tmp := t
+	for _, b := range word {
+		if tmp.data[b-'a'] == nil {
+			tt := Constructor1()
+			tmp.data[b-'a'] = &tt
+		}
+		tmp = tmp.data[b-'a']
+	}
+	tmp.isEnd = true
+	return
+}
+
+func (t *Trie) SearchPrefix(word string) *Trie {
+	tmp := t
+	for _, b := range word {
+		if tmp.data[b-'a'] == nil {
+			return nil
+		}
+		tmp = tmp.data[b-'a']
+	}
+	return tmp
+}
+
+func (t *Trie) Search(word string) bool {
+	trie := t.SearchPrefix(word)
+	return trie != nil && trie.isEnd
+}
+
+func (t *Trie) StartsWith(prefix string) bool {
+	return t.SearchPrefix(prefix) != nil
+}
+
 /*
 124. 二叉树中的最大路径和
 https://leetcode.cn/problems/binary-tree-maximum-path-sum/?envType=study-plan-v2&envId=top-100-liked
@@ -1378,6 +1454,35 @@ func maxPathSum(root *TreeNode) int {
 	}
 	maxGain(root)
 	return maxSum
+}
+
+/*
+*
+221. 最大正方形
+https://leetcode.cn/problems/maximal-square/?envType=study-plan-v2&envId=top-interview-150
+*/
+func maximalSquare(matrix [][]byte) int {
+	dp, maxSlide := make([][]int, len(matrix)), 0
+	for i := 0; i < len(matrix); i++ {
+		dp[i] = make([]int, len(matrix[i]))
+		for j := 0; j < len(matrix[i]); j++ {
+			if matrix[i][j] == '1' {
+				dp[i][j] = 1
+				maxSlide = 1
+			}
+		}
+	}
+	for i := 1; i < len(dp); i++ {
+		for j := 1; j < len(dp[i]); j++ {
+			if dp[i][j] == 1 {
+				dp[i][j] = minVal(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1
+				if dp[i][j] > maxSlide {
+					maxSlide = dp[i][j]
+				}
+			}
+		}
+	}
+	return maxSlide * maxSlide
 }
 
 /*
