@@ -19,8 +19,9 @@ func main() {
 	//fmt.Println(nums)
 	//nums := [][]int{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}
 	//r := spiralOrder(nums)
-	grid := [][]int{{2, 1, 1}, {1, 1, 0}, {0, 1, 1}}
-	r := orangesRotting(grid)
+	//grid := [][]int{{2, 1, 1}, {1, 1, 0}, {0, 1, 1}}
+	//r := orangesRotting(grid)
+	r := permute([]int{1, 2, 3})
 	fmt.Println(r)
 }
 
@@ -1483,6 +1484,52 @@ func maximalSquare(matrix [][]byte) int {
 		}
 	}
 	return maxSlide * maxSlide
+}
+
+func minVal(list ...int) int {
+	if len(list) == 0 {
+		return 0
+	}
+	minV := list[0]
+	for i := 1; i < len(list); i++ {
+		if list[i] < minV {
+			minV = list[i]
+		}
+	}
+	return minV
+}
+
+/*
+46. 全排列
+https://leetcode.cn/problems/permutations/?envType=study-plan-v2&envId=top-100-liked
+*/
+func permute(nums []int) [][]int {
+	if len(nums) < 1 {
+		return [][]int{}
+	}
+	r, mp, data := make([][]int, 0), make(map[int]struct{}), make([]int, 0)
+	permuteImpl1(nums, &data, mp, &r)
+	return r
+}
+
+func permuteImpl1(nums []int, data *[]int, mp map[int]struct{}, r *[][]int) {
+	if len(*data) == len(nums) {
+		tmp := make([]int, 0)
+		tmp = append(tmp, *data...)
+		*r = append(*r, tmp)
+		return
+	}
+	for i := 0; i < len(nums); i++ {
+		if _, ok := mp[nums[i]]; ok {
+			continue
+		}
+		mp[nums[i]] = struct{}{}
+		*data = append(*data, nums[i])
+		permuteImpl1(nums, data, mp, r)
+		delete(mp, nums[i])
+		*data = (*data)[:len(*data)-1]
+	}
+	return
 }
 
 /*
