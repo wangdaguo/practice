@@ -1532,6 +1532,28 @@ func permuteImpl1(nums []int, data *[]int, mp map[int]struct{}, r *[][]int) {
 	return
 }
 
+func subsets(nums []int) [][]int {
+	if len(nums) < 1 {
+		return [][]int{}
+	}
+	r, data := make([][]int, 0), make([]int, 0)
+	subsetsImpl(nums, &data, 0, &r)
+	return r
+}
+
+func subsetsImpl(nums []int, data *[]int, level int, r *[][]int) {
+	tmp := make([]int, 0)
+	tmp = append(tmp, *data...)
+	*r = append(*r, tmp)
+
+	for i := level; i < len(nums); i++ {
+		*data = append(*data, nums[i])
+		subsetsImpl(nums, data, level+1, r)
+		*data = (*data)[:len(*data)-1]
+	}
+	return
+}
+
 /*
 322. 零钱兑换
 https://leetcode.cn/problems/coin-change/?envType=study-plan-v2&envId=top-100-liked
