@@ -25,6 +25,14 @@ func main() {
 	fmt.Println(r)
 }
 
+func t2w(data []int) {
+	for i := 0; i < 10; i++ {
+		data = append(data, i)
+		fmt.Printf("data in : %p; &data in %p\n", data, &data) // data 代表切片指向数组地址；&data代表切片本身地址
+	}
+	return
+}
+
 /*
 *
 1. 两数之和
@@ -1532,6 +1540,10 @@ func permuteImpl1(nums []int, data *[]int, mp map[int]struct{}, r *[][]int) {
 	return
 }
 
+/*
+78. 子集
+https://leetcode.cn/problems/subsets/description/?envType=study-plan-v2&envId=top-100-liked
+*/
 func subsets(nums []int) [][]int {
 	if len(nums) < 1 {
 		return [][]int{}
@@ -1552,6 +1564,52 @@ func subsetsImpl(nums []int, data *[]int, level int, r *[][]int) {
 		*data = (*data)[:len(*data)-1]
 	}
 	return
+}
+
+/*
+39. 组合总和
+https://leetcode.cn/problems/combination-sum/description/
+*/
+func combinationSum(candidates []int, target int) [][]int {
+	if len(candidates) < 1 {
+		return [][]int{}
+	}
+	r, data, level := make([][]int, 0), make([]int, 0), 0
+	combinationSumBT(candidates, &data, target, level, &r)
+	return r
+}
+
+func combinationSumBT(candidates []int, data *[]int, target, level int, r *[][]int) {
+	if sumList(*data) == target {
+		tmp := make([]int, 0)
+		tmp = append(tmp, *data...)
+		*r = append(*r, tmp)
+		return
+	} else if sumList(*data) > target {
+		return
+	}
+	for i := level; i < len(candidates); i++ {
+		*data = append(*data, candidates[i])
+		combinationSumBT(candidates, data, target, i, r)
+		*data = (*data)[:len(*data)-1]
+	}
+	return
+}
+
+func sumList(list []int) int {
+	var r int
+	for _, v := range list {
+		r += v
+	}
+	return r
+}
+
+/*
+*40. 组合总和 IIg
+https://leetcode.cn/problems/combination-sum-ii/description/
+*/
+func combinationSum2(candidates []int, target int) [][]int {
+
 }
 
 /*
