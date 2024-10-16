@@ -1697,6 +1697,31 @@ func subsetsWithDupBT1(nums []int, data []int, level int, r *[][]int) {
 }
 
 /*
+47. 全排列 II
+https://leetcode.cn/problems/permutations-ii/description/
+*/
+func permuteUnique(nums []int) [][]int {
+	if len(nums) < 1 {
+		return [][]int{}
+	}
+	r, check, data, level := make([][]int, 0), make(map[int]bool), make([]int, 0), 0
+	permuteUniqueBT(nums, data, check, level, &r)
+	return r
+}
+
+func permuteUniqueBT(nums []int, data []int, check map[int]bool, level int, r *[][]int) {
+	if len(data) == len(nums) {
+		tmp := make([]int, 0)
+		tmp = append(tmp, data...)
+		*r = append(*r, tmp)
+		return
+	}
+	for i := level; i < len(nums); i++ {
+
+	}
+}
+
+/*
 322. 零钱兑换
 https://leetcode.cn/problems/coin-change/?envType=study-plan-v2&envId=top-100-liked
 */
