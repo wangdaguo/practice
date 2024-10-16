@@ -1609,7 +1609,33 @@ func sumList(list []int) int {
 https://leetcode.cn/problems/combination-sum-ii/description/
 */
 func combinationSum2(candidates []int, target int) [][]int {
+	if len(candidates) < 1 {
+		return [][]int{}
+	}
+	sort.Ints(candidates)
+	r, data, level := make([][]int, 0), make([]int, 0), 0
+	combinationSum2BT(candidates, data, target, level, &r)
+	return r
+}
 
+func combinationSum2BT(candidates []int, data []int, target int, level int, r *[][]int) {
+	if sumList(data) == target {
+		tmp := make([]int, 0)
+		tmp = append(tmp, data...)
+		*r = append(*r, tmp)
+		return
+	} else if sumList(data) > target {
+		return
+	}
+	for i := level; i < len(candidates); i++ {
+		if i > level && candidates[i-1] == candidates[i] {
+			continue
+		}
+		data = append(data, candidates[i])
+		combinationSum2BT(candidates, data, target, i+1, r)
+		data = data[:len(data)-1]
+	}
+	return
 }
 
 /*
