@@ -1704,21 +1704,37 @@ func permuteUnique(nums []int) [][]int {
 	if len(nums) < 1 {
 		return [][]int{}
 	}
-	r, check, data, level := make([][]int, 0), make(map[int]bool), make([]int, 0), 0
-	permuteUniqueBT(nums, data, check, level, &r)
+	sort.Ints(nums)
+	r, check, data := make([][]int, 0), make(map[int]bool), make([]int, 0)
+	permuteUniqueBT(nums, data, check, &r)
 	return r
 }
 
-func permuteUniqueBT(nums []int, data []int, check map[int]bool, level int, r *[][]int) {
+func permuteUniqueBT(nums []int, data []int, check map[int]bool, r *[][]int) {
 	if len(data) == len(nums) {
 		tmp := make([]int, 0)
 		tmp = append(tmp, data...)
 		*r = append(*r, tmp)
 		return
 	}
-	for i := level; i < len(nums); i++ {
-
+	for i := 0; i < len(nums); i++ {
+		if check[i] {
+			continue
+		}
+		if i > 0 && nums[i] == nums[i-1] && !check[i-1] {
+			continue
+		}
+		check[i] = true
+		data = append(data, nums[i])
+		permuteUniqueBT(nums, data, check, r)
+		data = data[:len(data)-1]
+		delete(check, i)
 	}
+	return
+}
+
+func letterCombinations(digits string) []string {
+
 }
 
 /*
