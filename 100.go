@@ -21,7 +21,8 @@ func main() {
 	//r := spiralOrder(nums)
 	//grid := [][]int{{2, 1, 1}, {1, 1, 0}, {0, 1, 1}}
 	//r := orangesRotting(grid)
-	r := permute([]int{1, 2, 3})
+	//r := permute([]int{1, 2, 3})
+	r := letterCombinations("23")
 	fmt.Println(r)
 }
 
@@ -1733,8 +1734,29 @@ func permuteUniqueBT(nums []int, data []int, check map[int]bool, r *[][]int) {
 	return
 }
 
-func letterCombinations(digits string) []string {
+var table = []string{"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"}
 
+func letterCombinations(digits string) []string {
+	if len(digits) < 1 {
+		return []string{}
+	}
+	r, idx, str := make([]string, 0), 0, ""
+	letterCombinationsBT(digits, idx, str, &r)
+	return r
+}
+
+func letterCombinationsBT(l string, idx int, data string, r *[]string) {
+	if len(data) == len(l) {
+		*r = append(*r, data)
+		return
+	}
+	str := table[l[idx]-'0']
+	for i := 0; i < len(str); i++ {
+		data = fmt.Sprintf("%s%s", data, string(str[i]))
+		letterCombinationsBT(l, idx+1, data, r)
+		data = data[:len(data)-1]
+	}
+	return
 }
 
 /*
