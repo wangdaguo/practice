@@ -1734,6 +1734,10 @@ func permuteUniqueBT(nums []int, data []int, check map[int]bool, r *[][]int) {
 	return
 }
 
+/*
+17. 电话号码的字母组合
+https://leetcode.cn/problems/letter-combinations-of-a-phone-number
+*/
 var table = []string{"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"}
 
 func letterCombinations(digits string) []string {
@@ -1757,6 +1761,32 @@ func letterCombinationsBT(l string, idx int, data string, r *[]string) {
 		data = data[:len(data)-1]
 	}
 	return
+}
+
+/*
+22. 括号生成
+https://leetcode.cn/problems/generate-parentheses/?envType=study-plan-v2&envId=top-100-liked
+*/
+func generateParenthesis(n int) []string {
+	if n < 1 {
+		return []string{}
+	}
+	left, right, data, r := n, n, "", make([]string, 0)
+	generateParenthesisImpl(n, left, right, data, &r)
+	return r
+}
+
+func generateParenthesisImpl(n int, left int, right int, s string, r *[]string) {
+	if left == right && left == 0 {
+		*r = append(*r, s)
+		return
+	}
+	if left > 0 {
+		generateParenthesisImpl(n, left-1, right, fmt.Sprintf("%s%s", s, "("), r)
+	}
+	if right > left {
+		generateParenthesisImpl(n, left, right-1, fmt.Sprintf("%s%s", s, ")"), r)
+	}
 }
 
 /*
