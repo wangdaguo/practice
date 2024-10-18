@@ -24,6 +24,7 @@ func main() {
 	//r := permute([]int{1, 2, 3})
 	r := letterCombinations("23")
 	fmt.Println(r)
+
 }
 
 func t2w(data []int) {
