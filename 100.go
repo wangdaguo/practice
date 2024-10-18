@@ -22,7 +22,12 @@ func main() {
 	//grid := [][]int{{2, 1, 1}, {1, 1, 0}, {0, 1, 1}}
 	//r := orangesRotting(grid)
 	//r := permute([]int{1, 2, 3})
-	r := letterCombinations("23")
+	//r := letterCombinations("23")
+	r := exist([][]byte{
+		{'A', 'B', 'C', 'E'},
+		{'S', 'F', 'C', 'S'},
+		{'A', 'D', 'E', 'E'},
+	}, "ABCB")
 	fmt.Println(r)
 
 }
@@ -1761,6 +1766,50 @@ func letterCombinationsBT(l string, idx int, data string, r *[]string) {
 		letterCombinationsBT(l, idx+1, data, r)
 		data = data[:len(data)-1]
 	}
+	return
+}
+
+/*
+79. 单词搜索
+https://leetcode.cn/problems/word-search/description/?envType=study-plan-v2&envId=top-100-liked
+*/
+func exist(board [][]byte, word string) bool {
+	if len(board) < 1 {
+		return false
+	}
+
+	r, selected := false, make(map[string]bool)
+	for i := 0; i < len(board); i++ {
+		for j := 0; j < len(board[i]); j++ {
+			if board[i][j] == word[0] {
+				existBFS(board, word, i, j, 0, selected, &r)
+				if r {
+					return r
+				}
+			}
+		}
+	}
+	return r
+}
+
+func existBFS(board [][]byte, word string, i, j, idx int, selected map[string]bool, r *bool) {
+
+	key := string(i) + string(j)
+	if i < 0 || i >= len(board) || j < 0 || j >= len(board[i]) || selected[key] || board[i][j] != word[idx] {
+		return
+	}
+	if idx == len(word)-1 {
+		*r = true
+		return
+	}
+	selected[key] = true
+	direction := []int{-1, 0, 1, 0, -1}
+	for k := 0; k < 4; k++ {
+		x := i + direction[k]
+		y := j + direction[k+1]
+		existBFS(board, word, x, y, idx+1, selected, r)
+	}
+	delete(selected, key)
 	return
 }
 
