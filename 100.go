@@ -1878,6 +1878,65 @@ func isPalindrome12(s string, i int, j int) bool {
 	return true
 }
 
+func canFinish(numCourses int, prerequisites [][]int) bool {
+	var (
+		edges, indeg, r, q = make([][]int, numCourses), make([]int, numCourses), make([]int, 0), make([]int, 0)
+	)
+	for _, list := range prerequisites {
+		edges[list[1]] = append(edges[list[1]], list[0])
+		indeg[list[0]]++
+	}
+	for k, v := range indeg {
+		if v == 0 {
+			q = append(q, k)
+		}
+	}
+	for len(q) > 0 {
+		n := q[0]
+		q = q[1:]
+		r = append(r, n)
+		for _, v := range edges[n] {
+			indeg[v]--
+			if indeg[v] == 0 {
+				q = append(q, v)
+			}
+		}
+	}
+	return len(r) == numCourses
+}
+
+func canFinishDFS(numCourses int, prerequisites [][]int) bool {
+	var (
+		edges, visited, r, valid = make([][]int, numCourses), make([]int, numCourses), make([]int, 0), true
+	)
+	var dfs func(i int)
+	dfs = func(i int) {
+		visited[i] = 1
+		for _, v := range edges[i] {
+			if visited[v] == 0 {
+				dfs(v)
+				if !valid {
+					return
+				}
+			} else if visited[v] == 1 {
+				valid = false
+				return
+			}
+		}
+		visited[i] = 2
+		r = append(r, i)
+	}
+	for _, list := range prerequisites {
+		edges[list[1]] = append(edges[list[1]], list[0])
+	}
+	for i := 0; i < numCourses && valid; i++ {
+		if visited[i] == 0 {
+			dfs(i)
+		}
+	}
+	return valid
+}
+
 /*
 322. 零钱兑换
 https://leetcode.cn/problems/coin-change/?envType=study-plan-v2&envId=top-100-liked
