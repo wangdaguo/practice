@@ -1840,6 +1840,45 @@ func generateParenthesisImpl(n int, left int, right int, s string, r *[]string) 
 }
 
 /*
+131. 分割回文串
+题解：https://leetcode.cn/problems/palindrome-partitioning/solutions/2059414/hui-su-bu-hui-xie-tao-lu-zai-ci-pythonja-fues/?envType=study-plan-v2&envId=top-100-liked
+https://leetcode.cn/problems/palindrome-partitioning/?envType=study-plan-v2&envId=top-100-liked
+*/
+func partition(s string) [][]string {
+	if len(s) < 1 {
+		return [][]string{}
+	}
+	r, path := make([][]string, 0), []string{}
+	var dfs func(i int)
+	dfs = func(i int) {
+		if i == len(s) {
+			r = append(r, append([]string{}, path...)) // 复制 path
+			return
+		}
+		for j := i; j < len(s); j++ { // 枚举子串的结束位置
+			if isPalindrome12(s, i, j) {
+				path = append(path, s[i:j+1])
+				dfs(j + 1)
+				path = path[:len(path)-1] // 恢复现场
+			}
+		}
+	}
+	dfs(0)
+	return r
+}
+
+func isPalindrome12(s string, i int, j int) bool {
+	for i < j {
+		if s[i] != s[j] {
+			return false
+		}
+		i++
+		j--
+	}
+	return true
+}
+
+/*
 322. 零钱兑换
 https://leetcode.cn/problems/coin-change/?envType=study-plan-v2&envId=top-100-liked
 */

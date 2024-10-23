@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func main() {
+func main1() {
 	//r := isIsomorphic("paper", "title")
 	//r := wordPattern("abc", "b c a")
 	//r := isAnagram("anagram", "nagaram")
