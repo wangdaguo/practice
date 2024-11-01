@@ -1938,6 +1938,46 @@ func canFinishDFS(numCourses int, prerequisites [][]int) bool {
 }
 
 /*
+35. 搜索插入位置
+https://leetcode.cn/problems/search-insert-position/?envType=study-plan-v2&envId=top-100-liked
+题解：https://leetcode.cn/problems/search-insert-position/solutions/8017/hua-jie-suan-fa-35-sou-suo-cha-ru-wei-zhi-by-guanp/?envType=study-plan-v2&envId=top-100-liked
+*/
+func searchInsert(nums []int, target int) int {
+	if len(nums) < 1 {
+		return 0
+	}
+	start, end := 0, len(nums)-1
+	for start < end {
+		mid := (end-start)/2 + start
+		if nums[mid] == target {
+			return mid
+		} else if nums[mid] < target {
+			start = mid + 1
+		} else {
+			end = mid - 1
+		}
+	}
+	return start + 1
+}
+
+func searchMatrix(matrix [][]int, target int) bool {
+	if len(matrix) < 1 {
+		return false
+	}
+	row := sort.Search(len(matrix), func(i int) bool {
+		return matrix[i][0] > target
+	}) - 1
+	if row < 0 {
+		return false
+	}
+	col := sort.SearchInts(matrix[row], target)
+	if col < len(matrix[row]) && matrix[row][col] == target {
+		return true
+	}
+	return false
+}
+
+/*
 322. 零钱兑换
 https://leetcode.cn/problems/coin-change/?envType=study-plan-v2&envId=top-100-liked
 */
