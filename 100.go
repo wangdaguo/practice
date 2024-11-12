@@ -1878,7 +1878,7 @@ func isPalindrome12(s string, i int, j int) bool {
 	return true
 }
 
-func canFinish(numCourses int, prerequisites [][]int) bool {
+func canFinish1(numCourses int, prerequisites [][]int) bool {
 	var (
 		edges, indeg, r, q = make([][]int, numCourses), make([]int, numCourses), make([]int, 0), make([]int, 0)
 	)
@@ -1960,17 +1960,17 @@ func searchInsert(nums []int, target int) int {
 	return start + 1
 }
 
-func searchMatrix(matrix [][]int, target int) bool {
+func searchMatrix1(matrix [][]int, target int) bool {
 	if len(matrix) < 1 {
 		return false
 	}
-	row := sort.Search(len(matrix), func(i int) bool {
+	row := sort.Search(len(matrix), func(i int) bool { // 根据表达式求值，如果找不到返回数据len
 		return matrix[i][0] > target
 	}) - 1
 	if row < 0 {
 		return false
 	}
-	col := sort.SearchInts(matrix[row], target)
+	col := sort.SearchInts(matrix[row], target) // 寻找int值所在的位置，如果找不到返回应该插入的位置
 	if col < len(matrix[row]) && matrix[row][col] == target {
 		return true
 	}
