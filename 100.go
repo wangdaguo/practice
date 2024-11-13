@@ -1978,6 +1978,10 @@ func searchMatrix1(matrix [][]int, target int) bool {
 	return false
 }
 
+/*
+215. 数组中的第K个最大元素
+https://leetcode.cn/problems/kth-largest-element-in-an-array/description/
+*/
 func findKthLargest(nums []int, k int) int {
 	if len(nums) < 1 {
 		return -1
@@ -2012,15 +2016,39 @@ func getPartitionPos(nums []int, start, end int) int {
 	return start
 }
 
+/*
+236. 二叉树的最近公共祖先
+https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-tree/description/
+*/
 func lowestCommonAncestor3(root, p, q *TreeNode) *TreeNode {
 	if root == nil {
 		return nil
 	}
 	mp := make(map[*TreeNode]*TreeNode)
-	var dfs func(root *TreeNode)
-	dfs = func(root *TreeNode) {
-
+	var dfs func(parentNode, node *TreeNode)
+	dfs = func(parentNode, node *TreeNode) {
+		mp[node] = parentNode
+		if node.Left != nil {
+			dfs(node, node.Left)
+		}
+		if node.Right != nil {
+			dfs(node, node.Right)
+		}
 	}
+	var parentNode *TreeNode
+	dfs(parentNode, root)
+	pPath := make(map[*TreeNode]struct{})
+	for p != nil {
+		pPath[p] = struct{}{}
+		p = mp[p]
+	}
+	for q != nil {
+		if _, ok := pPath[q]; ok {
+			return q
+		}
+		q = mp[q]
+	}
+	return root
 }
 
 /*
