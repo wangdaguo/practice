@@ -618,6 +618,7 @@ func detectCycle(head *ListNode) *ListNode {
 			return p
 		}
 	}
+	sort.Sli
 	return nil
 }
 
@@ -1975,6 +1976,51 @@ func searchMatrix1(matrix [][]int, target int) bool {
 		return true
 	}
 	return false
+}
+
+func findKthLargest(nums []int, k int) int {
+	if len(nums) < 1 {
+		return -1
+	}
+	n, start, end := len(nums)-k, 0, len(nums)-1
+	for {
+		p := getPartitionPos(nums, start, end)
+		if p == n {
+			return nums[p]
+		} else if p < n {
+			start = p + 1
+		} else {
+			end = p - 1
+		}
+	}
+	return nums[start]
+}
+
+func getPartitionPos(nums []int, start, end int) int {
+	val := nums[start]
+	for start < end {
+		for start < end && val <= nums[end] {
+			end--
+		}
+		nums[start] = nums[end]
+		for start < end && val >= nums[start] {
+			start++
+		}
+		nums[end] = nums[start]
+	}
+	nums[start] = val
+	return start
+}
+
+func lowestCommonAncestor3(root, p, q *TreeNode) *TreeNode {
+	if root == nil {
+		return nil
+	}
+	mp := make(map[*TreeNode]*TreeNode)
+	var dfs func(root *TreeNode)
+	dfs = func(root *TreeNode) {
+
+	}
 }
 
 /*
