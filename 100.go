@@ -29,7 +29,7 @@ func main() {
 	//	{'S', 'F', 'C', 'S'},
 	//	{'A', 'D', 'E', 'E'},
 	//}, "ABCB")
-	r := substring("100", "199")
+	r := substring1("100", "199")
 	fmt.Println(r)
 
 }
@@ -2054,6 +2054,52 @@ func lowestCommonAncestor3(root, p, q *TreeNode) *TreeNode {
 		q = mp[q]
 	}
 	return root
+}
+
+func substring1(num1 string, num2 string) string {
+	if isLess(num1, num2) {
+		r := sub(num2, num1)
+		return "-" + r
+	}
+	return sub(num1, num2)
+}
+
+func sub(num1 string, num2 string) string {
+	r, borrow, i, j := "", 0, len(num1)-1, len(num2)-1
+	for i >= 0 || j >= 0 {
+		x, y := 0, 0
+		if i >= 0 {
+			x = int(num1[i] - '0')
+		}
+		if j >= 0 {
+			y = int(num2[j] - '0')
+		}
+		diff := 0
+		if x-y-borrow < 0 {
+			diff = x - y - borrow + 10
+			borrow = 1
+		} else {
+			diff = x - y - borrow
+			borrow = 0
+		}
+		r = fmt.Sprintf("%d%s", diff, r)
+		i--
+		j--
+	}
+	idx := 0
+	for ; idx < len(r)-1; idx++ {
+		if r[idx] != '0' {
+			break
+		}
+	}
+	return r[idx:]
+}
+
+func isLess(num1 string, num2 string) bool {
+	if len(num1) == len(num2) {
+		return num1 < num2
+	}
+	return len(num1) < len(num2)
 }
 
 /**
