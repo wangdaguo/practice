@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"sort"
+	"strings"
 )
 
 func main() {
@@ -23,11 +24,12 @@ func main() {
 	//r := orangesRotting(grid)
 	//r := permute([]int{1, 2, 3})
 	//r := letterCombinations("23")
-	r := exist([][]byte{
-		{'A', 'B', 'C', 'E'},
-		{'S', 'F', 'C', 'S'},
-		{'A', 'D', 'E', 'E'},
-	}, "ABCB")
+	//r := exist([][]byte{
+	//	{'A', 'B', 'C', 'E'},
+	//	{'S', 'F', 'C', 'S'},
+	//	{'A', 'D', 'E', 'E'},
+	//}, "ABCB")
+	r := substring("100", "199")
 	fmt.Println(r)
 
 }
@@ -618,7 +620,6 @@ func detectCycle(head *ListNode) *ListNode {
 			return p
 		}
 	}
-	sort.Sli
 	return nil
 }
 
@@ -1671,6 +1672,10 @@ func combinationSum2BT(candidates []int, data []int, target int, level int, r *[
 		combinationSum2BT(candidates, data, target, i+1, r)
 		data = data[:len(data)-1]
 	}
+	/*
+		所谓的同一个for循环是指  << for i := level; i < len(candidates); i++ >> 这个循环里，这个循环会不断地append、然后再pop，总是在尝试同一层的数据
+		例如：[1,2,2,2,5] 中，i=0 代表我们第一层的选择（例如选择1）；此时 i++ 代表我们第一层尝试其他选择（例如选择2）
+	*/
 	return
 }
 
@@ -2049,6 +2054,70 @@ func lowestCommonAncestor3(root, p, q *TreeNode) *TreeNode {
 		q = mp[q]
 	}
 	return root
+}
+
+/**
+ * 代码中的类名、方法名、参数名已经指定，请勿修改，直接返回方法规定的值即可
+ * @param num1 string字符串
+ * @param num2 string字符串
+ * @return string字符串
+ */
+func substring(num1 string, num2 string) string {
+	var (
+		flag = true
+	)
+	/*
+	   判断结果符号
+	*/
+	if len(num1) < len(num2) {
+		flag = false
+	} else if len(num1) == len(num2) {
+		for i := 0; i < len(num1); i++ {
+			if num1[i] > num2[i] {
+				break
+			} else if num1[i] == num2[i] {
+				continue
+			} else {
+				flag = false
+			}
+		}
+	}
+	if !flag {
+		num1, num2 = num2, num1
+	}
+	r, jw, jwVal := "", math.MaxInt32, 0
+	for i := 0; i < len(num1); i++ {
+		n1, n2 := 0, 0
+		if jw < len(num1)-i-1 {
+			jwVal = 9
+		} else if jw == len(num1)-i-1 {
+			jwVal = -1
+		}
+		if len(num1)-i-1 >= 0 {
+			n1 = int(num1[len(num1)-i-1]-'0') + jwVal
+		}
+		if len(num2)-i-1 >= 0 {
+			n2 = int(num2[len(num2)-i-1] - '0')
+		}
+		c := 0
+		if n1 < n2 {
+			for j := i + 1; j < len(num1); j++ {
+				if num1[len(num1)-j-1] != '0' {
+					jw = len(num1) - j - 1
+					break
+				}
+			}
+			c = n1 + 10 - n2
+		} else {
+			c = n1 - n2
+		}
+		r = fmt.Sprintf("%d%s", c, r)
+	}
+	r = strings.TrimLeft(r, "0")
+	if !flag {
+		r = fmt.Sprintf("%s%s", "-", r)
+	}
+	return r
 }
 
 /*
