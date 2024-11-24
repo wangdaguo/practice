@@ -155,8 +155,8 @@ func main1() {
 	//	return exeFunction[any, any]()
 	//}
 	//apply(Addwx(1))
-	r := findKthLargest3([]int{2, 1, 0}, 3)
-	fmt.Println(r)
+	//r := findKthLargest3([]int{2, 1, 0}, 3)
+	//fmt.Println(r)
 }
 
 func Addwx(a int) int {

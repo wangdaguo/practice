@@ -29,9 +29,99 @@ func main() {
 	//	{'S', 'F', 'C', 'S'},
 	//	{'A', 'D', 'E', 'E'},
 	//}, "ABCB")
-	r := substring1("100", "199")
+	//r := substring1("100", "199")
+	//r := findMin1([]int{4, 5, 6, 7, 0, 1, 2})
+	r := findPeakElement([]int{4, 5, 6, 7, 0, 1, 2})
 	fmt.Println(r)
+}
 
+/*
+*
+旋转数组找最大值
+*/
+func findMax1(nums []int) int {
+	start, end := 0, len(nums)-1
+	for start < end {
+		mid := start + (end-start)/2
+		if nums[mid] > nums[start] {
+			start = mid
+		} else {
+			end = mid - 1
+		}
+	}
+	return nums[start]
+}
+
+/*
+*
+旋转数组找最小值
+*/
+func findMin1(nums []int) int {
+	start, end := 0, len(nums)-1
+	for start < end {
+		mid := start + (end-start)/2
+		if nums[mid] < nums[end] {
+			end = mid
+		} else {
+			start = mid + 1
+		}
+	}
+	return nums[start]
+}
+
+/*
+*
+旋转数组随意找一个峰值
+*/
+func findPeakElement(nums []int) int {
+	get := func(idx int) int {
+		if idx < 0 || idx >= len(nums) {
+			return math.MinInt32
+		}
+		return nums[idx]
+	}
+	start, end := 0, len(nums)-1
+	for start <= end {
+		mid := start + (end-start)/2
+		if get(mid) > get(mid-1) && get(mid) > get(mid+1) {
+			return mid
+		} else if get(mid) < get(mid+1) {
+			start = mid + 1
+		} else {
+			end = mid - 1
+		}
+	}
+	return start
+}
+
+/*
+33. 搜索旋转排序数组
+*https://leetcode.cn/problems/search-in-rotated-sorted-array/?envType=study-plan-v2&envId=top-interview-150
+*/
+func search(nums []int, target int) int {
+	if len(nums) < 1 {
+		return -1
+	}
+	start, end := 0, len(nums)-1
+	for start <= end {
+		mid := start + (end-start)/2
+		if nums[mid] == target {
+			return mid
+		} else if nums[mid] < nums[end] {
+			if nums[mid] < target && target <= mid {
+				start = mid + 1
+			} else {
+				end = mid - 1
+			}
+		} else { // nums[mid] >= nums[start]
+			if nums[mid] > target && nums[start] <= target {
+				end = mid - 1
+			} else {
+				start = mid + 1
+			}
+		}
+	}
+	return -1
 }
 
 func t2w(data []int) {
