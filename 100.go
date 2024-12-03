@@ -2257,6 +2257,46 @@ func substring(num1 string, num2 string) string {
 }
 
 /*
+34. 在排序数组中查找元素的第一个和最后一个位置
+https://leetcode.cn/problems/find-first-and-last-position-of-element-in-sorted-array/?envType=study-plan-v2&envId=top-100-liked
+*/
+func searchRange(nums []int, target int) []int {
+	left := sort.SearchInts(nums, target)
+	if left == len(nums) || nums[left] != target {
+		return []int{-1, -1}
+	}
+	right := sort.SearchInts(nums, target+1)
+	return []int{left, right - 1}
+}
+
+/*
+33. 搜索旋转排序数组
+https://leetcode.cn/problems/search-in-rotated-sorted-array/description/?envType=study-plan-v2&envId=top-100-liked
+*/
+func search(nums []int, target int) int {
+	left, right := 0, len(nums)-1
+	for left <= right {
+		mid := left + (right-left)/2
+		if nums[mid] == target {
+			return mid
+		} else if nums[mid] > nums[left] {
+			if target >= nums[left] && target < nums[mid] {
+				right = mid - 1
+			} else {
+				left = mid + 1
+			}
+		} else {
+			if target > nums[mid] && target <= nums[right] {
+				left = mid + 1
+			} else {
+				right = mid - 1
+			}
+		}
+	}
+	return -1
+}
+
+/*
 322. 零钱兑换
 https://leetcode.cn/problems/coin-change/?envType=study-plan-v2&envId=top-100-liked
 */
