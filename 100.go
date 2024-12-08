@@ -2192,6 +2192,7 @@ func isLess(num1 string, num2 string) bool {
 	}
 	return len(num1) < len(num2)
 }
+
 /*
 20. 有效的括号
 https://leetcode.cn/problems/valid-parentheses/?envType=study-plan-v2&envId=top-100-liked
@@ -2307,6 +2308,7 @@ func decodeString(s string) string {
 		}
 		r += string(s[i])
 	}
+	return r
 }
 
 /**
@@ -2390,7 +2392,7 @@ func searchRange(nums []int, target int) []int {
 33. 搜索旋转排序数组
 https://leetcode.cn/problems/search-in-rotated-sorted-array/description/?envType=study-plan-v2&envId=top-100-liked
 */
-func search(nums []int, target int) int {
+func search1(nums []int, target int) int {
 	left, right := 0, len(nums)-1
 	for left <= right {
 		mid := left + (right-left)/2
