@@ -2416,6 +2416,53 @@ func search1(nums []int, target int) int {
 }
 
 /*
+4. 寻找两个正序数组的中位数
+https://leetcode.cn/problems/median-of-two-sorted-arrays/?envType=study-plan-v2&envId=top-100-liked
+*/
+func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
+	tLen := len(nums1) + len(nums2)
+	if tLen%2 == 0 {
+		fmt.Println(123)
+		return float64(getKthElementC(nums1, nums2, tLen/2)+getKthElementC(nums1, nums2, tLen/2+1)) / 2.0
+	}
+	return float64(getKthElementC(nums1, nums2, tLen/2+1))
+}
+
+func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
+	len1, len2 := len(nums1), len(nums2)
+
+	if (len1+len2)%2 == 0 {
+		return float64((getKLargestVal(nums1, nums2, (len1+len2)/2) + getKLargestVal(nums1, nums2, (len1+len2)/2+1))) / 2.0
+	}
+	return float64(getKLargestVal(nums1, nums2, (len1+len2)/2+1))
+}
+
+func getKLargestVal(nums1 []int, nums2 []int, k int) int {
+	index1, index2 := 0, 0
+	for {
+		if index1 == len(nums1) {
+			return nums2[index2+k-1]
+		}
+		if index2 == len(nums2) {
+			return nums1[index1+k-1]
+		}
+		if k == 1 {
+			return min(nums1[index1], nums2[index2])
+		}
+		half := k / 2
+		newIndex1, newIndex2 := min(index1+half, len(nums1))-1, min(index2+half, len(nums2))-1
+		if nums1[newIndex1] <= nums2[newIndex2] {
+			k -= (newIndex1 - index1 + 1)
+			index1 = newIndex1 + 1
+		} else {
+			k -= (newIndex2 - index2 + 1)
+			index2 = newIndex2 + 1
+		}
+	}
+	return 0
+}
+
+/*
 322. 零钱兑换
 https://leetcode.cn/problems/coin-change/?envType=study-plan-v2&envId=top-100-liked
 */
