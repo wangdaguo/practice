@@ -31,7 +31,8 @@ func main() {
 	//}, "ABCB")
 	//r := substring1("100", "199")
 	//r := findMin1([]int{4, 5, 6, 7, 0, 1, 2})
-	r := findPeakElement([]int{4, 5, 6, 7, 0, 1, 2})
+	//r := findPeakElement([]int{4, 5, 6, 7, 0, 1, 2})
+	r := decodeString("3[a]2[bc]")
 	fmt.Println(r)
 }
 
@@ -2191,11 +2192,127 @@ func isLess(num1 string, num2 string) bool {
 	}
 	return len(num1) < len(num2)
 }
+/*
+20. 有效的括号
+https://leetcode.cn/problems/valid-parentheses/?envType=study-plan-v2&envId=top-100-liked
+*/
+func isValid(s string) bool {
+	if len(s) < 1 {
+		return true
+	}
+	stack := make([]byte, 0)
+	for i := 0; i < len(s); i++ {
+		if s[i] == '(' || s[i] == '[' || s[i] == '{' {
+			stack = append(stack, s[i])
+		}
+		if s[i] == ')' || s[i] == ']' || s[i] == '}' {
+			if len(stack) == 0 {
+				return false
+			}
+			peek := stack[len(stack)-1]
+			stack = stack[:len(stack)-1]
+			if s[i] == ')' && peek == '(' || (s[i] == ']' && peek == '[') || (s[i] == '}' && peek == '{') {
+				continue
+			} else {
+				return false
+			}
+		}
+	}
+	if len(stack) > 0 {
+		return false
+	}
+	return true
+}
+
+/*
+155. 最小栈
+https://leetcode.cn/problems/min-stack/?envType=study-plan-v2&envId=top-100-liked
+*/
+type MinStack struct {
+	data    []int
+	minData []int
+}
+
+func ConstructorMinStack() MinStack {
+	return MinStack{
+		data:    make([]int, 0),
+		minData: make([]int, 0),
+	}
+}
+
+func (m *MinStack) Push(val int) {
+	m.data = append(m.data, val)
+	if len(m.minData) == 0 {
+		m.minData = append(m.minData, val)
+	} else {
+		if m.minData[len(m.minData)-1] > val {
+			m.minData = append(m.minData, val)
+		} else {
+			m.minData = append(m.minData, m.minData[len(m.minData)-1])
+		}
+	}
+}
+
+func (m *MinStack) Pop() {
+	if len(m.data) == 0 {
+		return
+	}
+	m.data = m.data[:len(m.data)-1]
+	m.minData = m.minData[:len(m.minData)-1]
+}
+
+func (m *MinStack) Top() int {
+	if len(m.data) == 0 {
+		return 0
+	}
+	return m.data[len(m.data)-1]
+}
+
+func (m *MinStack) GetMin() int {
+	if len(m.minData) == 0 {
+		return 0
+	}
+	return m.minData[len(m.minData)-1]
+}
+
+func decodeString(s string) string {
+	r, str, stack, flag := "", "", make([]int, 0), false
+	for i := 0; i < len(s); i++ {
+		val := int(s[i] - '0')
+		if val >= 0 && val <= 9 {
+			stack = append(stack, val)
+			continue
+		}
+		if s[i] == '[' {
+			flag = true
+			continue
+		}
+		if flag {
+			str += string(s[i])
+			continue
+		}
+		if s[i] == ']' {
+			for len(stack) > 0 {
+				repeatCnt := stack[len(stack)-1]
+				stack = stack[:len(stack)-1]
+				for repeatCnt > 0 {
+					str += str
+					repeatCnt--
+				}
+			}
+			r += str
+			str = ""
+			flag = false
+			continue
+		}
+		r += string(s[i])
+	}
+}
 
 /**
  * 代码中的类名、方法名、参数名已经指定，请勿修改，直接返回方法规定的值即可
  * @param num1 string字符串
- * @param num2 string字符串
+ *GoInstallBinaries @param num2 string字符串
  * @return string字符串
  */
 func substring(num1 string, num2 string) string {
