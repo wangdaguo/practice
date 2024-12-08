@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"sort"
+	"strconv"
 	"strings"
 )
 
@@ -2276,39 +2277,68 @@ func (m *MinStack) GetMin() int {
 	return m.minData[len(m.minData)-1]
 }
 
+/*
+394. 字符串解码
+https://leetcode.cn/problems/decode-string/?envType=study-plan-v2&envId=top-100-liked
+*/
 func decodeString(s string) string {
-	r, str, stack, flag := "", "", make([]int, 0), false
-	for i := 0; i < len(s); i++ {
-		val := int(s[i] - '0')
-		if val >= 0 && val <= 9 {
-			stack = append(stack, val)
-			continue
-		}
-		if s[i] == '[' {
-			flag = true
-			continue
-		}
-		if flag {
-			str += string(s[i])
-			continue
-		}
-		if s[i] == ']' {
-			for len(stack) > 0 {
-				repeatCnt := stack[len(stack)-1]
-				stack = stack[:len(stack)-1]
-				for repeatCnt > 0 {
-					str += str
-					repeatCnt--
-				}
+	stack, idx := make([]string, 0), 0
+	for idx < len(s) {
+		if s[idx] >= '0' && s[idx] <= '9' {
+			numStr := ""
+			for ; s[idx] >= '0' && s[idx] <= '9'; idx++ {
+				numStr += string(s[idx])
 			}
-			r += str
-			str = ""
-			flag = false
+			stack = append(stack, numStr)
+		} else if s[idx] >= 'a' && s[idx] <= 'z' || (s[idx] >= 'A' && s[idx] <= 'Z') || s[idx] == '[' {
+			stack = append(stack, string(s[idx]))
+			idx++
+		} else {
+			idx++
+			strList := make([]string, 0)
+			for stack[len(stack)-1] != "[" {
+				strList = append(strList, stack[len(stack)-1])
+				stack = stack[:len(stack)-1]
+			}
+			for i := 0; i < len(strList)/2; i++ {
+				strList[i], strList[len(strList)-i-1] = strList[len(strList)-i-1], strList[i]
+			}
+			stack = stack[:len(stack)-1]
+			repeat, _ := strconv.Atoi(stack[len(stack)-1])
+			stack = stack[:len(stack)-1]
+			t := strings.Repeat(getString(strList), repeat)
+			stack = append(stack, t)
+		}
+	}
+	return getString(stack)
+}
+
+func getString(v []string) string {
+	ret := ""
+	for _, s := range v {
+		ret += s
+	}
+	return ret
+}
+
+/*
+739. 每日温度
+https://leetcode.cn/problems/daily-temperatures/?envType=study-plan-v2&envId=top-100-liked
+*/
+func dailyTemperatures(temperatures []int) []int {
+	ans, stack := make([]int, len(temperatures)), make([]int, 0)
+	for i := 0; i < len(temperatures); i++ {
+		if len(stack) == 0 {
+			stack = append(stack, i)
 			continue
 		}
-		r += string(s[i])
+		for len(stack) > 0 && temperatures[stack[len(stack)-1]] < temperatures[i] {
+			ans[stack[len(stack)-1]] = i - stack[len(stack)-1]
+			stack = stack[:len(stack)-1]
+		}
+		stack = append(stack, i)
 	}
-	return r
+	return ans
 }
 
 /**
@@ -2419,15 +2449,6 @@ func search1(nums []int, target int) int {
 4. 寻找两个正序数组的中位数
 https://leetcode.cn/problems/median-of-two-sorted-arrays/?envType=study-plan-v2&envId=top-100-liked
 */
-func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
-	tLen := len(nums1) + len(nums2)
-	if tLen%2 == 0 {
-		fmt.Println(123)
-		return float64(getKthElementC(nums1, nums2, tLen/2)+getKthElementC(nums1, nums2, tLen/2+1)) / 2.0
-	}
-	return float64(getKthElementC(nums1, nums2, tLen/2+1))
-}
-
 func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
 	len1, len2 := len(nums1), len(nums2)
 
