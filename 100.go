@@ -33,7 +33,8 @@ func main() {
 	//r := substring1("100", "199")
 	//r := findMin1([]int{4, 5, 6, 7, 0, 1, 2})
 	//r := findPeakElement([]int{4, 5, 6, 7, 0, 1, 2})
-	r := decodeString("3[a]2[bc]")
+	//r := decodeString("3[a]2[bc]")
+	r := topKFrequent([]int{1, 1, 1, 2, 2, 3}, 2)
 	fmt.Println(r)
 }
 
@@ -2481,6 +2482,97 @@ func getKLargestVal(nums1 []int, nums2 []int, k int) int {
 		}
 	}
 	return 0
+}
+
+func findKthLargest123(nums []int, k int) int {
+	if len(nums) < 1 {
+		return -1
+	}
+	n, start, end := len(nums)-k, 0, len(nums)-1
+	for {
+		idx := getPartitionPos123(nums, start, end)
+		if idx == n {
+			return nums[idx]
+		} else if idx < n {
+			start = idx + 1
+		} else {
+			end = idx - 1
+		}
+	}
+	return nums[start]
+}
+
+func getPartitionPos123(nums []int, start int, end int) int {
+	val := nums[start]
+	for start < end {
+		for start < end && nums[end] >= val {
+			end--
+		}
+		nums[start] = nums[end]
+		for start < end && nums[end] >= val {
+			start++
+		}
+		nums[end] = nums[start]
+	}
+	nums[start] = val
+	return start
+}
+
+func topKFrequent(nums []int, k int) []int {
+	hp, mp := NewHp(), make(map[int]int)
+	for i := 0; i < len(nums); i++ {
+		mp[nums[i]] += 1
+	}
+	for kk, vv := range mp {
+		heap.Push(hp, kv{key: kk, val: vv})
+		if hp.Len() > k {
+			heap.Pop(hp)
+		}
+		//hp.Push(nums[i])
+	}
+	r := make([]int, k)
+	for i := 0; i < k; i++ {
+		r[k-i-1] = heap.Pop(hp).(int)
+	}
+	return r
+}
+
+type kv struct {
+	key, val int
+}
+
+type hp struct {
+	data []kv
+}
+
+func NewHp() *hp {
+	return &hp{
+		data: make([]kv, 0),
+	}
+}
+
+func (h *hp) Less(i, j int) bool {
+	return h.data[i].val < h.data[j].val
+}
+
+func (h *hp) Swap(i, j int) {
+	h.data[i], h.data[j] = h.data[j], h.data[i]
+}
+
+func (h *hp) Len() int {
+	return len(h.data)
+}
+
+func (h *hp) Push(x any) {
+	h.data = append(h.data, x.(kv))
+}
+
+func (h *hp) Pop() any {
+	d := h.data[len(h.data)-1]
+	defer func() {
+		h.data = h.data[:len(h.data)-1]
+	}()
+	return d.key
 }
 
 /*
