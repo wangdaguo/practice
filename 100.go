@@ -2598,6 +2598,26 @@ func maxProfit(prices []int) int {
 }
 
 /*
+55. 跳跃游戏
+https://leetcode.cn/problems/jump-game/?envType=study-plan-v2&envId=top-100-liked
+*/
+func canJump(nums []int) bool {
+	i, dis, maxDis := 0, nums[0], nums[0]
+	for i <= dis {
+		for ; i <= dis; i++ {
+			if i+nums[i] > maxDis {
+				maxDis = i + nums[i]
+			}
+			if maxDis >= len(nums)-1 {
+				return true
+			}
+		}
+		dis = maxDis
+	}
+	return false
+}
+
+/*
 322. 零钱兑换
 https://leetcode.cn/problems/coin-change/?envType=study-plan-v2&envId=top-100-liked
 */
