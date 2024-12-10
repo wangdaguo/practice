@@ -34,7 +34,8 @@ func main() {
 	//r := findMin1([]int{4, 5, 6, 7, 0, 1, 2})
 	//r := findPeakElement([]int{4, 5, 6, 7, 0, 1, 2})
 	//r := decodeString("3[a]2[bc]")
-	r := topKFrequent([]int{1, 1, 1, 2, 2, 3}, 2)
+	//r := topKFrequent([]int{1, 1, 1, 2, 2, 3}, 2)
+	r := maxProfit([]int{7, 1, 5, 3, 6, 4})
 	fmt.Println(r)
 }
 
@@ -2573,6 +2574,27 @@ func (h *hp) Pop() any {
 		h.data = h.data[:len(h.data)-1]
 	}()
 	return d.key
+}
+
+/*
+121. 买卖股票的最佳时机
+https://leetcode.cn/problems/best-time-to-buy-and-sell-stock/?envType=study-plan-v2&envId=top-100-liked
+*/
+func maxProfit(prices []int) int {
+	if len(prices) < 1 {
+		return 0
+	}
+	buyIndex, r := 0, math.MinInt32
+	for i := 1; i < len(prices); i++ {
+		if prices[i] < prices[buyIndex] {
+			buyIndex = i
+			continue
+		}
+		if prices[i]-prices[buyIndex] > r {
+			r = prices[i] - prices[buyIndex]
+		}
+	}
+	return r
 }
 
 /*
