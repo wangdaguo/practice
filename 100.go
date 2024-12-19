@@ -2618,6 +2618,48 @@ func canJump(nums []int) bool {
 }
 
 /*
+45. 跳跃游戏 II
+https://leetcode.cn/problems/jump-game-ii/?envType=study-plan-v2&envId=top-100-liked
+*/
+func jump(nums []int) int {
+	r, i, dis, maxDis := 0, 0, nums[0], nums[0]
+	for dis < len(nums)-1 {
+		r++
+		for ; i <= dis; i++ {
+			if i+nums[i] > maxDis {
+				maxDis = i + nums[i]
+			}
+		}
+		dis = maxDis
+	}
+	return r
+}
+
+/*
+763. 划分字母区间
+https://leetcode.cn/problems/partition-labels/?envType=study-plan-v2&envId=top-100-liked
+*/
+func partitionLabels(s string) []int {
+	if len(s) < 1 {
+		return []int{}
+	}
+	pos, start, end, r := [26]int{}, 0, 0, make([]int, 0)
+	for i := 0; i < len(s); i++ {
+		pos[s[i]-'a'] = i
+	}
+	for i := 0; i < len(s); i++ {
+		if pos[s[i]-'a'] > end {
+			end = pos[s[i]-'a']
+		}
+		if i == end {
+			r = append(r, end-start+1)
+			start, end = i+1, i+1
+		}
+	}
+	return r
+}
+
+/*
 322. 零钱兑换
 https://leetcode.cn/problems/coin-change/?envType=study-plan-v2&envId=top-100-liked
 */
