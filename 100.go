@@ -2694,6 +2694,25 @@ func generate(numRows int) [][]int {
 }
 
 /*
+198. 打家劫舍
+https://leetcode.cn/problems/house-robber/?envType=study-plan-v2&envId=top-100-liked
+*/
+func rob(nums []int) int {
+	if len(nums) == 0 {
+		return 0
+	}
+	if len(nums) == 1 {
+		return nums[0]
+	}
+	dp := make([]int, len(nums))
+	dp[0], dp[1] = nums[0], max(nums[0], nums[1])
+	for i := 2; i < len(nums); i++ {
+		dp[i] = max(dp[i-1], dp[i-2]+nums[i])
+	}
+	return dp[len(nums)-1]
+}
+
+/*
 322. 零钱兑换
 https://leetcode.cn/problems/coin-change/?envType=study-plan-v2&envId=top-100-liked
 */
