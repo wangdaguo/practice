@@ -2713,6 +2713,16 @@ func rob(nums []int) int {
 }
 
 /*
+279. 完全平方数
+https://leetcode.cn/problems/perfect-squares/?envType=study-plan-v2&envId=top-100-liked
+*/
+func numSquares(n int) int {
+	/*
+		dp[i] =
+	*/
+}
+
+/*
 322. 零钱兑换
 https://leetcode.cn/problems/coin-change/?envType=study-plan-v2&envId=top-100-liked
 */
