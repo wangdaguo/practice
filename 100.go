@@ -2660,6 +2660,30 @@ func partitionLabels(s string) []int {
 }
 
 /*
+70. 爬楼梯
+https://leetcode.cn/problems/climbing-stairs/?envType=study-plan-v2&envId=top-100-liked
+*/
+func climbStairs(n int) int {
+	dp := make([]int, n+1)
+	dp[0] = 0
+	dp[1] = 1
+	dp[2] = 2
+	for i := 3; i <= n; i++ {
+		dp[i] = dp[2] + dp[1]
+	}
+	return dp[n]
+}
+
+/*
+118. 杨辉三角
+https://leetcode.cn/problems/pascals-triangle/description/?envType=study-plan-v2&envId=top-100-liked
+*/
+func generate(numRows int) [][]int {
+	dp := make([][]int, numRows+1)
+	
+}
+
+/*
 322. 零钱兑换
 https://leetcode.cn/problems/coin-change/?envType=study-plan-v2&envId=top-100-liked
 */
