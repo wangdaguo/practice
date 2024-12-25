@@ -2718,8 +2718,19 @@ https://leetcode.cn/problems/perfect-squares/?envType=study-plan-v2&envId=top-10
 */
 func numSquares(n int) int {
 	/*
-		dp[i] =
+		dp[i] = i * i
 	*/
+	dp := make([]int, n+1)
+	for i := 0; i < len(dp); i++ {
+		dp[i] = math.MaxInt16 / 2
+	}
+	dp[0] = 0
+	for i := 1; i <= n; i++ {
+		for j := 1; j*j <= i; j++ {
+			dp[i] = minVal(dp[i], dp[i-j*j]+1)
+		}
+	}
+	return dp[n]
 }
 
 /*
