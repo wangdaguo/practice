@@ -2738,25 +2738,132 @@ func numSquares(n int) int {
 https://leetcode.cn/problems/coin-change/?envType=study-plan-v2&envId=top-100-liked
 */
 func coinChange(coins []int, amount int) int {
+	/*
+		dp[i] i 元钱需要几个硬币
+		dp[i] = min(dp[i-coins[0...i]] + 1)
+	*/
 	dp := make([]int, amount+1)
-	dp[0] = 0
-	for i := 1; i <= amount; i++ {
+	for i := 0; i < len(dp); i++ {
 		dp[i] = amount + 1
 	}
-	/**
-	i元钱需要的coin数量   [1, 2, 5]  11
-	dp[i] = min(dp[i], dp[i-coins[i]]+1)
-	*/
+	dp[0] = 0
 	for i := 1; i <= amount; i++ {
 		for j := 0; j < len(coins); j++ {
-			if i < coins[j] {
+			if coins[j] > i {
 				continue
 			}
 			dp[i] = min(dp[i], dp[i-coins[j]]+1)
 		}
 	}
-	if dp[len(dp)-1] > amount {
+	if dp[amount] > amount {
 		return -1
 	}
-	return dp[len(dp)-1]
+	return dp[amount]
+}
+
+/*
+139. 单词拆分
+https://leetcode.cn/problems/word-break/description/?envType=study-plan-v2&envId=top-100-liked
+*/
+func wordBreak(s string, wordDict []string) bool {
+	mp := make(map[string]bool)
+	for _, word := range wordDict {
+		mp[word] = true
+	}
+	/*
+		dp[i] 代表前i个字符是否可以用wordDict里面的表示
+		dp[i] = dp[j] && mp[s[j:i]]  // j < i
+	*/
+	dp := make([]bool, len(s)+1)
+	dp[0] = true
+	for i := 0; i <= len(s); i++ {
+		for j := 0; j < i; j++ {
+			if dp[j] && mp[s[j:i]] {
+				// dp[i] = dp[0:0~j] && mp[s[j+1:i+1]]
+				dp[i] = true
+				break
+			}
+		}
+	}
+	return dp[len(s)]
+}
+
+/*
+300. 最长递增子序列
+https://leetcode.cn/problems/longest-increasing-subsequence/?envType=study-plan-v2&envId=top-100-liked
+*/
+func lengthOfLIS(nums []int) int {
+	/*
+		dp[i] 代表以第i个数结尾的最大递增子序列
+		dp[i] = max(dp[j...i] + 1)
+	*/
+	dp := make([]int, len(nums)+1)
+	for i := 0; i < len(dp); i++ {
+		dp[i] = 1
+	}
+	for i := 0; i < len(nums); i++ {
+		for j := 0; j < i; j++ {
+			if nums[i] > nums[j] {
+				dp[i] = max(dp[j]+1, dp[i])
+			}
+		}
+	}
+	r := 0
+	for _, v := range dp {
+		r = max(r, v)
+	}
+	return r
+}
+
+/*
+300. 最长递增子序列
+https://leetcode.cn/problems/longest-increasing-subsequence/?envType=study-plan-v2&envId=top-100-liked
+*/
+func findLength(nums1 []int, nums2 []int) int {
+	n, m := len(nums1), len(nums2)
+	dp := make([][]int, n+1)
+	for i := 0; i < len(dp); i++ {
+		dp[i] = make([]int, m+1)
+	}
+	ans := 0
+	for i := n - 1; i >= 0; i-- {
+		for j := m - 1; j >= 0; j-- {
+			if nums1[i] == nums2[j] {
+				dp[i][j] = dp[i+1][j+1] + 1
+			} else {
+				dp[i][j] = 0
+			}
+			if ans < dp[i][j] {
+				ans = dp[i][j]
+			}
+		}
+	}
+	return ans
+}
+
+/*
+152. 乘积最大子数组
+https://leetcode.cn/problems/maximum-product-subarray/?envType=study-plan-v2&envId=top-100-liked
+*/
+func maxProduct(nums []int) int {
+	/*
+		dp[i] 代表以i为结尾的最大非空连续乘积
+		dp[i] = max(nums[i], dp[i-1]*num[i])
+	*/
+	dpMax, dpMin := make([]int, len(nums)), make([]int, len(nums))
+	for i := 0; i < len(nums); i++ {
+		dpMax[i], dpMin[i] = nums[i], nums[i]
+	}
+	for i := 1; i < len(nums); i++ {
+		dpMax[i] = max(dpMax[i-1]*nums[i], max(dpMin[i-1]*nums[i], nums[i]))
+		dpMin[i] = min(dpMin[i-1]*nums[i], min(nums[i], dpMax[i-1]*nums[i]))
+		if dpMin[i] < math.MinInt32 {
+			dpMin[i] = nums[i]
+		}
+	}
+	r := dpMax[0]
+	for i := 0; i < len(nums); i++ {
+		r = max(r, dpMax[i])
+	}
+	return r
 }
