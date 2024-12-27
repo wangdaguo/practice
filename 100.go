@@ -2847,8 +2847,9 @@ https://leetcode.cn/problems/maximum-product-subarray/?envType=study-plan-v2&env
 */
 func maxProduct(nums []int) int {
 	/*
-		dp[i] 代表以i为结尾的最大非空连续乘积
-		dp[i] = max(nums[i], dp[i-1]*num[i])
+		dp[i] 代表以i为结尾的最大非空连续乘积；这里面需要考虑正负号的情况，因为如果当前数字为正数，则前面的乘机越大越好，如果当前数字为负数，则前面的乘积越小越好
+		dpMax[i] = max(dpMax[i-1]*num[i], max(num[i], dpMin[i-1]*num[i]))
+		dpMin[i] = min(dpMin[i-1]*num[i], min(num[i], dpMax[i-1]*num[i]))
 	*/
 	dpMax, dpMin := make([]int, len(nums)), make([]int, len(nums))
 	for i := 0; i < len(nums); i++ {
