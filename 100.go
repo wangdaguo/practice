@@ -2868,3 +2868,45 @@ func maxProduct(nums []int) int {
 	}
 	return r
 }
+
+/*
+416. 分割等和子集
+https://leetcode.cn/problems/partition-equal-subset-sum/?envType=study-plan-v2&envId=top-100-liked
+*/
+func canPartition(nums []int) bool {
+	sum, maxVal := 0, math.MinInt32
+	if len(nums) < 2 {
+		return false
+	}
+	for i := 0; i < len(nums); i++ {
+		sum += nums[i]
+		if nums[i] > maxVal {
+			maxVal = nums[i]
+		}
+	}
+	if sum%2 != 0 || maxVal > sum/2 {
+		return false
+	}
+	/*
+		dp[i][j] 代表前i个数字和是否等于j
+		if j == 0; dp[i][j] 都不选，则一定为true；if i == 0; dp[i][nums[0]] 为true；
+	*/
+	dp, target := make([][]bool, len(nums)), sum/2
+	for i := 0; i < len(dp); i++ {
+		dp[i] = make([]bool, target+1)
+	}
+	for i := 0; i < len(nums); i++ {
+		dp[i][0] = true
+	}
+	dp[0][nums[0]] = true
+	for i := 1; i < len(nums); i++ {
+		for j := 1; j <= target; j++ {
+			if j >= nums[i] {
+				dp[i][j] = dp[i-1][j] || dp[i-1][j-nums[i]]
+			} else {
+				dp[i][j] = dp[i-1][j]
+			}
+		}
+	}
+	return dp[len(nums)-1][target]
+}
