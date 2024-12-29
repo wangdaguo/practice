@@ -2910,3 +2910,8 @@ func canPartition(nums []int) bool {
 	}
 	return dp[len(nums)-1][target]
 }
+
+/*
+动态规划专题
+https://leetcode.cn/circle/discuss/tXLS3i/
+*/
