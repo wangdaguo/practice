@@ -2912,6 +2912,45 @@ func canPartition(nums []int) bool {
 }
 
 /*
-动态规划专题
+======================================================================  动态规划专题  ============================================================
 https://leetcode.cn/circle/discuss/tXLS3i/
 */
+
+/*
+377. 组合总和 Ⅳ
+https://leetcode.cn/problems/combination-sum-iv/
+*/
+func combinationSum4(nums []int, target int) int {
+	dp := make([]int, target+1)
+	dp[0] = 1
+	for i := 1; i < len(dp); i++ {
+		for _, num := range nums {
+			if num <= i {
+				dp[i] += dp[i-num]
+			}
+		}
+	}
+	return dp[len(dp)-1]
+}
+
+/*
+62. 不同路径
+https://leetcode.cn/problems/unique-paths/?envType=study-plan-v2&envId=top-100-liked
+*/
+func uniquePaths(m int, n int) int {
+	/*
+		dp[i][j] = dp[i-1][j] + dp[i][j-1]
+	*/
+	dp := make([][]int, m)
+	for i := 0; i < m; i++ {
+		dp[i] = make([]int, n)
+		for j := 0; j < n; j++ {
+			if i == 0 || j == 0 {
+				dp[i][j] = 1
+			} else {
+				dp[i][j] = dp[i-1][j] + dp[i][j-1]
+			}
+		}
+	}
+	return dp[m-1][n-1]
+}
