@@ -2839,10 +2839,18 @@ func lengthOfLIS(nums []int) int {
 }
 
 /*
-300. 最长递增子序列
-https://leetcode.cn/problems/longest-increasing-subsequence/?envType=study-plan-v2&envId=top-100-liked
+718. 最长重复子数组
+https://leetcode.cn/problems/maximum-length-of-repeated-subarray/description/
 */
 func findLength(nums1 []int, nums2 []int) int {
+	/*
+		dp[i][j] 代表 nums1[i:] 与 nums2[j:] 的最长公共前缀
+		if nums1[i] == nums2[j] {
+			dp[i][j] = dp[i+1][j+1] + 1
+		} else {
+			dp[i][j] = 0
+		}
+	*/
 	n, m := len(nums1), len(nums2)
 	dp := make([][]int, n+1)
 	for i := 0; i < len(dp); i++ {
