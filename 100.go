@@ -3,6 +3,7 @@ package main
 import (
 	"container/heap"
 	"fmt"
+	"hash/crc32"
 	"math"
 	"sort"
 	"strconv"
@@ -35,8 +36,15 @@ func main() {
 	//r := findPeakElement([]int{4, 5, 6, 7, 0, 1, 2})
 	//r := decodeString("3[a]2[bc]")
 	//r := topKFrequent([]int{1, 1, 1, 2, 2, 3}, 2)
-	r := maxProfit([]int{7, 1, 5, 3, 6, 4})
+	//r := maxProfit([]int{7, 1, 5, 3, 6, 4})
+	r := Crc32(369436432338804)
 	fmt.Println(r)
+}
+
+func Crc32(num int64) int64 {
+	numStr := strconv.FormatInt(num, 10)
+	data := []byte(numStr)
+	return int64(crc32.ChecksumIEEE(data))
 }
 
 /*
@@ -2953,4 +2961,30 @@ func uniquePaths(m int, n int) int {
 		}
 	}
 	return dp[m-1][n-1]
+}
+
+/*
+64. 最小路径和
+https://leetcode.cn/problems/minimum-path-sum/?envType=study-plan-v2&envId=top-100-liked
+*/
+func minPathSum(grid [][]int) int {
+	/*
+		dp[i][j] = min(dp[i-1][j], dp[i][j-1]) + grid[i][j]
+	*/
+	dp := make([][]int, len(grid))
+	for i := 0; i < len(grid); i++ {
+		dp[i] = make([]int, len(grid[i]))
+		for j := 0; j < len(grid[i]); j++ {
+			if i == 0 && j == 0 {
+				dp[i][j] = grid[i][j]
+			} else if i == 0 {
+				dp[i][j] = dp[i][j-1] + grid[i][j]
+			} else if j == 0 {
+				dp[i][j] = dp[i-1][j] + grid[i][j]
+			} else {
+				dp[i][j] = min(dp[i-1][j], dp[i][j-1]) + grid[i][j]
+			}
+		}
+	}
+	return dp[len(dp)-1][len(dp[0])-1]
 }
