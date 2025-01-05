@@ -3012,6 +3012,10 @@ func minPathSum(grid [][]int) int {
 	return dp[len(dp)-1][len(dp[0])-1]
 }
 
+/*
+5. 最长回文子串
+https://leetcode.cn/problems/longest-palindromic-substring/?envType=study-plan-v2&envId=top-100-liked
+*/
 func longestPalindrome(s string) string {
 	dp := make([][]bool, len(s))
 	for i := 0; i < len(dp); i++ {
@@ -3067,4 +3071,33 @@ func expandAroundCenter(s string, i, j int) (l, r int) {
 		j++
 	}
 	return i + 1, j - 1
+}
+
+/*
+1143. 最长公共子序列
+https://leetcode.cn/problems/longest-common-subsequence/?envType=study-plan-v2&envId=top-100-liked
+*/
+func longestCommonSubsequence(text1 string, text2 string) int {
+	/*
+		dp[i][j] 代表 text1 前i个 与 text2 前j个 的最长公共子序列
+		if text1[i] == text2[j] {
+			dp[i][j] = dp[i-1][j-1] + 1
+		} else {
+			dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+		}
+	*/
+	dp := make([][]int, len(text1)+1)
+	for i := 0; i < len(dp); i++ {
+		dp[i] = make([]int, len(text2)+1)
+	}
+	for i := 0; i < len(text1); i++ {
+		for j := 0; j < len(text2); j++ {
+			if text1[i] == text2[j] {
+				dp[i+1][j+1] = dp[i][j] + 1
+			} else {
+				dp[i+1][j+1] = max(dp[i][j+1], dp[i+1][j])
+			}
+		}
+	}
+	return dp[len(dp)-1][len(dp[0])-1]
 }
