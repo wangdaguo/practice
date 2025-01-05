@@ -3011,3 +3011,60 @@ func minPathSum(grid [][]int) int {
 	}
 	return dp[len(dp)-1][len(dp[0])-1]
 }
+
+func longestPalindrome(s string) string {
+	dp := make([][]bool, len(s))
+	for i := 0; i < len(dp); i++ {
+		dp[i] = make([]bool, len(s))
+		dp[i][i] = true
+	}
+	maxLen, begin := 1, 0
+	for length := 2; length <= len(s); length++ {
+		for left := 0; left < len(s); left++ {
+			right := left + length - 1
+			if right >= len(s) {
+				break
+			}
+			if s[left] != s[right] {
+				dp[left][right] = false
+			} else {
+				if right-left < 3 {
+					dp[left][right] = true
+				} else {
+					dp[left][right] = dp[left+1][right-1]
+				}
+			}
+			if dp[left][right] && right-left+1 > maxLen {
+				begin = left
+				maxLen = right - left + 1
+			}
+		}
+	}
+	return s[begin : begin+maxLen]
+}
+
+func longestPalindrome21(s string) string {
+	if len(s) <= 1 {
+		return s
+	}
+	start, end := 0, 0
+	for i := 0; i < len(s); i++ {
+		s1, e1 := expandAroundCenter(s, i, i)
+		s2, e2 := expandAroundCenter(s, i, i+1)
+		if e1-s1 > end-start {
+			start, end = s1, e1
+		}
+		if e2-s2 > end-start {
+			start, end = s2, e2
+		}
+	}
+	return s[start : end+1]
+}
+
+func expandAroundCenter(s string, i, j int) (l, r int) {
+	for i >= 0 && j <= len(s)-1 && s[i] == s[j] {
+		i--
+		j++
+	}
+	return i + 1, j - 1
+}
