@@ -3101,3 +3101,18 @@ func longestCommonSubsequence(text1 string, text2 string) int {
 	}
 	return dp[len(dp)-1][len(dp[0])-1]
 }
+
+/*
+72. 编辑距离
+https://leetcode.cn/problems/edit-distance/?envType=study-plan-v2&envId=top-100-liked
+*/
+func minDistance(word1 string, word2 string) int {
+	/*
+		dp[i][j] 代表 word1 前i个 与 word2 前j个 的编辑距离
+		if word1[i] == word2[j] {
+			dp[i][j] = dp[i-1][j-1]
+		} else {
+			dp[i][j] = min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1
+		}
+	*/
+}
