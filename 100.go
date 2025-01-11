@@ -2630,7 +2630,10 @@ func canJump(nums []int) bool {
 https://leetcode.cn/problems/jump-game-ii/?envType=study-plan-v2&envId=top-100-liked
 */
 func jump(nums []int) int {
-	r, i, dis, maxDis := 0, 0, nums[0], nums[0]
+	if len(nums) <= 1 {
+		return 0
+	}
+	r, i, dis, maxDis := 1, 0, nums[0], nums[0]
 	for dis < len(nums)-1 {
 		r++
 		for ; i <= dis; i++ {
@@ -2677,7 +2680,7 @@ func climbStairs(n int) int {
 	dp[1] = 1
 	dp[2] = 2
 	for i := 3; i <= n; i++ {
-		dp[i] = dp[2] + dp[1]
+		dp[i] = dp[i-1] + dp[i-2]
 	}
 	return dp[n]
 }
