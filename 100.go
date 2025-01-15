@@ -2955,6 +2955,9 @@ https://leetcode.cn/circle/discuss/tXLS3i/
 https://leetcode.cn/problems/combination-sum-iv/
 */
 func combinationSum4(nums []int, target int) int {
+	/*
+		dp[x] 表示选取的元素之和等于 x 的方案数
+	*/
 	dp := make([]int, target+1)
 	dp[0] = 1
 	for i := 1; i < len(dp); i++ {
@@ -3082,7 +3085,7 @@ https://leetcode.cn/problems/longest-common-subsequence/?envType=study-plan-v2&e
 */
 func longestCommonSubsequence(text1 string, text2 string) int {
 	/*
-		dp[i][j] 代表 text1 前i个 与 text2 前j个 的最长公共子序列
+		dp[i][j] 表示 text1[0:i] 和 text2[0:j] 的最长公共子序列的长度。
 		if text1[i] == text2[j] {
 			dp[i][j] = dp[i-1][j-1] + 1
 		} else {
