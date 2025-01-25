@@ -440,11 +440,7 @@ func merge(intervals [][]int) [][]int {
 		if end < intervals[i][0] { // [1,2] [3,4]
 			r = append(r, []int{start, end})
 			start, end = intervals[i][0], intervals[i][1]
-		} else if end >= intervals[i][0] && end <= intervals[i][1] { // [1,3] [2,4]
-			end = intervals[i][1]
-		} else if start <= intervals[i][0] && end >= intervals[i][1] { // [1,4] [2,3]
-			continue
-		} else {
+		} else if end >= intervals[i][0] && end <= intervals[i][1] { // [1,3] [2,4] 或者 [1,3] [1,4]
 			end = intervals[i][1]
 		}
 	}
