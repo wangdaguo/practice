@@ -296,6 +296,11 @@ func findAnagrams(s string, p string) []int {
 	if pCount == sCount {
 		r = append(r, 0)
 	}
+	/*
+		s = "abcabc" 6
+		p = "abc"  3
+		s[:3] = abc 0/1/2
+	*/
 	for k, v := range s[:len(s)-len(p)] {
 		sCount[v-'a']--
 		sCount[s[k+len(p)]-'a']++
@@ -397,6 +402,25 @@ func minWindow(s string, t string) string {
 		return ""
 	}
 	return s[minStart : minStart+minSize]
+}
+
+/*
+53. 最大子数组和
+https://leetcode.cn/problems/maximum-subarray/?envType=study-plan-v2&envId=top-100-liked
+*/
+func maxSubArray(nums []int) int {
+	sum, maxSum := nums[0], nums[0]
+	for i := 1; i < len(nums); i++ {
+		if sum < 0 {
+			sum = nums[i]
+		} else {
+			sum += nums[i]
+		}
+		if sum > maxSum {
+			maxSum = sum
+		}
+	}
+	return maxSum
 }
 
 /*
