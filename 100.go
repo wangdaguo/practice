@@ -599,7 +599,7 @@ func rotate(matrix [][]int) {
 https://leetcode.cn/problems/search-a-2d-matrix-ii/?envType=study-plan-v2&envId=top-100-liked
 */
 func searchMatrix(matrix [][]int, target int) bool {
-	firstRow := sort.Search(len(matrix), func(i int) bool { return matrix[i][len(matrix[i])-1] >= target })
+	firstRow := sort.Search(len(matrix), func(i int) bool { return matrix[i][len(matrix[i])-1] >= target }) // 根据表达式求值，如果找不到返回数据len
 	if firstRow == len(matrix) {
 		return false
 	}
@@ -608,7 +608,7 @@ func searchMatrix(matrix [][]int, target int) bool {
 		return false
 	}
 	for row := firstRow; row <= lastRow; row++ {
-		col := sort.SearchInts(matrix[row], target)
+		col := sort.SearchInts(matrix[row], target) // 寻找int值所在的位置，如果找不到返回应该插入的位置
 		if col < len(matrix[row]) && matrix[row][col] == target {
 			return true
 		}
@@ -1068,9 +1068,13 @@ func diameterOfBinaryTree(root *TreeNode) int {
 		if d, ok := mp[root]; ok {
 			return d
 		}
+		// 计算左右节点的深度
 		lDeep, rDeep := deep(root.Left), deep(root.Right)
+		// 当前节点的直径
 		r = max(r, lDeep+rDeep+1)
+		// 缓存当前节点深度
 		mp[root] = max(deep(root.Left), deep(root.Right)) + 1
+		// 返回当前节点的深度
 		return mp[root]
 	}
 	deep(root)
@@ -1124,6 +1128,10 @@ func sortedArrayToBST(nums []int) *TreeNode {
 	return head
 }
 
+/*
+98. 验证二叉搜索树
+https://leetcode.cn/problems/validate-binary-search-tree/description/?envType=study-plan-v2&envId=top-100-liked
+*/
 func isValidBST(root *TreeNode) bool {
 	if root == nil || root.Left == nil && root.Right == nil {
 		return true
