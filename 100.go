@@ -145,6 +145,26 @@ func t2w(data []int) {
 }
 
 /*
+153. 寻找旋转排序数组中的最小值
+https://leetcode.cn/problems/find-minimum-in-rotated-sorted-array/?envType=study-plan-v2&envId=top-100-liked
+*/
+func findMin(nums []int) int {
+	if len(nums) < 1 {
+		return -1
+	}
+	l, r := 0, len(nums)-1
+	for l < r {
+		mid := (r-l)/2 + l
+		if nums[mid] < nums[r] {
+			r = mid
+		} else {
+			l = mid + 1
+		}
+	}
+	return l
+}
+
+/*
 *
 1. 两数之和
 https://leetcode.cn/problems/two-sum/?envType=study-plan-v2&envId=top-100-liked
@@ -1299,6 +1319,7 @@ func buildTree(preorder []int, inorder []int) *TreeNode {
 }
 
 /*
+437. 路径总和 III
 https://leetcode.cn/problems/path-sum-iii/?envType=study-plan-v2&envId=top-100-liked
 */
 func pathSum(root *TreeNode, targetSum int) int {
@@ -1699,7 +1720,7 @@ func subsetsImpl(nums []int, data *[]int, level int, r *[][]int) {
 
 	for i := level; i < len(nums); i++ {
 		*data = append(*data, nums[i])
-		subsetsImpl(nums, data, level+1, r)
+		subsetsImpl(nums, data, i+1, r)
 		*data = (*data)[:len(*data)-1]
 	}
 	return
@@ -1913,7 +1934,6 @@ func exist(board [][]byte, word string) bool {
 	if len(board) < 1 {
 		return false
 	}
-
 	r, selected := false, make(map[string]bool)
 	for i := 0; i < len(board); i++ {
 		for j := 0; j < len(board[i]); j++ {
