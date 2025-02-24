@@ -37,7 +37,10 @@ func main() {
 	//r := decodeString("3[a]2[bc]")
 	//r := topKFrequent([]int{1, 1, 1, 2, 2, 3}, 2)
 	//r := maxProfit([]int{7, 1, 5, 3, 6, 4})
-	r := Crc32(369436432338804)
+	//r := Crc32(369436432338804)
+	r := findKthLargest2233([]int{3, 2, 1, 5, 6, 4}, 2)
+	//nums, k := []int{1, 3, -1, 5, 6, 7}, 3
+	//r := maxSlidingWindow1(nums, k)
 	fmt.Println(r)
 }
 
@@ -348,21 +351,26 @@ func subarraySum(nums []int, k int) int {
 	return r
 }
 
+/*
+*
+239. 滑动窗口最大值
+https://leetcode.cn/problems/sliding-window-maximum/description/
+*/
 var list []int
 
 type heap12 struct {
 	sort.IntSlice
 }
 
-func (h heap12) Less(i, j int) bool {
+func (h *heap12) Less(i, j int) bool {
 	return list[h.IntSlice[i]] > list[h.IntSlice[j]]
 }
 
-func (h heap12) Push(x any) {
+func (h *heap12) Push(x any) {
 	h.IntSlice = append(h.IntSlice, x.(int))
 }
 
-func (h heap12) Pop() any {
+func (h *heap12) Pop() any {
 	val := h.IntSlice[len(h.IntSlice)-1]
 	h.IntSlice = h.IntSlice[:len(h.IntSlice)-1]
 	return val
@@ -2131,6 +2139,50 @@ func searchMatrix1(matrix [][]int, target int) bool {
 		return true
 	}
 	return false
+}
+
+var data []int
+
+type KHeap struct {
+	sort.IntSlice
+}
+
+func NewKHeap(n int) *KHeap {
+	return &KHeap{
+		IntSlice: make(sort.IntSlice, n),
+	}
+}
+
+func (h *KHeap) Less(i, j int) bool {
+	return data[h.IntSlice[i]] > data[h.IntSlice[j]]
+}
+
+func (h *KHeap) Push(x any) {
+	h.IntSlice = append(h.IntSlice, x.(int))
+}
+
+func (h *KHeap) Pop() any {
+	val := h.IntSlice[len(h.IntSlice)-1]
+	h.IntSlice = h.IntSlice[:len(h.IntSlice)-1]
+	return val
+}
+
+func findKthLargest2233(nums []int, k int) int {
+	data = nums
+	hp := NewKHeap(k)
+	for i := 0; i < len(hp.IntSlice); i++ {
+		hp.IntSlice[i] = i
+	}
+	heap.Init(hp)
+	for i := k; i < len(nums); i++ {
+		heap.Push(hp, i)
+	}
+	fmt.Println(hp)
+	for i := 0; i < k-1; i++ {
+		_ = heap.Pop(hp).(int)
+	}
+	idx := heap.Pop(hp).(int)
+	return nums[idx]
 }
 
 /*
