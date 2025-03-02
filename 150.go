@@ -1596,34 +1596,22 @@ func deepCopyNode(mp map[*Node]*Node, h *Node) *Node {
 https://leetcode.cn/problems/reverse-linked-list-ii/?envType=study-plan-v2&envId=top-interview-150
 */
 func reverseBetween(head *ListNode, left int, right int) *ListNode {
-	if left == right {
-		return head
+	dummyHead := &ListNode{
+		Next: head,
 	}
-	dummyHead := &ListNode{Next: head}
-	pre, end, h, i := dummyHead, dummyHead, dummyHead, 0
-	for i < right-left {
-		end = end.Next
-		i++
-	}
-	i = 0
-	for i < left {
-		pre = h
+	h := dummyHead
+	for i := 0; i < left-1; i++ {
 		h = h.Next
-		end = end.Next
-		i++
 	}
-	if end != nil {
-		end = end.Next
+	var pre, cur *ListNode = nil, h.Next
+	for i := 0; i < right-left+1; i++ {
+		next := cur.Next
+		cur.Next = pre
+		pre = cur
+		cur = next
 	}
-	p := end
-	cur := pre.Next
-	for cur != end {
-		n := cur.Next
-		cur.Next = p
-		p = cur
-		cur = n
-	}
-	pre.Next = p
+	h.Next.Next = cur
+	h.Next = pre
 	return dummyHead.Next
 }
 
