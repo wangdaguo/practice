@@ -2650,33 +2650,33 @@ type kv struct {
 	key, val int
 }
 
-type hp struct {
+type Hp struct {
 	data []kv
 }
 
-func NewHp() *hp {
-	return &hp{
+func NewHp() *Hp {
+	return &Hp{
 		data: make([]kv, 0),
 	}
 }
 
-func (h *hp) Less(i, j int) bool {
+func (h *Hp) Less(i, j int) bool {
 	return h.data[i].val < h.data[j].val
 }
 
-func (h *hp) Swap(i, j int) {
+func (h *Hp) Swap(i, j int) {
 	h.data[i], h.data[j] = h.data[j], h.data[i]
 }
 
-func (h *hp) Len() int {
+func (h *Hp) Len() int {
 	return len(h.data)
 }
 
-func (h *hp) Push(x any) {
+func (h *Hp) Push(x any) {
 	h.data = append(h.data, x.(kv))
 }
 
-func (h *hp) Pop() any {
+func (h *Hp) Pop() any {
 	d := h.data[len(h.data)-1]
 	defer func() {
 		h.data = h.data[:len(h.data)-1]
@@ -3180,6 +3180,32 @@ func expandAroundCenter(s string, i, j int) (l, r int) {
 }
 
 /*
+718. 最长重复子数组
+https://leetcode.cn/problems/maximum-length-of-repeated-subarray/
+*/
+func findLength1(nums1 []int, nums2 []int) int {
+	/*
+		dp[i][j] 是 num1[:i] 与 nums2[:j] 为结尾的最长子数组
+		这里面需要提一下，子数组必须是连续的，所以 if nums1[i] != nums2[j] 时，dp[i][j] = 0
+	*/
+	dp, r := make([][]int, len(nums1)+1), 0
+	for i := 0; i < len(dp); i++ {
+		dp[i] = make([]int, len(nums2)+1)
+	}
+	for i := 0; i < len(nums1); i++ {
+		for j := 0; j < len(nums1); j++ {
+			if nums1[i] == nums2[j] {
+				dp[i+1][j+1] = dp[i][j] + 1
+			}
+			if dp[i+1][j+1] > r {
+				r = dp[i+1][j+1]
+			}
+		}
+	}
+	return r
+}
+
+/*
 1143. 最长公共子序列
 https://leetcode.cn/problems/longest-common-subsequence/?envType=study-plan-v2&envId=top-100-liked
 */
@@ -3214,12 +3240,22 @@ https://leetcode.cn/problems/edit-distance/?envType=study-plan-v2&envId=top-100-
 */
 func minDistance(word1 string, word2 string) int {
 	/*
-		dp[i][j] 代表 word1 前i个 与 word2 前j个 的编辑距离
+		dp[i][j] 代表 word1 到 i 位置转换成 word2 到 j 位置需要最少步数
 		if word1[i] == word2[j] {
 			dp[i][j] = dp[i-1][j-1]
 		} else {
 			dp[i][j] = min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1
 		}
+
+		对“dp[i-1][j-1] 表示替换操作，dp[i-1][j] 表示删除操作，dp[i][j-1] 表示插入操作。”的补充理解：
+
+		以 word1 为 "horse"，word2 为 "ros"，且 dp[5][3] 为例，即要将 word1的前 5 个字符转换为 word2的前 3 个字符，也就是将 horse 转换为 ros，因此有：
+
+		(1) dp[i-1][j-1]，即先将 word1 的前 4 个字符 hors 转换为 word2 的前 2 个字符 ro，然后将第五个字符 word1[4]（因为下标基数以 0 开始） 由 e 替换为 s（即替换为 word2 的第三个字符，word2[2]）
+
+		(2) dp[i][j-1]，即先将 word1 的前 5 个字符 horse 转换为 word2 的前 2 个字符 ro，然后在末尾补充一个 s，即插入操作
+
+		(3) dp[i-1][j]，即先将 word1 的前 4 个字符 hors 转换为 word2 的前 3 个字符 ros，然后删除 word1 的第 5 个字符
 	*/
 	dp := make([][]int, len(word1)+1)
 	for i := 0; i < len(dp); i++ {
