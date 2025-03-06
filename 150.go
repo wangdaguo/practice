@@ -1901,6 +1901,7 @@ func invertTree(root *TreeNode) *TreeNode {
 101. 对称二叉树
 https://leetcode.cn/problems/symmetric-tree/description/?envType=study-plan-v2&envId=top-interview-150
 */
+
 func isSymmetric(root *TreeNode) bool {
 	if root == nil {
 		return true
@@ -3626,7 +3627,7 @@ func restoreIpAddresses(s string) []string {
 
 func restoreIpAddressesBT(s string, tmp []string, r []string) {
 	if len(tmp) == 4 && len(s) == 0 {
-		r = append(r, tmp[0]+"."+tmp[1]+"."+tmp[2]+"."+tmp[3])
+		r = append(r, strings.Join(tmp, "."))
 		return
 	}
 	for i := 1; i < 4; i++ {
@@ -4952,7 +4953,6 @@ func lengthOfLIS(nums []int) int {
 	for _, v := range dp {
 		r = max(r, v)
 	}
-	math.MaxInt32
 	return r
 }
 

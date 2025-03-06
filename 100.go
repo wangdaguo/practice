@@ -1774,7 +1774,7 @@ func sumList(list []int) int {
 }
 
 /*
-*40. 组合总和 IIg
+*40. 组合总和 II
 https://leetcode.cn/problems/combination-sum-ii/description/
 题解：https://leetcode.cn/problems/combination-sum-ii/solutions/14753/hui-su-suan-fa-jian-zhi-python-dai-ma-java-dai-m-3/
 */
