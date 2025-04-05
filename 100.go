@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func main() {
+func main12() {
 	//nums := []int{0, 1, 0, 3, 12}
 	//moveZeroes(nums)
 	//r := maxArea([]int{1, 8, 6, 2, 5, 4, 8, 3, 7})
@@ -38,9 +38,10 @@ func main() {
 	//r := topKFrequent([]int{1, 1, 1, 2, 2, 3}, 2)
 	//r := maxProfit([]int{7, 1, 5, 3, 6, 4})
 	//r := Crc32(369436432338804)
-	r := findKthLargest2233([]int{3, 2, 1, 5, 6, 4}, 2)
+	//r := findKthLargest2233([]int{3, 2, 1, 5, 6, 4}, 2)
 	//nums, k := []int{1, 3, -1, 5, 6, 7}, 3
 	//r := maxSlidingWindow1(nums, k)
+	r := longestCommonSubsequence("abcde", "ace")
 	fmt.Println(r)
 }
 
@@ -304,6 +305,43 @@ func lengthOfLongestSubstring(s string) int {
 	return cnt
 }
 
+func threeSum(nums []int) [][]int {
+	if len(nums) < 1 {
+		return [][]int{}
+	}
+	sort.Ints(nums)
+	r, idx := make([][]int, 0), 0
+	for idx < len(nums)-1 {
+		if nums[idx] > 0 {
+			return r
+		}
+		if idx > 0 && nums[idx] == nums[idx-1] {
+			idx++
+			continue
+		}
+		left, right := idx+1, len(nums)-1
+		for left < right {
+			if nums[idx]+nums[left]+nums[right] > 0 {
+				right--
+			} else if nums[idx]+nums[left]+nums[right] < 0 {
+				left++
+			} else {
+				r = append(r, []int{nums[idx], nums[left], nums[right]})
+				for left < right && nums[left] == nums[left+1] {
+					left++
+				}
+				for left < right && nums[right] == nums[right-1] {
+					right--
+				}
+				left++
+				right--
+			}
+		}
+		idx++
+	}
+	return r
+}
+
 /*
 *
 438. 找到字符串中所有字母异位词
@@ -534,8 +572,8 @@ func setZeroes(matrix [][]int) {
 			matrix[row[i]][j] = 0
 		}
 	}
-	for i := 0; i < len(col); i++ {
-		for j := 0; j < len(matrix); j++ {
+	for j := 0; j < len(matrix); j++ {
+		for i := 0; i < len(col); i++ {
 			matrix[j][col[i]] = 0
 		}
 	}
@@ -2902,7 +2940,7 @@ func wordBreak(s string, wordDict []string) bool {
 	*/
 	dp := make([]bool, len(s)+1)
 	dp[0] = true
-	for i := 0; i <= len(s); i++ {
+	for i := 1; i <= len(s); i++ {
 		for j := 0; j < i; j++ {
 			if dp[j] && mp[s[j:i]] {
 				// dp[i] = dp[0:0~j] && mp[s[j+1:i+1]]
@@ -2973,6 +3011,22 @@ func findLength(nums1 []int, nums2 []int) int {
 		}
 	}
 	return ans
+}
+
+func findLength1(nums1 []int, nums2 []int) int {
+	res, dp := 0, make([][]int, len(nums1)+1)
+	for i := 0; i < len(dp); i++ {
+		dp[i] = make([]int, len(nums2)+1)
+	}
+	for i := 0; i < len(nums1); i++ {
+		for j := 0; j < len(nums2); j++ {
+			if nums1[i] == nums2[j] {
+				dp[i+1][j+1] = dp[i][j] + 1
+			}
+			res = max(res, dp[i+1][j+1])
+		}
+	}
+	return res
 }
 
 /*
@@ -3209,9 +3263,10 @@ func findLength1(nums1 []int, nums2 []int) int {
 1143. 最长公共子序列
 https://leetcode.cn/problems/longest-common-subsequence/?envType=study-plan-v2&envId=top-100-liked
 */
-func longestCommonSubsequence(text1 string, text2 string) int {
+func longestCommonSubsequence1(text1 string, text2 string) int {
 	/*
 		dp[i][j] 表示 text1[0:i] 和 text2[0:j] 的最长公共子序列的长度。
+
 		if text1[i] == text2[j] {
 			dp[i][j] = dp[i-1][j-1] + 1
 		} else {

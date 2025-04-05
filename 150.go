@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func main1() {
+func main() {
 	//r := isIsomorphic("paper", "title")
 	//r := wordPattern("abc", "b c a")
 	//r := isAnagram("anagram", "nagaram")
@@ -157,10 +157,7 @@ func main1() {
 	//apply(Addwx(1))
 	//r := findKthLargest3([]int{2, 1, 0}, 3)
 	//fmt.Println(r)
-}
 
-func Addwx(a int) int {
-	return a + 1
 }
 
 func findMaxNum(nums []int) int {
@@ -405,20 +402,22 @@ func canJump(nums []int) bool {
 }
 
 func jump(nums []int) int {
-	if len(nums) < 1 {
+	if len(nums) <= 1 {
 		return 0
 	}
-	start, end, cnt := 0, 1, 0
-	for end < len(nums) {
-		maxPos := 0
-		for i := start; i < end; i++ {
-			maxPos = max(maxPos, i+nums[i])
+	i, r, dis, maxDis := 0, 1, nums[0], nums[1]
+	for dis < len(nums)-1 {
+		r++
+		for ; i <= dis; i++ {
+			if i+nums[i] > maxDis {
+				maxDis = i + nums[i]
+			}
 		}
-		start = end
-		end = maxPos + 1
-		cnt++
+		if maxDis > dis {
+			dis = maxDis
+		}
 	}
-	return cnt
+	return r
 }
 
 func hIndex(citations []int) int {
@@ -1242,11 +1241,11 @@ func merge(intervals [][]int) [][]int {
 	})
 	r, start, end := make([][]int, 0), intervals[0][0], intervals[0][1]
 	for i := 1; i < len(intervals); i++ {
-		if end >= intervals[i][0] && intervals[i][1] >= end { // [1,3] [2,4]
-			end = intervals[i][1]
-		} else if end < intervals[i][0] {
+		if end < intervals[i][0] { // [1,2] [3,4]
 			r = append(r, []int{start, end})
 			start, end = intervals[i][0], intervals[i][1]
+		} else if end >= intervals[i][0] && end <= intervals[i][1] { // [1,3] [2,4]
+			end = intervals[i][1]
 		}
 	}
 	r = append(r, []int{start, end})
@@ -1265,13 +1264,13 @@ func insert(intervals [][]int, newInterval []int) [][]int {
 	}
 	left, right, merged, r := newInterval[0], newInterval[1], false, [][]int{}
 	for _, interval := range intervals {
-		if interval[0] > newInterval[1] {
+		if interval[0] > right {
 			if !merged {
 				merged = true
 				r = append(r, []int{left, right})
 			}
 			r = append(r, interval)
-		} else if interval[1] < newInterval[0] {
+		} else if interval[1] < left {
 			r = append(r, interval)
 		} else {
 			left = min(left, interval[0])
@@ -2733,6 +2732,36 @@ func zigzagLevelOrder(root *TreeNode) [][]int {
 		r = append(r, tmp)
 	}
 	return r
+}
+
+/*
+662. 二叉树最大宽度
+https://leetcode.cn/problems/maximum-width-of-binary-tree/submissions/611576767/
+*/
+type pp struct {
+	node *TreeNode
+	idx  int
+}
+
+func widthOfBinaryTree(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+	q, ans := []*pp{{root, 1}}, 1
+	for len(q) > 0 {
+		ans = max(q[len(q)-1].idx-q[0].idx+1, ans)
+		tmp := q
+		q = nil
+		for _, n := range tmp {
+			if n.node.Left != nil {
+				q = append(q, &pp{n.node.Left, 2 * n.idx})
+			}
+			if n.node.Right != nil {
+				q = append(q, &pp{n.node.Right, 2*n.idx + 1})
+			}
+		}
+	}
+	return ans
 }
 
 /*
