@@ -228,3 +228,33 @@ func (ch *SimpleChannel) Receive() interface{} {
 	ch.cond.Broadcast()
 	return value
 }
+
+type Pool struct {
+	queue chan int
+	wg    *sync.WaitGroup
+}
+
+func NewPool(size int) *Pool {
+	if size <= 0 {
+		size = 1
+	}
+
+	return &Pool{
+		queue: make(chan int, size),
+		wg:    &sync.WaitGroup{},
+	}
+}
+
+func (p *Pool) Add(value int) {
+	p.queue <- value
+	p.wg.Add(value)
+}
+
+func (p *Pool) Done() {
+	<-p.queue
+	p.wg.Done()
+}
+
+func (p *Pool) Wait() {
+	p.wg.Wait()
+}
