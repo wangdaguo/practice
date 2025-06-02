@@ -31,6 +31,7 @@ func main() {
 	//TestSelect1()
 	//producer()
 	//abc()
+	//testPool()
 }
 
 func reqTest() {
@@ -112,16 +113,16 @@ func abc() {
 		close(c)
 	}()
 	flag1 <- 1
-	//for v := range c {
-	//	fmt.Println(v)
-	//}
-	for {
-		v, ok := <-c
-		if !ok {
-			break
-		}
+	for v := range c {
 		fmt.Println(v)
 	}
+	//for {
+	//	v, ok := <-c
+	//	if !ok {
+	//		break
+	//	}
+	//	fmt.Println(v)
+	//}
 }
 
 func consumer(data, end chan int) {
@@ -227,6 +228,19 @@ func (ch *SimpleChannel) Receive() interface{} {
 	// ch.cond.Signal() // 唤醒等待发送的 goroutine
 	ch.cond.Broadcast()
 	return value
+}
+
+func testPool() {
+	p := NewPool(2)
+	for i := 0; i < 10; i++ {
+		p.Add(1)
+		go func(i int) {
+			defer p.Done()
+			fmt.Println(i)
+			time.Sleep(2 * time.Second)
+		}(i)
+	}
+	p.Wait()
 }
 
 type Pool struct {

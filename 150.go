@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func main() {
+func main32() {
 	//r := isIsomorphic("paper", "title")
 	//r := wordPattern("abc", "b c a")
 	//r := isAnagram("anagram", "nagaram")
@@ -157,7 +157,6 @@ func main() {
 	//apply(Addwx(1))
 	//r := findKthLargest3([]int{2, 1, 0}, 3)
 	//fmt.Println(r)
-
 }
 
 func findMaxNum(nums []int) int {

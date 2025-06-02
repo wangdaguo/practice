@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func main12() {
+func main() {
 	//nums := []int{0, 1, 0, 3, 12}
 	//moveZeroes(nums)
 	//r := maxArea([]int{1, 8, 6, 2, 5, 4, 8, 3, 7})
@@ -41,7 +41,8 @@ func main12() {
 	//r := findKthLargest2233([]int{3, 2, 1, 5, 6, 4}, 2)
 	//nums, k := []int{1, 3, -1, 5, 6, 7}, 3
 	//r := maxSlidingWindow1(nums, k)
-	r := longestCommonSubsequence("abcde", "ace")
+	//r := longestCommonSubsequence("abcde", "ace")
+	r := findMin1([]int{4, 5, 6, 7, 0, 1, 2})
 	fmt.Println(r)
 }
 
@@ -420,12 +421,22 @@ func maxSlidingWindow1(nums []int, k int) []int {
 	for i := 0; i < k; i++ {
 		hp.IntSlice[i] = i
 	}
+	/*
+		nums = [1,3,-1,-3,5,3,6,7]
+		k = 3
+		[1,3,-1] 3
+		[3,-1,-3] -1
+		[-1,-3,5] 5
+		[-3,5,3] 5
+		[5,3,6] 6
+		[3,6,7] 7
+	*/
 	heap.Init(hp)
 	r := make([]int, 1)
 	r[0] = nums[hp.IntSlice[0]]
 	for i := k; i < len(nums); i++ {
 		heap.Push(hp, i)
-		for i-k >= hp.IntSlice[0] {
+		for i-k >= hp.IntSlice[0] { // 排除掉不是K的范围内的数字
 			heap.Pop(hp)
 		}
 		r = append(r, nums[hp.IntSlice[0]])
@@ -567,14 +578,12 @@ func setZeroes(matrix [][]int) {
 			}
 		}
 	}
-	for i := 0; i < len(row); i++ {
-		for j := 0; j < len(matrix[row[i]]); j++ {
-			matrix[row[i]][j] = 0
-		}
+	for _, i := range row {
+		matrix[i] = make([]int, len(matrix[i]))
 	}
-	for j := 0; j < len(matrix); j++ {
-		for i := 0; i < len(col); i++ {
-			matrix[j][col[i]] = 0
+	for _, i := range col {
+		for j := 0; j < len(matrix); j++ {
+			matrix[j][i] = 0
 		}
 	}
 }
@@ -814,6 +823,7 @@ func detectCycle(head *ListNode) *ListNode {
 /*
 24. 两两交换链表中的节点
 https://leetcode.cn/problems/swap-nodes-in-pairs/?envType=study-plan-v2&envId=top-100-liked
+三个指针，头部每次循环变动一次，其他两个来回变
 */
 func swapPairs(head *ListNode) *ListNode {
 	if head == nil || head.Next == nil {
@@ -1409,6 +1419,11 @@ func pathSum1(root *TreeNode, targetSum int) (ans int) {
 	return
 }
 
+/*
+*
+236. 二叉树的最近公共祖先
+https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-tree/description/?envType=study-plan-v2&envId=top-interview-150
+*/
 func lowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
 	if root == nil {
 		return nil
@@ -3237,7 +3252,7 @@ func expandAroundCenter(s string, i, j int) (l, r int) {
 718. 最长重复子数组
 https://leetcode.cn/problems/maximum-length-of-repeated-subarray/
 */
-func findLength1(nums1 []int, nums2 []int) int {
+func findLength12(nums1 []int, nums2 []int) int {
 	/*
 		dp[i][j] 是 num1[:i] 与 nums2[:j] 为结尾的最长子数组
 		这里面需要提一下，子数组必须是连续的，所以 if nums1[i] != nums2[j] 时，dp[i][j] = 0
